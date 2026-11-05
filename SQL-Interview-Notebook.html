@@ -1,0 +1,2123 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SQL &amp; Database Interview Notebook — Data Scientist Edition</title>
+<style>
+/* ============================================================
+   THEME VARIABLES
+   ============================================================ */
+:root{
+  --radius: 14px;
+  --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+}
+
+html[data-theme="light"]{
+  --bg:#e9edf3; --paper:#ffffff; --paper2:#f6f9fd; --ink:#17202b; --ink2:#5c6b7f;
+  --rule:rgba(23,32,43,.055); --border:rgba(23,32,43,.12); --accent:#2f6fed;
+  --accent-soft:rgba(47,111,237,.10); --code-bg:#101827; --code-ink:#d8e3f6;
+  --chip:#eef2f8; --shadow:0 18px 50px rgba(20,32,60,.10); --shadow-sm:0 4px 14px rgba(20,32,60,.07);
+}
+html[data-theme="dark"]{
+  --bg:#0b1020; --paper:#131a2b; --paper2:#182134; --ink:#e6ecf7; --ink2:#9aa8bf;
+  --rule:rgba(230,236,247,.045); --border:rgba(230,236,247,.11); --accent:#6ea8ff;
+  --accent-soft:rgba(110,168,255,.13); --code-bg:#060b16; --code-ink:#b9cdf0;
+  --chip:#1b2438; --shadow:0 18px 50px rgba(0,0,0,.45); --shadow-sm:0 4px 14px rgba(0,0,0,.35);
+}
+html[data-theme="sepia"]{
+  --bg:#e5d9c2; --paper:#fbf4e3; --paper2:#f4ead3; --ink:#3b2f1f; --ink2:#7a6850;
+  --rule:rgba(59,47,31,.07); --border:rgba(59,47,31,.17); --accent:#a35a1e;
+  --accent-soft:rgba(163,90,30,.12); --code-bg:#2d2418; --code-ink:#efe2c8;
+  --chip:#f0e4c9; --shadow:0 18px 50px rgba(80,60,30,.18); --shadow-sm:0 4px 14px rgba(80,60,30,.12);
+}
+html[data-theme="solight"]{
+  --bg:#e6dfc8; --paper:#fdf6e3; --paper2:#f7f0dc; --ink:#073642; --ink2:#586e75;
+  --rule:rgba(7,54,66,.06); --border:rgba(7,54,66,.15); --accent:#268bd2;
+  --accent-soft:rgba(38,139,210,.12); --code-bg:#002b36; --code-ink:#a9b8b8;
+  --chip:#eee8d5; --shadow:0 18px 50px rgba(7,54,66,.14); --shadow-sm:0 4px 14px rgba(7,54,66,.10);
+}
+html[data-theme="sodark"]{
+  --bg:#002b36; --paper:#073642; --paper2:#0b3f4c; --ink:#eee8d5; --ink2:#93a1a1;
+  --rule:rgba(238,232,213,.045); --border:rgba(238,232,213,.13); --accent:#b58900;
+  --accent-soft:rgba(181,137,0,.16); --code-bg:#001f27; --code-ink:#a9b8b8;
+  --chip:#0e4452; --shadow:0 18px 50px rgba(0,0,0,.45); --shadow-sm:0 4px 14px rgba(0,0,0,.35);
+}
+html[data-theme="nord"]{
+  --bg:#2e3440; --paper:#3b4252; --paper2:#434c5e; --ink:#eceff4; --ink2:#aebacf;
+  --rule:rgba(236,239,244,.045); --border:rgba(236,239,244,.13); --accent:#88c0d0;
+  --accent-soft:rgba(136,192,208,.15); --code-bg:#272c36; --code-ink:#d8dee9;
+  --chip:#434c5e; --shadow:0 18px 50px rgba(0,0,0,.35); --shadow-sm:0 4px 14px rgba(0,0,0,.28);
+}
+html[data-theme="dracula"]{
+  --bg:#1e1f29; --paper:#282a36; --paper2:#2f3240; --ink:#f8f8f2; --ink2:#b0b3c5;
+  --rule:rgba(248,248,242,.045); --border:rgba(248,248,242,.13); --accent:#bd93f9;
+  --accent-soft:rgba(189,147,249,.16); --code-bg:#191a21; --code-ink:#f8f8f2;
+  --chip:#343746; --shadow:0 18px 50px rgba(0,0,0,.45); --shadow-sm:0 4px 14px rgba(0,0,0,.35);
+}
+html[data-theme="forest"]{
+  --bg:#14211a; --paper:#1b2d23; --paper2:#21372b; --ink:#e3f2e6; --ink2:#9cb8a5;
+  --rule:rgba(227,242,230,.045); --border:rgba(227,242,230,.13); --accent:#6fcf97;
+  --accent-soft:rgba(111,207,151,.14); --code-bg:#0e1813; --code-ink:#cfe9d8;
+  --chip:#24392d; --shadow:0 18px 50px rgba(0,0,0,.45); --shadow-sm:0 4px 14px rgba(0,0,0,.35);
+}
+html[data-theme="ocean"]{
+  --bg:#0a1a24; --paper:#0f2531; --paper2:#133040; --ink:#e0f2f7; --ink2:#93b8c6;
+  --rule:rgba(224,242,247,.045); --border:rgba(224,242,247,.13); --accent:#38bdf8;
+  --accent-soft:rgba(56,189,248,.15); --code-bg:#061319; --code-ink:#b9e2f0;
+  --chip:#143441; --shadow:0 18px 50px rgba(0,0,0,.45); --shadow-sm:0 4px 14px rgba(0,0,0,.35);
+}
+html[data-theme="rose"]{
+  --bg:#f7e9ee; --paper:#fffafc; --paper2:#fdf1f5; --ink:#3a1e2a; --ink2:#8a6274;
+  --rule:rgba(58,30,42,.055); --border:rgba(58,30,42,.14); --accent:#d6336c;
+  --accent-soft:rgba(214,51,108,.10); --code-bg:#2a1620; --code-ink:#f7dbe6;
+  --chip:#fbe9f0; --shadow:0 18px 50px rgba(90,30,55,.14); --shadow-sm:0 4px 14px rgba(90,30,55,.10);
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+*{ box-sizing:border-box; }
+[hidden]{ display:none !important; }
+html{ scroll-behavior:smooth; }
+body{
+  margin:0; padding:0;
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  transition: background .35s ease, color .35s ease;
+}
+code, pre{ font-family: var(--mono); }
+a{ color: var(--accent); }
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.app{
+  display:grid;
+  grid-template-columns: 316px minmax(0,1fr);
+  min-height:100vh;
+}
+
+/* ---------- SIDEBAR ---------- */
+.sidebar{
+  position: sticky; top:0; align-self:start;
+  height:100vh; overflow-y:auto;
+  padding: 22px 18px 48px;
+  background: var(--paper2);
+  border-right: 1px solid var(--border);
+  display:flex; flex-direction:column; gap:24px;
+  scrollbar-width: thin;
+}
+.sidebar::-webkit-scrollbar{ width:8px; }
+.sidebar::-webkit-scrollbar-thumb{ background: var(--border); border-radius:8px; }
+
+.brand{ display:flex; gap:12px; align-items:center; }
+.brand-mark{
+  width:46px; height:46px; flex:0 0 46px;
+  display:grid; place-items:center;
+  border-radius: 13px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 800; font-size: 15px; letter-spacing:.5px;
+  box-shadow: 0 6px 18px var(--accent-soft);
+}
+.brand h1{ font-size:15px; margin:0; letter-spacing:-.2px; }
+.brand p{ margin:2px 0 0; font-size:11.5px; color: var(--ink2); }
+
+.search-wrap input{
+  width:100%; padding: 11px 13px;
+  border-radius: 11px;
+  border:1px solid var(--border);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 13.5px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+.search-wrap input:focus{
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.search-wrap input::placeholder{ color: var(--ink2); }
+
+.side-h{ font-size:11px; text-transform:uppercase; letter-spacing:.12em; color:var(--ink2); margin:0 0 10px; font-weight:700; }
+
+.nav{ display:flex; flex-direction:column; gap:5px; }
+.nav a{
+  display:flex; align-items:center; gap:9px;
+  text-decoration:none; color: var(--ink);
+  font-size:13.5px; font-weight:600;
+  padding: 9px 11px; border-radius:10px;
+  border:1px solid transparent;
+  transition: .18s;
+}
+.nav a:hover{ background: var(--chip); border-color: var(--border); }
+.nav a .dot{ width:8px; height:8px; border-radius:50%; background: var(--accent); flex:0 0 8px; }
+.nav a small{ margin-left:auto; color: var(--ink2); font-weight:600; font-size:11px; }
+
+.themes{ display:grid; grid-template-columns: 1fr 1fr; gap:7px; }
+.theme-btn{
+  display:flex; align-items:center; gap:8px;
+  padding: 7px 9px; border-radius: 10px;
+  border:1px solid var(--border);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 11.5px; font-weight:600; font-family:inherit;
+  cursor:pointer; transition:.18s;
+  text-align:left;
+}
+.theme-btn:hover{ border-color: var(--accent); }
+.theme-btn.active{ border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+.sw{ width:15px; height:15px; border-radius:5px; flex:0 0 15px; border:1px solid var(--border); }
+
+.progress-outer{ height:8px; border-radius:99px; background: var(--chip); overflow:hidden; border:1px solid var(--border); }
+.progress-inner{ height:100%; width:0%; background: var(--accent); transition: width .35s ease; border-radius:99px; }
+.progress-meta{ display:flex; justify-content:space-between; font-size:11.5px; color:var(--ink2); margin-top:7px; font-weight:600; }
+
+/* ---------- MAIN / BOOK ---------- */
+.page{ padding: 30px clamp(14px, 3vw, 46px) 80px; }
+
+.book{
+  position:relative;
+  max-width: 1000px;
+  margin: 0 auto;
+  background:
+    repeating-linear-gradient(to bottom, transparent 0 33px, var(--rule) 33px 34px),
+    var(--paper);
+  border:1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  padding: clamp(20px, 3.5vw, 48px) clamp(18px, 3.5vw, 54px) 60px;
+  transition: background .35s ease, border-color .35s ease;
+}
+.book::before{
+  content:"";
+  position:absolute; left:0; top:34px; bottom:34px; width:4px;
+  border-radius: 0 4px 4px 0;
+  background: linear-gradient(to bottom, var(--accent), transparent 85%);
+  opacity:.5;
+}
+
+/* ---------- COVER ---------- */
+.cover{ padding-bottom: 26px; border-bottom: 2px dashed var(--border); margin-bottom: 34px; }
+.kicker{
+  font-size: 11.5px; text-transform: uppercase; letter-spacing: .18em;
+  color: var(--accent); font-weight: 800; margin: 0 0 10px;
+}
+.cover h1{
+  font-size: clamp(30px, 5.4vw, 50px);
+  line-height: 1.03; letter-spacing: -1.6px;
+  margin: 0 0 12px;
+}
+.cover .sub{ color: var(--ink2); font-size: 14.5px; margin: 0 0 18px; line-height:1.6; max-width: 640px;}
+.cover-chips{ display:flex; flex-wrap:wrap; gap:8px; }
+.chip{
+  display:inline-flex; align-items:center; gap:6px;
+  padding: 6px 12px; border-radius: 999px;
+  background: var(--chip); border:1px solid var(--border);
+  font-size: 12px; font-weight: 650; color: var(--ink);
+}
+
+/* ---------- TOOLBAR ---------- */
+.toolbar{
+  display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+  margin: 0 0 30px;
+}
+
+/* ---------- CHAPTER ---------- */
+.chapter{ margin-bottom: 54px; scroll-margin-top: 24px; }
+.chapter-head{ margin-bottom: 20px; }
+.chapter-top{ display:flex; align-items:center; gap:14px; }
+.chapter-icon{
+  width:52px; height:52px; flex:0 0 52px;
+  display:grid; place-items:center; font-size:24px;
+  border-radius:15px;
+  background: var(--accent-soft);
+  border:1px solid var(--border);
+}
+.chapter-tag{
+  font-size:10.5px; text-transform:uppercase; letter-spacing:.16em;
+  color: var(--accent); font-weight: 800;
+}
+.chapter h2{ margin: 1px 0 0; font-size: clamp(22px, 3vw, 30px); letter-spacing:-.9px; }
+.chapter-count{
+  margin-left:auto; font-size:12px; font-weight:700; color: var(--ink2);
+  background: var(--chip); border:1px solid var(--border);
+  padding: 6px 12px; border-radius: 999px; white-space:nowrap;
+}
+.chapter-blurb{ color: var(--ink2); font-size:14px; line-height:1.65; margin: 12px 0 0; max-width: 700px; }
+
+.block-title{
+  display:flex; align-items:center; gap:10px;
+  font-size: 15px; margin: 30px 0 6px;
+  padding-bottom: 9px; border-bottom: 1px solid var(--border);
+  letter-spacing:-.2px;
+}
+.block-sub{ font-size:12.5px; color: var(--ink2); margin: 0 0 16px; }
+
+/* ---------- QUESTION CARD ---------- */
+.q{
+  background: var(--paper2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 15px 17px 13px;
+  margin: 0 0 12px;
+  transition: border-color .2s, box-shadow .2s, transform .2s;
+}
+.q:hover{ border-color: var(--accent); box-shadow: var(--shadow-sm); }
+.q-top{ display:flex; gap:11px; align-items:flex-start; }
+.q-id{
+  flex:0 0 auto;
+  font-family: var(--mono);
+  font-size: 10.5px; font-weight: 700;
+  padding: 3px 8px; border-radius: 7px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid var(--border);
+  margin-top: 2px;
+  letter-spacing:.4px;
+}
+.q-text{
+  margin:0; font-size: 14.5px; line-height: 1.55; font-weight: 600; letter-spacing:-.1px;
+  flex: 1;
+}
+.q-bar{
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  margin: 12px 0 0 0; padding-left: 0;
+}
+.btn{
+  font-family: inherit;
+  border:1px solid var(--border);
+  background: var(--chip);
+  color: var(--ink);
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 12.5px; font-weight: 700;
+  cursor:pointer;
+  transition: .18s;
+}
+.btn:hover{ border-color: var(--accent); color: var(--accent); }
+.btn.active{ background: var(--accent); color:#fff; border-color: var(--accent); }
+.mastered{
+  display:inline-flex; align-items:center; gap:7px;
+  font-size:12.5px; color: var(--ink2); font-weight:600;
+  cursor:pointer; user-select:none;
+  margin-left:auto;
+}
+.mastered input{ accent-color: var(--accent); width:15px; height:15px; cursor:pointer; }
+
+.q-body{
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--border);
+  animation: fadein .25s ease;
+}
+@keyframes fadein{ from{opacity:0; transform: translateY(-4px);} to{opacity:1; transform:none;} }
+
+.ans{ font-size: 14px; line-height: 1.72; color: var(--ink); }
+.ans p{ margin: 0 0 10px; }
+.ans ul, .ans ol{ margin: 8px 0 12px; padding-left: 20px; }
+.ans li{ margin: 5px 0; line-height:1.65; }
+.ans b, .ans strong{ color: var(--ink); font-weight: 750; }
+
+code{
+  font-size: .9em;
+  background: var(--chip);
+  padding: 1.5px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+pre code{ background:none; border:none; padding:0; font-size: inherit; }
+
+.codewrap{ position: relative; margin-top: 12px; }
+pre{
+  margin: 0;
+  background: var(--code-bg);
+  color: var(--code-ink);
+  padding: 15px 16px;
+  border-radius: 11px;
+  overflow-x: auto;
+  font-size: 12.8px;
+  line-height: 1.65;
+  border: 1px solid rgba(255,255,255,.07);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+.copy{
+  position:absolute; top:9px; right:9px;
+  font-family: inherit;
+  font-size: 10.5px; font-weight: 700;
+  padding: 4px 9px;
+  border-radius: 7px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.09);
+  color: #e6eefc;
+  cursor: pointer;
+  opacity: .45;
+  transition: .18s;
+}
+.codewrap:hover .copy{ opacity: 1; }
+.copy:hover{ background: rgba(255,255,255,.2); }
+
+.tip{
+  margin: 13px 0 0;
+  padding: 11px 13px;
+  font-size: 13px; line-height:1.6;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent);
+  color: var(--ink);
+}
+
+.empty-note{
+  text-align:center; padding: 40px 20px; color: var(--ink2); font-size:14px;
+}
+
+/* ---------- FOOTER ---------- */
+.book-foot{
+  margin-top: 50px; padding-top: 24px;
+  border-top: 2px dashed var(--border);
+  font-size: 12.5px; color: var(--ink2); line-height: 1.7;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 960px){
+  .app{ grid-template-columns: 1fr; }
+  .sidebar{
+    position: static; height: auto; overflow: visible;
+    border-right: none; border-bottom: 1px solid var(--border);
+  }
+  .themes{ grid-template-columns: repeat(3, 1fr); }
+  .page{ padding: 18px 10px 60px; }
+  .book{ border-radius: 16px; }
+  .chapter-count{ display:none; }
+  .mastered{ margin-left:0; }
+}
+@media (max-width: 520px){
+  .themes{ grid-template-columns: repeat(2, 1fr); }
+  .q-text{ font-size: 13.8px; }
+  .cover h1{ letter-spacing:-1px; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">SQL</div>
+      <div>
+        <h1>Interview Notebook</h1>
+        <p>Data Scientist Edition</p>
+      </div>
+    </div>
+
+    <div class="search-wrap">
+      <input id="search" type="search" placeholder="Search questions, keywords…" autocomplete="off">
+    </div>
+
+    <div>
+      <p class="side-h">Jump to</p>
+      <nav class="nav">
+        <a href="#easy"><span class="dot"></span> Easy <small id="nav-easy"></small></a>
+        <a href="#medium"><span class="dot" style="opacity:.7"></span> Medium <small id="nav-medium"></small></a>
+        <a href="#hard"><span class="dot" style="opacity:.45"></span> Hard <small id="nav-hard"></small></a>
+      </nav>
+    </div>
+
+    <div>
+      <p class="side-h">Themes</p>
+      <div id="themes" class="themes"></div>
+    </div>
+
+    <div>
+      <p class="side-h">Progress</p>
+      <div class="progress-outer"><div id="progressBar" class="progress-inner"></div></div>
+      <div class="progress-meta">
+        <span id="progressLabel">0 mastered</span>
+        <span id="progressPct">0%</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <main class="page">
+    <article class="book" id="book">
+
+      <header class="cover">
+        <p class="kicker">Data Science Interview Prep</p>
+        <h1>SQL &amp; Databases</h1>
+        <p class="sub">
+          A working notebook of the SQL and database questions that actually come up in
+          data scientist interviews. Every level has <b>hands-on query drills</b> and
+          <b>theory questions</b>. Cover the answer, write it yourself, then check.
+        </p>
+        <div class="cover-chips">
+          <span class="chip">🌱 Easy</span>
+          <span class="chip">⚡ Medium</span>
+          <span class="chip">🔥 Hard</span>
+          <span class="chip">🧮 SQL drills</span>
+          <span class="chip">📘 Theory</span>
+          <span class="chip">🎨 10 themes</span>
+          <span class="chip" id="totalChip">… questions</span>
+        </div>
+      </header>
+
+      <div class="toolbar">
+        <button class="btn" id="expandAll" type="button">Show all answers</button>
+        <button class="btn" id="collapseAll" type="button">Hide all answers</button>
+        <button class="btn" id="resetProgress" type="button">Reset progress</button>
+      </div>
+
+      <div id="content"></div>
+
+      <div class="book-foot">
+        <p>
+          <b>How to use this notebook.</b> Work top-to-bottom. For SQL drills, read the question,
+          hide the answer, and type the query out in a scratch editor (or on paper) before revealing.
+          For theory questions, say the answer out loud in 30–60 seconds — that's exactly the format
+          of a phone screen. Tick <b>Mastered</b> only when you can answer without peeking. Your progress
+          is saved in this browser.
+        </p>
+        <p>
+          SQL dialects differ: <code>LIMIT</code> is PostgreSQL/MySQL, <code>TOP</code> is SQL Server,
+          <code>FETCH FIRST n ROWS ONLY</code> is Oracle. <code>DATE_TRUNC</code>,
+          <code>PERCENTILE_CONT</code>, and <code>INTERVAL</code> arithmetic are shown in PostgreSQL syntax —
+          always mention the dialect you're assuming in an interview.
+        </p>
+      </div>
+
+    </article>
+  </main>
+</div>
+
+<script>
+/* ============================================================
+   THEMES
+   ============================================================ */
+const THEMES = [
+  { id:'light',   name:'Paper',      grad:'linear-gradient(135deg,#ffffff 50%, #2f6fed 50%)' },
+  { id:'dark',    name:'Midnight',   grad:'linear-gradient(135deg,#131a2b 50%, #6ea8ff 50%)' },
+  { id:'sepia',   name:'Sepia',      grad:'linear-gradient(135deg,#fbf4e3 50%, #a35a1e 50%)' },
+  { id:'solight', name:'Solar Lite', grad:'linear-gradient(135deg,#fdf6e3 50%, #268bd2 50%)' },
+  { id:'sodark',  name:'Solar Dark', grad:'linear-gradient(135deg,#073642 50%, #b58900 50%)' },
+  { id:'nord',    name:'Nord',       grad:'linear-gradient(135deg,#3b4252 50%, #88c0d0 50%)' },
+  { id:'dracula', name:'Dracula',    grad:'linear-gradient(135deg,#282a36 50%, #bd93f9 50%)' },
+  { id:'forest',  name:'Forest',     grad:'linear-gradient(135deg,#1b2d23 50%, #6fcf97 50%)' },
+  { id:'ocean',   name:'Ocean',      grad:'linear-gradient(135deg,#0f2531 50%, #38bdf8 50%)' },
+  { id:'rose',    name:'Rose',       grad:'linear-gradient(135deg,#fffafc 50%, #d6336c 50%)' }
+];
+
+/* ============================================================
+   CONTENT DATA
+   ============================================================ */
+const DATA = [
+
+/* =====================================================================
+   EASY
+   ===================================================================== */
+{
+  id:'easy', level:'Level 1', name:'Easy', icon:'🌱',
+  blurb:'Warm-up territory: single-table SELECTs, filtering, sorting, basic aggregation, and the vocabulary every interviewer assumes you already know cold.',
+  sql:[
+    {
+      q:'Select every column and every row from the employees table.',
+      a:'<p>The simplest query in SQL. <code>SELECT *</code> returns all columns and omitting <code>WHERE</code> returns all rows.</p><p>Interviewers love the follow-up: <b>“why is <code>SELECT *</code> a bad habit in production?”</b> Because it (1) breaks silently when the schema changes, (2) prevents covering-index / index-only scans, and (3) ships columns you never use over the network.</p>',
+      code:`SELECT *
+FROM employees;`
+    },
+    {
+      q:'Retrieve employees earning more than 60,000.',
+      a:'<p>Basic <code>WHERE</code> filtering with a comparison operator. Always qualify the columns you need instead of <code>SELECT *</code>.</p>',
+      code:`SELECT employee_id, first_name, last_name, salary
+FROM employees
+WHERE salary > 60000;`
+    },
+    {
+      q:'List all distinct department IDs from the employees table.',
+      a:'<p><code>DISTINCT</code> removes duplicate rows from the result set. It applies to the <b>whole selected row</b>, not just one column — a very common gotcha when people write <code>SELECT DISTINCT a, b</code> and expect only <code>a</code> to be unique.</p>',
+      code:`SELECT DISTINCT department_id
+FROM employees;`
+    },
+    {
+      q:'Count the total number of employees.',
+      a:'<p><code>COUNT(*)</code> counts rows. <code>COUNT(column)</code> counts only <b>non-NULL</b> values of that column — a favourite trick question.</p>',
+      code:`SELECT COUNT(*) AS total_employees
+FROM employees;`
+    },
+    {
+      q:'Calculate the average salary across all employees.',
+      a:'<p><code>AVG()</code> ignores NULLs in its calculation, so rows with a NULL salary are dropped from both numerator and denominator.</p>',
+      code:`SELECT AVG(salary) AS avg_salary
+FROM employees;`
+    },
+    {
+      q:'Find employees whose first name starts with the letter "A".',
+      a:'<p><code>%</code> matches any number of characters, <code>_</code> matches exactly one. So <code>\'A%\'</code> = starts with A, <code>\'%a\'</code> = ends with a, <code>\'_a%\'</code> = second letter is a.</p>',
+      code:`SELECT employee_id, first_name
+FROM employees
+WHERE first_name LIKE 'A%';`,
+      tip:'In PostgreSQL <code>LIKE</code> is case-sensitive; <code>ILIKE</code> is not. In MySQL the default collation makes <code>LIKE</code> case-insensitive.'
+    },
+    {
+      q:'Sort employees by salary descending, and by first name ascending when salaries tie.',
+      a:'<p>Multi-column <code>ORDER BY</code>. The second key only breaks ties from the first.</p>',
+      code:`SELECT first_name, last_name, salary
+FROM employees
+ORDER BY salary DESC, first_name ASC;`
+    },
+    {
+      q:'Return the top 5 highest-paid employees.',
+      a:'<p>Dialect-dependent row limiting.</p>',
+      code:`-- PostgreSQL / MySQL
+SELECT first_name, salary
+FROM employees
+ORDER BY salary DESC
+LIMIT 5;
+
+-- SQL Server
+SELECT TOP 5 first_name, salary
+FROM employees
+ORDER BY salary DESC;
+
+-- Oracle 12c+
+SELECT first_name, salary
+FROM employees
+ORDER BY salary DESC
+FETCH FIRST 5 ROWS ONLY;`,
+      tip:'Without <code>ORDER BY</code>, “top 5” is meaningless — the database returns an arbitrary 5 rows.'
+    },
+    {
+      q:'Find employees hired during the year 2020.',
+      a:'<p>The index-friendly way is a half-open range. Wrapping the column in a function like <code>YEAR(hire_date) = 2020</code> usually kills the index and forces a full scan.</p>',
+      code:`SELECT employee_id, first_name, hire_date
+FROM employees
+WHERE hire_date >= '2020-01-01'
+  AND hire_date <  '2021-01-01';`,
+      tip:'SARGable predicates (Search ARGument able) = no function applied to the filtered column. This is a classic "do you understand indexes" signal.'
+    },
+    {
+      q:'Return the highest and the lowest salary in one row.',
+      a:'<p>Multiple aggregates in a single <code>SELECT</code> list.</p>',
+      code:`SELECT MAX(salary) AS max_salary,
+       MIN(salary) AS min_salary
+FROM employees;`
+    },
+    {
+      q:'Count employees per department.',
+      a:'<p>Classic <code>GROUP BY</code>. Note that departments with zero employees will <b>not</b> appear — you need a <code>LEFT JOIN</code> from the departments table for that.</p>',
+      code:`SELECT department_id,
+       COUNT(*) AS headcount
+FROM employees
+GROUP BY department_id;`
+    },
+    {
+      q:'Find employees who have no manager.',
+      a:'<p><code>NULL</code> is not a value — it is the absence of one. Any comparison with <code>=</code> returns <code>UNKNOWN</code>, never TRUE. You must use <code>IS NULL</code>.</p>',
+      code:`SELECT employee_id, first_name, manager_id
+FROM employees
+WHERE manager_id IS NULL;`,
+      tip:'<code>WHERE manager_id = NULL</code> returns zero rows, always. This is one of the most common screening questions.'
+    },
+    {
+      q:'Find departments whose total salary bill exceeds 500,000.',
+      a:'<p><code>WHERE</code> filters rows <b>before</b> grouping; <code>HAVING</code> filters groups <b>after</b> aggregation. You cannot use an aggregate in <code>WHERE</code>.</p>',
+      code:`SELECT department_id,
+       SUM(salary) AS total_salary
+FROM employees
+GROUP BY department_id
+HAVING SUM(salary) > 500000;`
+    },
+    {
+      q:'Find employees earning between 50,000 and 80,000 (inclusive).',
+      a:'<p><code>BETWEEN</code> is inclusive on both ends — equivalent to <code>&gt;= 50000 AND &lt;= 80000</code>.</p>',
+      code:`SELECT employee_id, salary
+FROM employees
+WHERE salary BETWEEN 50000 AND 80000;`
+    },
+    {
+      q:'Find employees who belong to department 10, 20, or 30.',
+      a:'<p><code>IN</code> is shorthand for a chain of <code>OR</code>s. Beware: if the list contains a NULL, <code>NOT IN</code> can silently return no rows.</p>',
+      code:`SELECT employee_id, department_id
+FROM employees
+WHERE department_id IN (10, 20, 30);`
+    },
+    {
+      q:'Produce a single "full name" column from first_name and last_name.',
+      a:'<p>String concatenation differs by dialect.</p>',
+      code:`-- MySQL / PostgreSQL / SQL Server 2012+
+SELECT CONCAT(first_name, ' ', last_name) AS full_name
+FROM employees;
+
+-- Oracle / PostgreSQL / standard SQL
+SELECT first_name || ' ' || last_name AS full_name
+FROM employees;`
+    },
+    {
+      q:'Find the second highest salary in the company.',
+      a:'<p>The simplest approach: take the max salary that is strictly less than the overall max.</p>',
+      code:`SELECT MAX(salary) AS second_highest
+FROM employees
+WHERE salary < (SELECT MAX(salary) FROM employees);`,
+      tip:'This breaks if there are ties for the top salary in a "second highest distinct value" sense only when duplicates exist — it still returns the correct second <i>distinct</i> value. The window-function version is in the Medium section.'
+    },
+    {
+      q:'Count how many distinct departments actually have employees.',
+      a:'<p><code>COUNT(DISTINCT col)</code> ignores NULLs automatically.</p>',
+      code:`SELECT COUNT(DISTINCT department_id) AS dept_count
+FROM employees;`
+    },
+    {
+      q:'Find customers who have never placed an order.',
+      a:'<p>The classic anti-join. Two equivalent patterns: <code>LEFT JOIN … IS NULL</code> or <code>NOT EXISTS</code>. Avoid <code>NOT IN</code> with a nullable subquery column.</p>',
+      code:`SELECT c.customer_id, c.name
+FROM customers c
+LEFT JOIN orders o
+       ON o.customer_id = c.customer_id
+WHERE o.order_id IS NULL;
+
+-- Equivalent
+SELECT c.customer_id, c.name
+FROM customers c
+WHERE NOT EXISTS (
+  SELECT 1 FROM orders o WHERE o.customer_id = c.customer_id
+);`
+    },
+    {
+      q:'Compute total amount spent by each customer, highest spender first.',
+      a:'<p>Aggregate + sort by the alias. Most engines allow ordering by a <code>SELECT</code> alias because <code>ORDER BY</code> is evaluated late in the pipeline.</p>',
+      code:`SELECT customer_id,
+       SUM(amount) AS total_spent
+FROM orders
+GROUP BY customer_id
+ORDER BY total_spent DESC;`
+    },
+    {
+      q:'Find products whose name contains the word "phone" anywhere.',
+      a:'<p>Leading wildcard = cannot use a normal B-tree index. Mention full-text search or trigram indexes if scale matters.</p>',
+      code:`SELECT product_id, product_name
+FROM products
+WHERE product_name LIKE '%phone%';`
+    },
+    {
+      q:'Return rows 21–30 of orders sorted by order_date descending (pagination).',
+      a:'<p><code>LIMIT</code> + <code>OFFSET</code>. Note that large offsets are slow because the engine still has to scan and discard the skipped rows.</p>',
+      code:`SELECT order_id, order_date, amount
+FROM orders
+ORDER BY order_date DESC
+LIMIT 10 OFFSET 20;`,
+      tip:'For deep pagination, keyset pagination (<code>WHERE order_date &lt; :last_seen ORDER BY order_date DESC LIMIT 10</code>) is dramatically faster.'
+    },
+    {
+      q:'Average salary per department, but only for employees hired after 2019, and only departments with more than 3 such employees.',
+      a:'<p>Combines <code>WHERE</code> (row filter), <code>GROUP BY</code>, and <code>HAVING</code> (group filter) — the canonical "explain the order of operations" question.</p>',
+      code:`SELECT department_id,
+       AVG(salary) AS avg_salary,
+       COUNT(*)    AS headcount
+FROM employees
+WHERE hire_date >= '2020-01-01'
+GROUP BY department_id
+HAVING COUNT(*) > 3;`
+    },
+    {
+      q:'Show every employee with their commission, displaying 0 instead of NULL.',
+      a:'<p><code>COALESCE</code> is the ANSI-standard function and accepts any number of arguments, returning the first non-NULL.</p>',
+      code:`SELECT employee_id,
+       first_name,
+       COALESCE(commission, 0) AS commission
+FROM employees;`,
+      tip:'Dialect alternatives: <code>IFNULL()</code> in MySQL, <code>ISNULL()</code> in SQL Server, <code>NVL()</code> in Oracle. <code>COALESCE</code> works everywhere.'
+    }
+  ],
+  theory:[
+    {
+      q:'What is a database? What is the difference between a DBMS and an RDBMS?',
+      a:'<p>A <b>database</b> is an organised collection of structured data that can be easily accessed, managed and updated.</p><ul><li><b>DBMS</b> (Database Management System) — software that stores, retrieves and manages data. It may not enforce relationships. Examples: MongoDB, Redis, SQLite (loosely).</li><li><b>RDBMS</b> (Relational DBMS) — a DBMS built on the relational model: data lives in tables with rows and columns, tables relate through keys, and it supports SQL plus ACID transactions. Examples: PostgreSQL, MySQL, Oracle, SQL Server.</li></ul><p>Every RDBMS is a DBMS; not every DBMS is an RDBMS.</p>'
+    },
+    {
+      q:'What are the main categories of SQL commands?',
+      a:'<ul><li><b>DDL</b> — Data Definition Language: <code>CREATE</code>, <code>ALTER</code>, <code>DROP</code>, <code>TRUNCATE</code>, <code>RENAME</code>. Defines structure; usually auto-commits.</li><li><b>DML</b> — Data Manipulation Language: <code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>, <code>MERGE</code>. Works on data.</li><li><b>DCL</b> — Data Control Language: <code>GRANT</code>, <code>REVOKE</code>. Permissions.</li><li><b>TCL</b> — Transaction Control Language: <code>COMMIT</code>, <code>ROLLBACK</code>, <code>SAVEPOINT</code>. Transaction boundaries.</li></ul>'
+    },
+    {
+      q:'What is a primary key? How is it different from a unique key?',
+      a:'<p>A <b>primary key</b> uniquely identifies each row. It is implicitly <code>NOT NULL</code> and there can be only one per table.</p><p>A <b>unique key</b> also enforces uniqueness but <b>allows one NULL</b> (in most engines; SQL Server allows only one NULL too, PostgreSQL allows multiple) and you can have many per table. Both are implemented with indexes.</p>'
+    },
+    {
+      q:'What is a foreign key?',
+      a:'<p>A column (or set of columns) in one table that references the primary key of another table, enforcing <b>referential integrity</b>: you cannot insert a child row that points to a non-existent parent, and you cannot delete a parent that still has children (unless you configure <code>ON DELETE CASCADE</code> / <code>SET NULL</code>).</p>'
+    },
+    {
+      q:'What is NULL? How is it different from 0 or an empty string?',
+      a:'<p><code>NULL</code> means “unknown / not applicable” — it is not a value at all. <code>0</code> is a number and <code>\'\'</code> is a string of length zero; both are real values.</p><ul><li>Any arithmetic or comparison with NULL yields NULL: <code>NULL + 5 = NULL</code>, <code>NULL = NULL</code> is UNKNOWN.</li><li>Test with <code>IS NULL</code> / <code>IS NOT NULL</code>.</li><li>Aggregates ignore NULLs, except <code>COUNT(*)</code>.</li><li><code>NULL = NULL</code> is false, so use <code>IS NOT DISTINCT FROM</code> for null-safe equality where supported.</li></ul>'
+    },
+    {
+      q:'What is the difference between WHERE and HAVING?',
+      a:'<p><code>WHERE</code> filters individual rows <b>before</b> grouping; <code>HAVING</code> filters groups <b>after</b> <code>GROUP BY</code> and aggregation. Aggregates like <code>SUM()</code> or <code>COUNT()</code> are not allowed in <code>WHERE</code>.</p>'
+    },
+    {
+      q:'What is the difference between DELETE, TRUNCATE, and DROP?',
+      a:'<ul><li><b>DELETE</b> — DML. Removes rows matching a <code>WHERE</code> clause (or all rows). Can be rolled back, fires triggers, slower, keeps the table and its indexes.</li><li><b>TRUNCATE</b> — DDL. Removes <i>all</i> rows quickly by deallocating pages. Cannot be filtered, does not fire row triggers, resets identity in most engines, usually cannot be rolled back.</li><li><b>DROP</b> — DDL. Removes the entire table including its structure, indexes, constraints and permissions.</li></ul>'
+    },
+    {
+      q:'What is a JOIN? Name the main types.',
+      a:'<p>A JOIN combines rows from two or more tables based on a related column.</p><ul><li><b>INNER JOIN</b> — only matching rows from both sides.</li><li><b>LEFT (OUTER) JOIN</b> — all rows from the left table plus matches; NULLs where there is no match.</li><li><b>RIGHT (OUTER) JOIN</b> — mirror of LEFT.</li><li><b>FULL (OUTER) JOIN</b> — all rows from both sides.</li><li><b>CROSS JOIN</b> — Cartesian product, every combination.</li><li><b>SELF JOIN</b> — a table joined to itself (needs aliases).</li></ul>'
+    },
+    {
+      q:'Explain the difference between INNER JOIN and LEFT JOIN with an example.',
+      a:'<p><code>INNER JOIN</code> returns only customers who have at least one order. <code>LEFT JOIN</code> returns <b>every</b> customer, with NULLs in the order columns for those who never ordered.</p><p>Practical consequence: <code>WHERE o.order_id IS NULL</code> after a LEFT JOIN is the standard "find the missing records" pattern.</p>'
+    },
+    {
+      q:'What is a constraint? Name the common types.',
+      a:'<p>A constraint is a rule enforced by the database on the data.</p><ul><li><code>NOT NULL</code> — no missing values.</li><li><code>UNIQUE</code> — no duplicates.</li><li><code>PRIMARY KEY</code> — unique + not null.</li><li><code>FOREIGN KEY</code> — referential integrity.</li><li><code>CHECK</code> — domain rule, e.g. <code>salary &gt; 0</code>.</li><li><code>DEFAULT</code> — value used when none supplied.</li></ul>'
+    },
+    {
+      q:'What is an index and why would you create one?',
+      a:'<p>An index is an auxiliary data structure (usually a B-tree) that lets the engine locate rows without scanning the whole table — like the index at the back of a book.</p><p><b>Benefits:</b> dramatically faster <code>WHERE</code>, <code>JOIN</code>, and <code>ORDER BY</code> operations.<br><b>Costs:</b> extra storage and slower <code>INSERT</code>/<code>UPDATE</code>/<code>DELETE</code> because every index must be maintained.</p><p>Rule of thumb: index the columns you filter and join on, not every column.</p>'
+    },
+    {
+      q:'What is the difference between CHAR and VARCHAR?',
+      a:'<p><code>CHAR(n)</code> is fixed-length — always stores exactly <em>n</em> characters, padding with spaces. <code>VARCHAR(n)</code> is variable-length — stores only what you give it (plus a small length prefix).</p><p>Use <code>CHAR</code> for genuinely fixed codes (e.g. country ISO-2 codes) and <code>VARCHAR</code> for everything else. <code>VARCHAR</code> saves space; <code>CHAR</code> can be marginally faster for fixed-length data.</p>'
+    },
+    {
+      q:'What is a view?',
+      a:'<p>A view is a stored, named SQL query that behaves like a virtual table. It holds no data itself (unless materialised) — it re-executes the underlying query each time it is referenced.</p><p><b>Uses:</b> simplify complex queries, restrict column/row access for security, provide a stable interface when the underlying schema changes.</p>'
+    },
+    {
+      q:'What is a schema?',
+      a:'<p>A schema is a namespace / logical container for database objects (tables, views, functions, indexes). It lets you group related objects and manage permissions at a coarser level, e.g. <code>sales.orders</code> vs <code>hr.employees</code>. It is also loosely used to mean "the structure of the tables" — clarify which meaning the interviewer intends.</p>'
+    },
+    {
+      q:'What is the difference between UNION and UNION ALL?',
+      a:'<p><code>UNION</code> combines two result sets and <b>removes duplicates</b> (which requires a sort or hash — expensive). <code>UNION ALL</code> simply concatenates, keeping duplicates and running much faster.</p><p>Default to <code>UNION ALL</code> unless you genuinely need deduplication.</p>'
+    },
+    {
+      q:'What are aggregate functions? Give examples.',
+      a:'<p>Functions that collapse many rows into one value: <code>COUNT</code>, <code>SUM</code>, <code>AVG</code>, <code>MIN</code>, <code>MAX</code>, plus <code>STRING_AGG</code>/<code>GROUP_CONCAT</code>, <code>STDDEV</code>, <code>VARIANCE</code>.</p><p>They are typically used with <code>GROUP BY</code>; without it, the whole table is one group. All of them except <code>COUNT(*)</code> ignore NULLs.</p>'
+    },
+    {
+      q:'Explain super key, candidate key, primary key, and alternate key.',
+      a:'<ul><li><b>Super key</b> — any set of columns that uniquely identifies a row (superset allowed).</li><li><b>Candidate key</b> — a minimal super key; remove any column and uniqueness breaks.</li><li><b>Primary key</b> — the candidate key chosen as the main identifier.</li><li><b>Alternate key</b> — a candidate key that was not chosen as the primary key.</li></ul>'
+    },
+    {
+      q:'What is an alias and where can you use it?',
+      a:'<p>An alias renames a column or table for the duration of the query: <code>SELECT salary * 12 AS annual_salary</code> or <code>FROM employees e</code>.</p><p>Table aliases are essential for self-joins and for readability in multi-table queries. You can reference a column alias in <code>ORDER BY</code> and <code>GROUP BY</code> (in most engines) but <b>not</b> in <code>WHERE</code>, because <code>WHERE</code> runs before the <code>SELECT</code> list is evaluated.</p>'
+    },
+    {
+      q:'What is the difference between COUNT(*) and COUNT(column)?',
+      a:'<p><code>COUNT(*)</code> counts rows regardless of content. <code>COUNT(column)</code> counts only rows where that column is <code>NOT NULL</code>. On a nullable column they return different numbers — a very common source of silently wrong metrics.</p>'
+    },
+    {
+      q:'What is the difference between a composite key and a compound (composite) index?',
+      a:'<p>A <b>composite key</b> is a primary/unique key made of more than one column (e.g. <code>(student_id, course_id)</code> in an enrolment table). A <b>composite index</b> is an index over multiple columns; its usefulness depends on the leftmost-prefix rule — an index on <code>(a, b)</code> helps queries filtering on <code>a</code> or <code>(a, b)</code>, but not on <code>b</code> alone.</p>'
+    },
+    {
+      q:'What kinds of relationships can exist between tables?',
+      a:'<ul><li><b>One-to-one</b> — e.g. user and user_profile. Implemented with a shared primary key or a unique foreign key.</li><li><b>One-to-many</b> — the most common: customer → orders. Foreign key on the "many" side.</li><li><b>Many-to-many</b> — students ↔ courses. Requires a junction / bridge table with two foreign keys.</li></ul>'
+    },
+    {
+      q:'What is data redundancy and why is it a problem?',
+      a:'<p>Redundancy is the same fact stored in multiple places. It wastes storage, but the real problem is <b>update anomalies</b>: change the fact in one place and forget the other, and the database becomes inconsistent. Normalisation exists primarily to eliminate redundancy.</p>'
+    },
+    {
+      q:'What does the DISTINCT keyword do, and where in the query is it applied?',
+      a:'<p><code>DISTINCT</code> deduplicates the final result set, and it applies to the <b>entire selected row</b>, not to a single column. It is logically applied after <code>SELECT</code> and before <code>ORDER BY</code>/<code>LIMIT</code>.</p><p>A frequent bug: <code>SELECT DISTINCT customer_id, order_date</code> gives you distinct <i>pairs</i>, not distinct customers. Use <code>GROUP BY</code> or a subquery when you need true per-entity deduplication.</p>'
+    }
+  ]
+},
+
+/* =====================================================================
+   MEDIUM
+   ===================================================================== */
+{
+  id:'medium', level:'Level 2', name:'Medium', icon:'⚡',
+  blurb:'Where most data scientist interviews actually live: multi-table joins, subqueries, window functions, running totals, deduplication, and the modelling concepts behind them.',
+  sql:[
+    {
+      q:'Find the Nth highest salary (write it for N = 3).',
+      a:'<p>Three approaches — know all three.</p>',
+      code:`-- 1) LIMIT / OFFSET (simplest)
+SELECT DISTINCT salary
+FROM employees
+ORDER BY salary DESC
+LIMIT 1 OFFSET 2;          -- OFFSET = N - 1
+
+-- 2) Correlated subquery (portable, older)
+SELECT DISTINCT salary
+FROM employees e1
+WHERE 3 = (
+  SELECT COUNT(DISTINCT salary)
+  FROM employees e2
+  WHERE e2.salary >= e1.salary
+);
+
+-- 3) Window function (best for "per group")
+SELECT salary FROM (
+  SELECT salary,
+         DENSE_RANK() OVER (ORDER BY salary DESC) AS rnk
+  FROM employees
+) t
+WHERE rnk = 3;`,
+      tip:'Use <code>DENSE_RANK</code>, not <code>ROW_NUMBER</code>, when the question says "Nth highest <i>salary</i>" — ties must share a rank.'
+    },
+    {
+      q:'Find all duplicate email addresses in the users table.',
+      a:'<p>Group by the column and keep the groups with more than one member.</p>',
+      code:`SELECT email,
+       COUNT(*) AS occurrences
+FROM users
+GROUP BY email
+HAVING COUNT(*) > 1;`
+    },
+    {
+      q:'Delete duplicate rows, keeping only the row with the smallest id.',
+      a:'<p>Two idiomatic solutions. The self-join version is usually faster on large tables and avoids the <code>NOT IN</code> NULL trap.</p>',
+      code:`-- Self-join delete (MySQL-friendly)
+DELETE u
+FROM users u
+JOIN users d
+  ON u.email = d.email
+ AND u.id > d.id;
+
+-- Portable subquery version
+DELETE FROM users
+WHERE id NOT IN (
+  SELECT MIN(id)
+  FROM users
+  GROUP BY email
+);
+
+-- PostgreSQL with a CTE
+WITH ranked AS (
+  SELECT id,
+         ROW_NUMBER() OVER (PARTITION BY email ORDER BY id) AS rn
+  FROM users
+)
+DELETE FROM users
+WHERE id IN (SELECT id FROM ranked WHERE rn > 1);`
+    },
+    {
+      q:'Find employees who earn more than the average salary of their own department.',
+      a:'<p>Two ways: a join against a grouped subquery, or a window function. The window version scans the table once and is generally faster.</p>',
+      code:`-- Join against a derived table
+SELECT e.employee_id, e.first_name, e.salary, e.department_id
+FROM employees e
+JOIN (
+  SELECT department_id, AVG(salary) AS dept_avg
+  FROM employees
+  GROUP BY department_id
+) d ON d.department_id = e.department_id
+WHERE e.salary > d.dept_avg;
+
+-- Window function version
+SELECT employee_id, first_name, salary, department_id
+FROM (
+  SELECT e.*,
+         AVG(salary) OVER (PARTITION BY department_id) AS dept_avg
+  FROM employees e
+) t
+WHERE salary > dept_avg;`
+    },
+    {
+      q:'Which department has the highest average salary?',
+      a:'<p>Aggregate, sort, take one. If you need the department <i>name</i> too, join to the departments table.</p>',
+      code:`SELECT d.department_name,
+       AVG(e.salary) AS avg_salary
+FROM employees e
+JOIN departments d ON d.department_id = e.department_id
+GROUP BY d.department_name
+ORDER BY avg_salary DESC
+LIMIT 1;`
+    },
+    {
+      q:'Find all employees who are managers of at least one other employee.',
+      a:'<p>A self-referencing existence check.</p>',
+      code:`SELECT *
+FROM employees
+WHERE employee_id IN (
+  SELECT manager_id
+  FROM employees
+  WHERE manager_id IS NOT NULL
+);`
+    },
+    {
+      q:'List every employee alongside their manager\'s name.',
+      a:'<p>Self-join on the same table with two aliases. Use <code>LEFT JOIN</code> so the CEO (no manager) is not dropped.</p>',
+      code:`SELECT e.employee_id,
+       e.first_name AS employee_name,
+       m.first_name AS manager_name
+FROM employees e
+LEFT JOIN employees m
+       ON e.manager_id = m.employee_id;`
+    },
+    {
+      q:'Find customers who have placed more than 3 orders.',
+      a:'<p><code>GROUP BY</code> + <code>HAVING</code>. If you also want the total value, add <code>SUM(amount)</code>.</p>',
+      code:`SELECT customer_id,
+       COUNT(*)     AS order_count,
+       SUM(amount)  AS total_value
+FROM orders
+GROUP BY customer_id
+HAVING COUNT(*) > 3
+ORDER BY order_count DESC;`
+    },
+    {
+      q:'Compute a running (cumulative) total of order amounts by date.',
+      a:'<p>A window function with the default frame <code>RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</code>. Note that the default frame with <code>ORDER BY</code> aggregates all rows with the same date together.</p>',
+      code:`SELECT order_date,
+       amount,
+       SUM(amount) OVER (ORDER BY order_date
+                         ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS running_total
+FROM orders
+ORDER BY order_date;`
+    },
+    {
+      q:'Find the top 2 highest-paid employees in each department.',
+      a:'<p>The canonical "top N per group" problem. Use a window function in a subquery, then filter on the rank — you cannot filter on a window function directly in <code>WHERE</code>.</p>',
+      code:`SELECT department_id, employee_id, first_name, salary, rnk
+FROM (
+  SELECT e.*,
+         DENSE_RANK() OVER (PARTITION BY department_id
+                            ORDER BY salary DESC) AS rnk
+  FROM employees e
+) t
+WHERE rnk <= 2
+ORDER BY department_id, rnk;`,
+      tip:'<code>ROW_NUMBER</code> gives exactly 2 rows per department; <code>DENSE_RANK</code> may return more if there are ties. Interviewers love asking which you would choose and why.'
+    },
+    {
+      q:'Find gaps (missing IDs) in a numeric sequence table.',
+      a:'<p>The "find the hole" pattern: a row whose <code>id + 1</code> does not exist.</p>',
+      code:`SELECT n.id + 1 AS missing_start
+FROM numbers n
+LEFT JOIN numbers n2 ON n2.id = n.id + 1
+WHERE n2.id IS NULL
+  AND n.id < (SELECT MAX(id) FROM numbers)
+ORDER BY missing_start;
+
+-- PostgreSQL shortcut
+SELECT gs AS missing_id
+FROM generate_series((SELECT MIN(id) FROM numbers),
+                     (SELECT MAX(id) FROM numbers)) gs
+WHERE gs NOT IN (SELECT id FROM numbers);`
+    },
+    {
+      q:'Find the most recent order for each customer.',
+      a:'<p>Three standard solutions: window function, correlated subquery, or a join to a max-date subquery.</p>',
+      code:`-- 1) Window function (preferred)
+SELECT * FROM (
+  SELECT o.*,
+         ROW_NUMBER() OVER (PARTITION BY customer_id
+                            ORDER BY order_date DESC) AS rn
+  FROM orders o
+) t
+WHERE rn = 1;
+
+-- 2) Correlated subquery
+SELECT o.*
+FROM orders o
+WHERE o.order_date = (
+  SELECT MAX(o2.order_date)
+  FROM orders o2
+  WHERE o2.customer_id = o.customer_id
+);
+
+-- 3) Join to a max-date derived table
+SELECT o.*
+FROM orders o
+JOIN (
+  SELECT customer_id, MAX(order_date) AS max_date
+  FROM orders GROUP BY customer_id
+) m ON m.customer_id = o.customer_id AND o.order_date = m.max_date;`,
+      tip:'Only the window-function version guarantees exactly one row per customer when there are ties on <code>order_date</code>.'
+    },
+    {
+      q:'Find employees who earn more than their own manager.',
+      a:'<p>Self-join plus a comparison across the two aliases.</p>',
+      code:`SELECT e.first_name  AS employee,
+       e.salary      AS emp_salary,
+       m.first_name  AS manager,
+       m.salary      AS mgr_salary
+FROM employees e
+JOIN employees m ON e.manager_id = m.employee_id
+WHERE e.salary > m.salary;`
+    },
+    {
+      q:'Show each product\'s revenue and its percentage of total revenue.',
+      a:'<p>Divide by a scalar subquery, or use a window aggregate over the whole result set.</p>',
+      code:`SELECT product_id,
+       SUM(amount) AS revenue,
+       ROUND(100.0 * SUM(amount)
+             / SUM(SUM(amount)) OVER (), 2) AS pct_of_total
+FROM orders
+GROUP BY product_id
+ORDER BY revenue DESC;`,
+      tip:'Multiplying by <code>100.0</code> (not <code>100</code>) forces decimal division — otherwise integer division truncates to 0.'
+    },
+    {
+      q:'Compute month-over-month revenue growth percentage.',
+      a:'<p><code>LAG()</code> pulls the previous row into the current row, giving you the classic growth formula.</p>',
+      code:`WITH monthly AS (
+  SELECT DATE_TRUNC('month', order_date) AS mth,
+         SUM(amount) AS revenue
+  FROM orders
+  GROUP BY 1
+)
+SELECT mth,
+       revenue,
+       LAG(revenue) OVER (ORDER BY mth) AS prev_revenue,
+       ROUND(
+         100.0 * (revenue - LAG(revenue) OVER (ORDER BY mth))
+               / NULLIF(LAG(revenue) OVER (ORDER BY mth), 0)
+       , 2) AS mom_growth_pct
+FROM monthly
+ORDER BY mth;`,
+      tip:'<code>NULLIF(x, 0)</code> prevents division-by-zero from crashing the whole query.'
+    },
+    {
+      q:'Pivot revenue so each month is its own column, one row per year.',
+      a:'<p>Conditional aggregation — the portable pivot. SQL has no standard <code>PIVOT</code> clause.</p>',
+      code:`SELECT EXTRACT(YEAR FROM order_date) AS yr,
+       SUM(CASE WHEN EXTRACT(MONTH FROM order_date) = 1 THEN amount ELSE 0 END) AS jan,
+       SUM(CASE WHEN EXTRACT(MONTH FROM order_date) = 2 THEN amount ELSE 0 END) AS feb,
+       SUM(CASE WHEN EXTRACT(MONTH FROM order_date) = 3 THEN amount ELSE 0 END) AS mar,
+       SUM(CASE WHEN EXTRACT(MONTH FROM order_date) = 4 THEN amount ELSE 0 END) AS apr
+FROM orders
+GROUP BY 1
+ORDER BY 1;`
+    },
+    {
+      q:'Find products that have never been ordered.',
+      a:'<p>Anti-join again, this time across three tables.</p>',
+      code:`SELECT p.product_id, p.product_name
+FROM products p
+LEFT JOIN order_items oi ON oi.product_id = p.product_id
+WHERE oi.product_id IS NULL;`
+    },
+    {
+      q:'Compute the median salary (no MEDIAN function available).',
+      a:'<p>Median = the middle value, or the average of the two middle values for an even count. Two ways:</p>',
+      code:`-- PostgreSQL built-in
+SELECT PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY salary) AS median
+FROM employees;
+
+-- Portable with window functions
+SELECT AVG(salary) AS median
+FROM (
+  SELECT salary,
+         ROW_NUMBER() OVER (ORDER BY salary) AS rn,
+         COUNT(*)     OVER ()                AS cnt
+  FROM employees
+  WHERE salary IS NOT NULL
+) t
+WHERE rn IN (FLOOR((cnt + 1) / 2.0), CEIL((cnt + 1) / 2.0));`
+    },
+    {
+      q:'Find all salary values that appear more than once.',
+      a:'<p>Simple grouped duplicate check on a numeric column.</p>',
+      code:`SELECT salary,
+       COUNT(*) AS n
+FROM employees
+GROUP BY salary
+HAVING COUNT(*) > 1
+ORDER BY n DESC;`
+    },
+    {
+      q:'Rank employees by salary with both rank and percentile.',
+      a:'<p>Window ranking functions. <code>PERCENT_RANK</code> = (rank − 1) / (rows − 1); <code>CUME_DIST</code> = rows ≤ current / total rows.</p>',
+      code:`SELECT employee_id,
+       salary,
+       RANK()         OVER (ORDER BY salary DESC) AS rnk,
+       DENSE_RANK()   OVER (ORDER BY salary DESC) AS dense_rnk,
+       PERCENT_RANK() OVER (ORDER BY salary DESC) AS pct_rank,
+       CUME_DIST()    OVER (ORDER BY salary DESC) AS cume_dist,
+       NTILE(4)       OVER (ORDER BY salary DESC) AS quartile
+FROM employees;`
+    },
+    {
+      q:'For each order, calculate the number of days between order and delivery.',
+      a:'<p>Date arithmetic is dialect-specific — always say which dialect you are assuming.</p>',
+      code:`-- PostgreSQL
+SELECT order_id, order_date, delivery_date,
+       delivery_date - order_date AS days_to_deliver
+FROM orders;
+
+-- MySQL
+SELECT order_id, DATEDIFF(delivery_date, order_date) AS days_to_deliver
+FROM orders;
+
+-- SQL Server
+SELECT order_id, DATEDIFF(day, order_date, delivery_date) AS days_to_deliver
+FROM orders;`
+    },
+    {
+      q:'Find the second most recent order for each customer.',
+      a:'<p>Same "top N per group" pattern, just with <code>rn = 2</code>. Note that customers with only one order disappear entirely — use a <code>LEFT JOIN</code> if you need to keep them.</p>',
+      code:`SELECT customer_id, order_id, order_date, amount
+FROM (
+  SELECT o.*,
+         ROW_NUMBER() OVER (PARTITION BY customer_id
+                            ORDER BY order_date DESC) AS rn
+  FROM orders o
+) t
+WHERE rn = 2;`
+    },
+    {
+      q:'Find three consecutive rows with the same value (LeetCode "Consecutive Numbers").',
+      a:'<p>Classic triple self-join on an id sequence.</p>',
+      code:`SELECT DISTINCT a.num AS ConsecutiveNums
+FROM logs a
+JOIN logs b ON b.id = a.id + 1
+JOIN logs c ON c.id = a.id + 2
+WHERE a.num = b.num
+  AND b.num = c.num;`,
+      tip:'The general "gap and islands" solution (id − ROW_NUMBER() = constant group) handles streaks of <i>any</i> length — see the Hard section.'
+    },
+    {
+      q:'Find the department with the most employees.',
+      a:'<p>Aggregate, order, take the first. If two departments tie, you need a different approach (e.g. <code>RANK()</code>) to return both.</p>',
+      code:`SELECT department_id,
+       COUNT(*) AS headcount
+FROM employees
+GROUP BY department_id
+ORDER BY headcount DESC
+LIMIT 1;`
+    },
+    {
+      q:'Return each customer\'s first order and their most recent order side by side.',
+      a:'<p>Two conditional aggregates, or two joins to ranked subqueries.</p>',
+      code:`SELECT customer_id,
+       MIN(order_date) AS first_order,
+       MAX(order_date) AS last_order,
+       COUNT(*)        AS total_orders
+FROM orders
+GROUP BY customer_id;`
+    }
+  ],
+  theory:[
+    {
+      q:'What is normalisation? Explain 1NF, 2NF, 3NF and BCNF.',
+      a:'<p>Normalisation organises columns and tables to minimise redundancy and dependency anomalies.</p><ul><li><b>1NF</b> — atomic values only: no repeating groups, no multi-valued cells, each column holds one value of one type.</li><li><b>2NF</b> — 1NF + no <b>partial dependency</b>: every non-key column depends on the <i>whole</i> composite key, not part of it.</li><li><b>3NF</b> — 2NF + no <b>transitive dependency</b>: non-key columns depend only on the key, not on other non-key columns.</li><li><b>BCNF</b> — a stricter 3NF where every determinant is a candidate key.</li></ul><p>Higher normal forms (4NF, 5NF) remove multi-valued and join dependencies but are rarely used in practice.</p>'
+    },
+    {
+      q:'What is denormalisation and why do data warehouses do it?',
+      a:'<p>Denormalisation deliberately reintroduces redundancy to speed up reads.</p><p><b>Why analytics does it:</b> OLAP workloads are read-heavy and join-heavy; pre-joining dimensions into wide tables (or star schemas) eliminates expensive joins at query time, and columnar storage makes the redundant columns cheap to compress. The trade-off is more storage and more ETL work to keep duplicates consistent.</p>'
+    },
+    {
+      q:'What is the difference between a clustered and a non-clustered index?',
+      a:'<ul><li><b>Clustered index</b> defines the physical order of the rows on disk. There can be only one per table because data can only be physically sorted one way. The leaf level <i>is</i> the data. A primary key typically creates one.</li><li><b>Non-clustered index</b> is a separate structure with its own sorted keys and pointers (row locators) back to the data. You can have many; lookups usually require an extra "key lookup" step unless the index covers the query.</li></ul><p>In a heap table (no clustered index), rows are stored in insertion order.</p>'
+    },
+    {
+      q:'What is a CTE? When would you use it instead of a subquery?',
+      a:'<p>A Common Table Expression is a named, temporary result set defined with <code>WITH</code> at the top of a query.</p><p><b>Use it when:</b> you need the same intermediate result more than once, you want to break a nested monster into readable steps, or you need recursion (<code>WITH RECURSIVE</code>).</p><p><b>Performance note:</b> in PostgreSQL 12+, CTEs are inlined by default and optimised like subqueries; earlier versions always materialised them. In SQL Server, CTEs are never automatically materialised — use temp tables for expensive intermediates.</p>'
+    },
+    {
+      q:'What is the difference between GROUP BY and a window function?',
+      a:'<p><code>GROUP BY</code> <b>collapses</b> rows — one output row per group, and you can only select grouped columns or aggregates.</p><p>A window function <b>preserves every row</b> and attaches an aggregate/rank computed over a related set of rows. So <code>SUM(salary) OVER (PARTITION BY dept)</code> shows every employee <i>next to</i> their department total.</p><p>Rule of thumb: if you need the detail rows, use a window function; if you need one row per group, use <code>GROUP BY</code>.</p>'
+    },
+    {
+      q:'Explain the ACID properties.',
+      a:'<ul><li><b>Atomicity</b> — a transaction is all-or-nothing. Either every statement commits or none do.</li><li><b>Consistency</b> — a transaction moves the database from one valid state to another, respecting all constraints.</li><li><b>Isolation</b> — concurrent transactions do not interfere with each other; the observable result is as if they ran serially (to the degree the isolation level allows).</li><li><b>Durability</b> — once committed, the data survives crashes, usually via a write-ahead log flushed to disk.</li></ul>'
+    },
+    {
+      q:'What are transactions and isolation levels?',
+      a:'<p>A transaction groups statements into a single unit of work bounded by <code>BEGIN</code> and <code>COMMIT</code>/<code>ROLLBACK</code>.</p><p>SQL standard isolation levels, from weakest to strongest:</p><ul><li><b>READ UNCOMMITTED</b> — allows dirty reads.</li><li><b>READ COMMITTED</b> — no dirty reads; allows non-repeatable reads and phantoms. Default in PostgreSQL, Oracle, SQL Server.</li><li><b>REPEATABLE READ</b> — no non-repeatable reads; phantoms still possible in theory (MySQL InnoDB blocks them too).</li><li><b>SERIALIZABLE</b> — full isolation, lowest concurrency.</li></ul>'
+    },
+    {
+      q:'What is the difference between ROW_NUMBER, RANK and DENSE_RANK?',
+      a:'<p>For values <code>[100, 100, 90]</code>:</p><ul><li><code>ROW_NUMBER()</code> → 1, 2, 3 — always unique, arbitrary tie-breaking.</li><li><code>RANK()</code> → 1, 1, 3 — ties share a rank, then it <b>skips</b>.</li><li><code>DENSE_RANK()</code> → 1, 1, 2 — ties share a rank, no gaps.</li></ul><p>“Top N distinct salaries” → <code>DENSE_RANK</code>. “Pick exactly one row per group” → <code>ROW_NUMBER</code>.</p>'
+    },
+    {
+      q:'What is the difference between a correlated and a non-correlated subquery?',
+      a:'<p>A <b>non-correlated</b> subquery is independent of the outer query — it can be evaluated once and reused. Example: <code>WHERE salary &gt; (SELECT AVG(salary) FROM employees)</code>.</p><p>A <b>correlated</b> subquery references a column from the outer query, so it is logically evaluated once per outer row — potentially very slow. Example: <code>WHERE salary &gt; (SELECT AVG(salary) FROM employees e2 WHERE e2.dept_id = e1.dept_id)</code>.</p><p>Most correlated subqueries can be rewritten as joins or window functions for much better performance.</p>'
+    },
+    {
+      q:'View vs stored procedure vs function — what are the differences?',
+      a:'<ul><li><b>View</b> — a named query; used like a table; no parameters (standard views); no control flow.</li><li><b>Stored procedure</b> — a precompiled program stored in the database; accepts input/output parameters; can contain control flow, transactions, DML; called with <code>CALL</code>/<code>EXEC</code>.</li><li><b>Function</b> — returns a value (scalar or table); can be used inside <code>SELECT</code>; usually cannot perform DML or manage transactions in most engines.</li></ul>'
+    },
+    {
+      q:'What is a trigger?',
+      a:'<p>A trigger is a block of code that fires automatically in response to an <code>INSERT</code>, <code>UPDATE</code>, or <code>DELETE</code> on a table — either <code>BEFORE</code> or <code>AFTER</code>, per row or per statement.</p><p><b>Uses:</b> audit logging, maintaining derived columns, enforcing complex business rules.<br><b>Downsides:</b> hidden side effects, harder debugging, and they can silently slow down every write. Data pipelines generally prefer explicit transformations over triggers.</p>'
+    },
+    {
+      q:'What is the logical order of execution of a SQL query?',
+      a:'<p>Even though you <i>write</i> it in a different order, the engine logically evaluates:</p><ol><li><code>FROM</code> / <code>JOIN</code> — build the working set</li><li><code>WHERE</code> — filter rows</li><li><code>GROUP BY</code> — form groups</li><li><code>HAVING</code> — filter groups</li><li><code>SELECT</code> — compute expressions and window functions</li><li><code>DISTINCT</code> — deduplicate</li><li><code>ORDER BY</code> — sort</li><li><code>LIMIT</code> / <code>OFFSET</code> — trim</li></ol><p>This explains why a <code>SELECT</code> alias works in <code>ORDER BY</code> but not in <code>WHERE</code>, and why window functions cannot appear in <code>WHERE</code>.</p>'
+    },
+    {
+      q:'What is a deadlock?',
+      a:'<p>Two or more transactions each hold a lock the other needs, so neither can proceed. The database detects the cycle and kills one transaction (the "victim") with an error.</p><p><b>Prevention:</b> acquire locks in a consistent order across all transactions, keep transactions short, use lower isolation levels where acceptable, and retry with backoff on deadlock errors.</p>'
+    },
+    {
+      q:'What is a self-join and when do you need one?',
+      a:'<p>A self-join joins a table to itself using two different aliases. You need it whenever a row relates to another row <b>in the same table</b>:</p><ul><li>Employee → manager hierarchy</li><li>Comparing a row to the previous row (though <code>LAG</code> is usually cleaner)</li><li>Finding pairs of records that share an attribute (e.g. same city)</li><li>Comparing this month\'s value to last month\'s</li></ul>'
+    },
+    {
+      q:'What is the difference between OLTP and OLAP systems?',
+      a:'<ul><li><b>OLTP</b> (Online Transaction Processing) — many small, fast reads and writes; highly normalised; row-oriented; strong ACID; optimised for concurrency. Example: an e-commerce order system.</li><li><b>OLAP</b> (Online Analytical Processing) — few, large, complex read queries scanning millions of rows; denormalised star/snowflake schemas; columnar storage; optimised for throughput and compression. Example: a data warehouse feeding dashboards.</li></ul><p>As a data scientist you almost always query OLAP systems — which is why window functions and wide scans matter more than single-row lookups.</p>'
+    },
+    {
+      q:'Star schema vs snowflake schema?',
+      a:'<p><b>Star schema:</b> one central fact table surrounded by flat, denormalised dimension tables. Fewer joins, simpler to query, slightly more storage.</p><p><b>Snowflake schema:</b> dimensions are normalised into sub-dimensions (e.g. product → category → department). Saves storage and enforces consistency, but requires more joins and is harder to navigate.</p><p>Most modern warehouses default to star schemas because storage is cheap and query simplicity wins.</p>'
+    },
+    {
+      q:'Surrogate key vs natural key?',
+      a:'<p><b>Natural key</b> — a real-world attribute that happens to be unique (email, ISBN, SSN). Meaningful, but can change and may not be stable or available.</p><p><b>Surrogate key</b> — a system-generated meaningless integer/UUID (auto-increment id). Stable, compact, join-friendly.</p><p>Warehouses prefer surrogate keys so history tracking (SCD Type 2) can store multiple versions of the same natural key.</p>'
+    },
+    {
+      q:'Materialised view vs regular view?',
+      a:'<p>A regular view re-runs its query every time it is referenced — always current, potentially slow.</p><p>A materialised view stores the result physically on disk. Reads are fast, but the data is stale until you <code>REFRESH</code> it (full or incremental). Ideal for expensive aggregations powering dashboards.</p>'
+    },
+    {
+      q:'How do you read a query execution plan?',
+      a:'<p>Use <code>EXPLAIN</code> (or <code>EXPLAIN ANALYZE</code> in PostgreSQL, <code>EXPLAIN FORMAT=JSON</code> in MySQL, "Actual Execution Plan" in SQL Server).</p><p>Look for, in order of importance:</p><ul><li><b>Seq Scan / Full Table Scan</b> on a large table where a filter exists → missing or unused index.</li><li><b>Estimate vs actual rows</b> — a large gap means stale statistics.</li><li><b>Nested Loop</b> over huge inputs → usually a bad join order.</li><li><b>Sort / Hash</b> spilling to disk.</li><li>Highest-cost node overall — that is where to optimise first.</li></ul>'
+    },
+    {
+      q:'UNION vs JOIN — what is the difference?',
+      a:'<p><code>JOIN</code> combines <b>columns</b> horizontally — matching rows from two tables side by side.</p><p><code>UNION</code> combines <b>rows</b> vertically — stacking two result sets that have the same number and compatible types of columns.</p><p>They solve completely different problems and are not interchangeable.</p>'
+    },
+    {
+      q:'What is a CROSS JOIN and when is a Cartesian product useful?',
+      a:'<p><code>CROSS JOIN</code> returns every combination of rows from both tables — <i>m</i> × <i>n</i> rows. It is usually a mistake caused by a missing join condition (and it explodes the result set).</p><p>It is genuinely useful for building a complete date × product grid so that periods with zero sales still appear, and for generating test data.</p>'
+    },
+    {
+      q:'COALESCE vs IFNULL vs ISNULL vs NULLIF?',
+      a:'<p><code>COALESCE(a, b, c, …)</code> — ANSI standard, returns the first non-NULL argument, any number of arguments. Portable; prefer this.</p><p><code>IFNULL(a, b)</code> — MySQL, two arguments only.<br><code>ISNULL(a, b)</code> — SQL Server, two arguments only.<br><code>NVL(a, b)</code> — Oracle, two arguments only.</p><p><code>NULLIF(a, b)</code> — the opposite job: returns NULL if <code>a = b</code>, otherwise <code>a</code>. Most common use is guarding division: <code>x / NULLIF(y, 0)</code>.</p>'
+    },
+    {
+      q:'What is a recursive CTE and what problems does it solve?',
+      a:'<p>A <code>WITH RECURSIVE</code> CTE references itself, with an anchor member (the starting rows) <code>UNION ALL</code> a recursive member (which references the CTE). It stops when the recursive member returns no rows.</p><p><b>Use cases:</b> traversing hierarchies (org charts, category trees, bill-of-materials), generating date series, graph reachability, and walking parent-child relationships of unknown depth.</p><p><b>Risk:</b> infinite recursion if the data has cycles — cap depth with a level counter.</p>'
+    },
+    {
+      q:'What does "cardinality" mean in databases?',
+      a:'<p>Two meanings, both worth knowing:</p><ul><li><b>Column cardinality</b> — the number of distinct values. A <code>gender</code> column has low cardinality; <code>user_id</code> has high cardinality. Indexes are far more effective on high-cardinality columns.</li><li><b>Relationship cardinality</b> — the ratio between related tables: one-to-one, one-to-many, many-to-many.</li></ul>'
+    },
+    {
+      q:'What does ON DELETE CASCADE do?',
+      a:'<p>It is a foreign-key referential action. When the parent row is deleted, all matching child rows are automatically deleted too.</p><p>Sibling options: <code>ON DELETE SET NULL</code>, <code>ON DELETE SET DEFAULT</code>, <code>ON DELETE RESTRICT</code> (block the delete), <code>ON DELETE NO ACTION</code> (defer the check).</p><p>Convenient but dangerous — a single delete can silently wipe out a large subtree of data.</p>'
+    },
+    {
+      q:'What is a covering index?',
+      a:'<p>An index that contains <b>every column</b> the query needs, so the engine can answer the query from the index alone without touching the table (an "index-only scan" in PostgreSQL or "covering index" in SQL Server).</p><p>Example: an index on <code>(customer_id, order_date)</code> fully covers <code>SELECT order_date FROM orders WHERE customer_id = 5</code>.</p>'
+    }
+  ]
+},
+
+/* =====================================================================
+   HARD
+   ===================================================================== */
+{
+  id:'hard', level:'Level 3', name:'Hard', icon:'🔥',
+  blurb:'Senior-level material: gap-and-islands, sessionisation, cohort retention, recursive hierarchies, funnel math, warehouse internals, and the performance reasoning that separates a good answer from a great one.',
+  sql:[
+    {
+      q:'Department Top 3 Salaries — return the top 3 earners in each department (LeetCode 185).',
+      a:'<p>Partition by department, dense-rank by salary, then filter. Filtering on a window function requires a subquery or CTE.</p>',
+      code:`WITH ranked AS (
+  SELECT d.name  AS Department,
+         e.name  AS Employee,
+         e.salary AS Salary,
+         DENSE_RANK() OVER (PARTITION BY e.departmentId
+                            ORDER BY e.salary DESC) AS rnk
+  FROM Employee e
+  JOIN Department d ON d.id = e.departmentId
+)
+SELECT Department, Employee, Salary
+FROM ranked
+WHERE rnk <= 3
+ORDER BY Department, Salary DESC;`
+    },
+    {
+      q:'Find managers who have at least 5 direct reports (LeetCode 570).',
+      a:'<p>Join the table to itself on manager id, then group and count.</p>',
+      code:`SELECT m.name
+FROM Employee e
+JOIN Employee m ON e.managerId = m.id
+GROUP BY m.id, m.name
+HAVING COUNT(*) >= 5;`
+    },
+    {
+      q:'Gap and islands: find the longest streak of consecutive login days for each user.',
+      a:'<p>The classic trick: <code>date − ROW_NUMBER()</code> is constant for consecutive dates, giving you a group key.</p>',
+      code:`WITH daily AS (
+  SELECT DISTINCT user_id, login_date
+  FROM logins
+),
+grouped AS (
+  SELECT user_id,
+         login_date,
+         login_date
+           - (ROW_NUMBER() OVER (PARTITION BY user_id
+                                 ORDER BY login_date) * INTERVAL '1 day') AS grp
+  FROM daily
+)
+SELECT user_id,
+       MIN(login_date) AS streak_start,
+       MAX(login_date) AS streak_end,
+       COUNT(*)        AS streak_length
+FROM grouped
+GROUP BY user_id, grp
+ORDER BY streak_length DESC;`,
+      tip:'This pattern generalises to "consecutive orders", "consecutive wins", "consecutive months with revenue" — any ordered sequence where you need runs.'
+    },
+    {
+      q:'Calculate next-day retention: the % of users who log in the day after their first login.',
+      a:'<p>Find each user\'s cohort day, then look for an activity row exactly one day later.</p>',
+      code:`WITH first_login AS (
+  SELECT user_id, MIN(login_date) AS d0
+  FROM logins
+  GROUP BY user_id
+)
+SELECT ROUND(
+         100.0 * COUNT(DISTINCT CASE WHEN l.user_id IS NOT NULL THEN f.user_id END)
+              / COUNT(DISTINCT f.user_id)
+       , 2) AS d1_retention_pct
+FROM first_login f
+LEFT JOIN logins l
+       ON l.user_id = f.user_id
+      AND l.login_date = f.d0 + INTERVAL '1 day';`,
+      tip:'The <code>CASE WHEN … END</code> inside <code>COUNT(DISTINCT …)</code> is the key move — it lets you count only the retained users while still counting all users in the denominator.'
+    },
+    {
+      q:'Build a monthly cohort retention table.',
+      a:'<p>Assign each user to a cohort month (month of first activity), then count how many are still active in each subsequent month.</p>',
+      code:`WITH cohorts AS (
+  SELECT user_id,
+         DATE_TRUNC('month', MIN(order_date)) AS cohort_month
+  FROM orders
+  GROUP BY user_id
+),
+activity AS (
+  SELECT o.user_id,
+         c.cohort_month,
+         DATE_TRUNC('month', o.order_date) AS activity_month
+  FROM orders o
+  JOIN cohorts c USING (user_id)
+)
+SELECT cohort_month,
+       activity_month,
+       COUNT(DISTINCT user_id) AS active_users
+FROM activity
+GROUP BY cohort_month, activity_month
+ORDER BY cohort_month, activity_month;`,
+      tip:'Wrap this in conditional aggregation to pivot into the familiar triangle: <code>SUM(CASE WHEN activity_month = cohort_month + INTERVAL \'1 month\' THEN 1 ELSE 0 END)</code>.'
+    },
+    {
+      q:'Market basket analysis: find the pair of products most often bought together.',
+      a:'<p>Self-join the line items on the same order, forcing <code>a.product_id &lt; b.product_id</code> so each unordered pair is counted exactly once.</p>',
+      code:`SELECT a.product_id AS product_1,
+       b.product_id AS product_2,
+       COUNT(*)     AS times_bought_together
+FROM order_items a
+JOIN order_items b
+  ON a.order_id   = b.order_id
+ AND a.product_id < b.product_id
+GROUP BY a.product_id, b.product_id
+ORDER BY times_bought_together DESC
+LIMIT 10;`
+    },
+    {
+      q:'Human Traffic of Stadium — find all rows that belong to a run of 3+ consecutive ids where people ≥ 100 (LeetCode 601).',
+      a:'<p>Filter first, then apply gap-and-islands, then keep only groups of size ≥ 3.</p>',
+      code:`WITH filtered AS (
+  SELECT *,
+         id - ROW_NUMBER() OVER (ORDER BY id) AS grp
+  FROM stadium
+  WHERE people >= 100
+)
+SELECT id, visit_date, people
+FROM filtered
+WHERE grp IN (
+  SELECT grp
+  FROM filtered
+  GROUP BY grp
+  HAVING COUNT(*) >= 3
+)
+ORDER BY visit_date;`
+    },
+    {
+      q:'Trips and Users — daily cancellation rate for unbanned users, Oct 1–3 2013 (LeetCode 262).',
+      a:'<p>Join trips to both client and driver user tables, filter banned users out, then average a boolean.</p>',
+      code:`SELECT t.request_at AS Day,
+       ROUND(
+         AVG(CASE WHEN t.status IN ('cancelled_by_driver','cancelled_by_client')
+                  THEN 1.0 ELSE 0.0 END)
+       , 2) AS "Cancellation Rate"
+FROM Trips t
+JOIN Users c ON c.users_id = t.client_id AND c.banned = 'No'
+JOIN Users d ON d.users_id = t.driver_id AND d.banned = 'No'
+WHERE t.request_at BETWEEN '2013-10-01' AND '2013-10-03'
+GROUP BY t.request_at
+ORDER BY t.request_at;`
+    },
+    {
+      q:'Sessionisation: group raw events into sessions, where a new session starts after 30 minutes of inactivity.',
+      a:'<p>Flag session starts with <code>LAG</code>, then take a running sum of that flag to form session ids. This is one of the most useful "real job" SQL patterns.</p>',
+      code:`WITH flagged AS (
+  SELECT user_id,
+         event_time,
+         CASE
+           WHEN LAG(event_time) OVER (PARTITION BY user_id ORDER BY event_time) IS NULL
+             OR event_time - LAG(event_time) OVER (PARTITION BY user_id ORDER BY event_time)
+                > INTERVAL '30 minutes'
+           THEN 1 ELSE 0
+         END AS is_new_session
+  FROM events
+),
+sessionised AS (
+  SELECT user_id,
+         event_time,
+         SUM(is_new_session) OVER (PARTITION BY user_id
+                                   ORDER BY event_time
+                                   ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS session_id
+  FROM flagged
+)
+SELECT user_id,
+       session_id,
+       MIN(event_time) AS session_start,
+       MAX(event_time) AS session_end,
+       COUNT(*)        AS event_count
+FROM sessionised
+GROUP BY user_id, session_id
+ORDER BY user_id, session_start;`
+    },
+    {
+      q:'Year-over-year revenue growth.',
+      a:'<p><code>LAG</code> with a 1-row offset over yearly aggregates.</p>',
+      code:`WITH yearly AS (
+  SELECT EXTRACT(YEAR FROM order_date) AS yr,
+         SUM(amount) AS revenue
+  FROM orders
+  GROUP BY 1
+)
+SELECT yr,
+       revenue,
+       LAG(revenue) OVER (ORDER BY yr) AS prev_year_revenue,
+       ROUND(
+         100.0 * (revenue - LAG(revenue) OVER (ORDER BY yr))
+               / NULLIF(LAG(revenue) OVER (ORDER BY yr), 0)
+       , 2) AS yoy_growth_pct
+FROM yearly
+ORDER BY yr;`
+    },
+    {
+      q:'Recursive CTE: print the full employee hierarchy with level and reporting path.',
+      a:'<p>Anchor on the roots (<code>manager_id IS NULL</code>), then recurse downward, incrementing the level and appending to a path string.</p>',
+      code:`WITH RECURSIVE org AS (
+  -- anchor: top-level managers
+  SELECT employee_id,
+         manager_id,
+         first_name,
+         1 AS lvl,
+         CAST(first_name AS VARCHAR(1000)) AS path
+  FROM employees
+  WHERE manager_id IS NULL
+
+  UNION ALL
+
+  -- recursive step
+  SELECT e.employee_id,
+         e.manager_id,
+         e.first_name,
+         o.lvl + 1,
+         CAST(o.path || ' > ' || e.first_name AS VARCHAR(1000))
+  FROM employees e
+  JOIN org o ON e.manager_id = o.employee_id
+)
+SELECT lvl, path
+FROM org
+ORDER BY path;`
+    },
+    {
+      q:'Find users who purchased in 3 or more consecutive months.',
+      a:'<p>Gap-and-islands on month buckets: <code>month − k × interval</code> is constant for consecutive months.</p>',
+      code:`WITH months AS (
+  SELECT DISTINCT user_id,
+         DATE_TRUNC('month', order_date) AS mth
+  FROM orders
+),
+grouped AS (
+  SELECT user_id,
+         mth,
+         mth - (ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY mth)
+                * INTERVAL '1 month') AS grp
+  FROM months
+)
+SELECT user_id,
+       MIN(mth) AS streak_start,
+       MAX(mth) AS streak_end,
+       COUNT(*) AS consecutive_months
+FROM grouped
+GROUP BY user_id, grp
+HAVING COUNT(*) >= 3;`
+    },
+    {
+      q:'Compute the median salary per department (portable version).',
+      a:'<p><code>PERCENTILE_CONT</code> if available; otherwise a window-function fallback that works on any engine with window support.</p>',
+      code:`-- PostgreSQL / Oracle / SQL Server 2012+
+SELECT department_id,
+       PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY salary) AS median_salary
+FROM employees
+GROUP BY department_id;
+
+-- Portable window-function version
+WITH ranked AS (
+  SELECT department_id,
+         salary,
+         ROW_NUMBER() OVER (PARTITION BY department_id ORDER BY salary) AS rn,
+         COUNT(*)     OVER (PARTITION BY department_id)                AS cnt
+  FROM employees
+  WHERE salary IS NOT NULL
+)
+SELECT department_id,
+       AVG(salary) AS median_salary
+FROM ranked
+WHERE rn IN (FLOOR((cnt + 1) / 2.0), CEIL((cnt + 1) / 2.0))
+GROUP BY department_id;`
+    },
+    {
+      q:'Calculate the 90th percentile of order value, overall and per region.',
+      a:'<p><code>PERCENTILE_CONT</code> interpolates; <code>PERCENTILE_DISC</code> returns an actual observed value.</p>',
+      code:`SELECT region,
+       PERCENTILE_CONT(0.9) WITHIN GROUP (ORDER BY amount) AS p90_cont,
+       PERCENTILE_DISC(0.9) WITHIN GROUP (ORDER BY amount) AS p90_disc,
+       COUNT(*) AS n
+FROM orders
+GROUP BY region;`,
+      tip:'<code>PERCENTILE_CONT</code> interpolates between values, so it can return a number that never appears in the data. <code>PERCENTILE_DISC</code> always returns a real value. Mention the distinction — it impresses interviewers.'
+    },
+    {
+      q:'Find each customer\'s first and second order, and the number of days between them.',
+      a:'<p>Rank the orders per customer, then self-join rank 1 to rank 2.</p>',
+      code:`WITH ranked AS (
+  SELECT customer_id,
+         order_id,
+         order_date,
+         ROW_NUMBER() OVER (PARTITION BY customer_id
+                            ORDER BY order_date) AS rn
+  FROM orders
+)
+SELECT a.customer_id,
+       a.order_date AS first_order_date,
+       b.order_date AS second_order_date,
+       b.order_date - a.order_date AS days_between
+FROM ranked a
+LEFT JOIN ranked b
+       ON b.customer_id = a.customer_id
+      AND b.rn = 2
+WHERE a.rn = 1;`
+    },
+    {
+      q:'Delete duplicate emails (LeetCode 196) — keep the smallest id per email.',
+      a:'<p>The MySQL-idiomatic self-join delete.</p>',
+      code:`DELETE p1
+FROM Person p1
+JOIN Person p2
+  ON p1.email = p2.email
+ AND p1.id > p2.id;`
+    },
+    {
+      q:'Exchange seats (LeetCode 626) — swap every pair of adjacent students, leaving the last row alone if the count is odd.',
+      a:'<p>A pure <code>CASE</code> expression on the id parity plus a max-id check.</p>',
+      code:`SELECT CASE
+         WHEN id % 2 = 1 AND id = (SELECT MAX(id) FROM Seat) THEN id
+         WHEN id % 2 = 1 THEN id + 1
+         ELSE id - 1
+       END AS id,
+       student
+FROM Seat
+ORDER BY id;`
+    },
+    {
+      q:'Compute a funnel conversion rate: how many users moved from view → cart → purchase, and what fraction of viewers purchased?',
+      a:'<p>Conditional aggregation over distinct users per stage.</p>',
+      code:`SELECT COUNT(DISTINCT CASE WHEN event = 'view'     THEN user_id END) AS viewers,
+       COUNT(DISTINCT CASE WHEN event = 'add_cart' THEN user_id END) AS carters,
+       COUNT(DISTINCT CASE WHEN event = 'purchase' THEN user_id END) AS buyers,
+       ROUND(
+         100.0 * COUNT(DISTINCT CASE WHEN event = 'purchase' THEN user_id END)
+               / NULLIF(COUNT(DISTINCT CASE WHEN event = 'view' THEN user_id END), 0)
+       , 2) AS view_to_purchase_pct
+FROM events
+WHERE event_date >= CURRENT_DATE - INTERVAL '30 days';`
+    },
+    {
+      q:'Top 3 products by revenue within each category — including categories with no sales.',
+      a:'<p>Start from the category table with a <code>LEFT JOIN</code> so empty categories survive, then rank.</p>',
+      code:`WITH revenue AS (
+  SELECT p.category_id,
+         p.product_id,
+         COALESCE(SUM(oi.amount), 0) AS revenue
+  FROM products p
+  LEFT JOIN order_items oi ON oi.product_id = p.product_id
+  GROUP BY p.category_id, p.product_id
+),
+ranked AS (
+  SELECT r.*,
+         DENSE_RANK() OVER (PARTITION BY category_id ORDER BY revenue DESC) AS rnk
+  FROM revenue r
+)
+SELECT c.category_name,
+       r.product_id,
+       r.revenue,
+       r.rnk
+FROM categories c
+LEFT JOIN ranked r
+       ON r.category_id = c.category_id
+      AND r.rnk <= 3
+ORDER BY c.category_name, r.rnk;`
+    },
+    {
+      q:'Pivot rows to columns when the column list is not known in advance.',
+      a:'<p>Standard SQL cannot pivot dynamically — <code>PIVOT</code> and <code>CASE</code> both need fixed column names. The two real-world answers are: (1) build the SQL string dynamically, or (2) pivot in the application/BI layer.</p>',
+      code:`-- PostgreSQL: build the SQL dynamically, then execute it
+SELECT string_agg(
+         format('SUM(CASE WHEN category = %L THEN amount ELSE 0 END) AS %I',
+                category, category),
+         ', ' ORDER BY category
+       )
+FROM (SELECT DISTINCT category FROM sales) t;
+
+-- Then EXECUTE the generated string (plpgsql / your app layer).`,
+      tip:'Say out loud that dynamic pivots are usually better done in the BI tool — the interviewer is checking whether you know SQL has this limitation.'
+    },
+    {
+      q:'Find the average session length per user from an events table.',
+      a:'<p>Sessionise first (see the sessionisation question), then aggregate.</p>',
+      code:`WITH flagged AS (
+  SELECT user_id, event_time,
+         CASE WHEN LAG(event_time) OVER (PARTITION BY user_id ORDER BY event_time) IS NULL
+                OR event_time - LAG(event_time) OVER (PARTITION BY user_id ORDER BY event_time)
+                   > INTERVAL '30 minutes'
+              THEN 1 ELSE 0 END AS is_new
+  FROM events
+),
+s AS (
+  SELECT user_id, event_time,
+         SUM(is_new) OVER (PARTITION BY user_id ORDER BY event_time
+                           ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS sid
+  FROM flagged
+),
+sessions AS (
+  SELECT user_id, sid,
+         EXTRACT(EPOCH FROM (MAX(event_time) - MIN(event_time))) AS duration_sec
+  FROM s
+  GROUP BY user_id, sid
+)
+SELECT user_id,
+       COUNT(*)              AS session_count,
+       ROUND(AVG(duration_sec), 2) AS avg_session_seconds
+FROM sessions
+GROUP BY user_id
+ORDER BY avg_session_seconds DESC;`
+    },
+    {
+      q:'Detect fan-out (double counting) caused by joining two one-to-many tables.',
+      a:'<p>Joining orders to both <code>order_items</code> and <code>payments</code> multiplies rows: an order with 3 items and 2 payments produces 6 rows, so <code>SUM(order_total)</code> is inflated 2×.</p><p><b>Fixes:</b> aggregate each child table in its own CTE first, or use <code>COUNT(DISTINCT …)</code> / <code>SUM(DISTINCT …)</code> where semantically valid.</p>',
+      code:`-- Wrong: double counting
+SELECT o.order_id, SUM(o.total) AS revenue, SUM(p.amount) AS paid
+FROM orders o
+JOIN order_items i ON i.order_id = o.order_id
+JOIN payments    p ON p.order_id = o.order_id
+GROUP BY o.order_id;
+
+-- Right: pre-aggregate each side
+WITH items AS (
+  SELECT order_id, SUM(amount) AS item_total
+  FROM order_items GROUP BY order_id
+),
+pays AS (
+  SELECT order_id, SUM(amount) AS paid_total
+  FROM payments GROUP BY order_id
+)
+SELECT o.order_id,
+       COALESCE(i.item_total, 0) AS item_total,
+       COALESCE(p.paid_total, 0) AS paid_total
+FROM orders o
+LEFT JOIN items i ON i.order_id = o.order_id
+LEFT JOIN pays  p ON p.order_id = o.order_id;`
+    }
+  ],
+  theory:[
+    {
+      q:'How do you read and act on a query execution plan?',
+      a:'<p>Run <code>EXPLAIN ANALYZE</code> (PostgreSQL), <code>EXPLAIN FORMAT=JSON</code> (MySQL), or view the actual execution plan (SQL Server).</p><p><b>Read it bottom-up</b> — leaves execute first. Then check:</p><ul><li><b>Seq Scan on a large table with a selective filter</b> → add/repair an index, or check for a function wrapping the column.</li><li><b>Rows estimate vs actual</b> → large mismatches mean stale statistics; run <code>ANALYZE</code>.</li><li><b>Nested Loop over large inputs</b> → the planner chose badly; consider a hash/merge join or a better index.</li><li><b>Sort / Hash Aggregate with "spilled to disk"</b> → increase <code>work_mem</code> or reduce row width.</li><li><b>Highest actual time × loops</b> → that is your optimisation target.</li></ul>'
+    },
+    {
+      q:'Why does the leftmost-prefix rule exist for composite indexes?',
+      a:'<p>A B-tree index on <code>(a, b, c)</code> is sorted first by <code>a</code>, then by <code>b</code> within equal <code>a</code>, then by <code>c</code> — exactly like a phone book sorted by last name then first name.</p><p>Therefore the engine can seek efficiently only when the leading columns are constrained. <code>WHERE a = 1</code>, <code>WHERE a = 1 AND b = 2</code>, and <code>WHERE a = 1 AND b = 2 AND c = 3</code> all use it. <code>WHERE b = 2</code> alone cannot — there is no contiguous range of <code>b</code> values in the index.</p><p>Column order in a composite index is therefore a design decision driven by your most common query patterns.</p>'
+    },
+    {
+      q:'Partitioning vs sharding — what is the difference?',
+      a:'<p><b>Partitioning</b> splits one logical table into smaller physical pieces <i>within the same database server</i> (by range, list, or hash). Benefits: partition pruning on queries, cheaper archiving (drop a partition instead of deleting rows), smaller indexes.</p><p><b>Sharding</b> distributes data across <i>multiple independent servers</i>, each holding a subset. Benefits: horizontal scale beyond one machine. Costs: cross-shard joins and transactions become application-level problems, and rebalancing is painful.</p><p>Partition first; shard only when a single machine truly cannot cope.</p>'
+    },
+    {
+      q:'Explain the CAP theorem and its practical implications.',
+      a:'<p>For a distributed data system, you can guarantee at most two of:</p><ul><li><b>Consistency</b> — every read sees the latest write.</li><li><b>Availability</b> — every request gets a non-error response.</li><li><b>Partition tolerance</b> — the system keeps working when the network splits.</li></ul><p>Since network partitions are unavoidable, real systems choose <b>CP</b> (refuse writes rather than diverge — e.g. HBase, Spanner) or <b>AP</b> (serve possibly-stale data — e.g. Cassandra, DynamoDB).</p><p>For a data scientist: AP systems mean your metrics may be eventually consistent, which matters when reconciling dashboard numbers.</p>'
+    },
+    {
+      q:'Explain Slowly Changing Dimensions (SCD Type 1, 2, 3).',
+      a:'<p>How a warehouse tracks changes to dimension attributes over time.</p><ul><li><b>Type 1</b> — overwrite the old value. Simple, but history is lost.</li><li><b>Type 2</b> — add a new row with new surrogate key, plus <code>valid_from</code>, <code>valid_to</code>, and <code>is_current</code> flags. Full history; the standard for analytical warehouses. Joins must then be time-aware.</li><li><b>Type 3</b> — add a "previous_value" column. Tracks only one prior value; limited.</li></ul>'
+    },
+    {
+      q:'What is the difference between ROWS and RANGE in a window frame?',
+      a:'<p><code>ROWS</code> counts <b>physical rows</b>. <code>RANGE</code> counts <b>logical value ranges</b> of the <code>ORDER BY</code> expression — so all rows with the same order value are treated as peers and included together.</p><p>Consequence: with duplicate dates, <code>SUM(x) OVER (ORDER BY d ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)</code> gives partial running totals within a tied date, while <code>RANGE</code> gives the same total for every row on that date.</p><p>The default frame when <code>ORDER BY</code> is present is <code>RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</code> — a classic gotcha. Use <code>ROWS</code> explicitly when you mean row-by-row.</p>'
+    },
+    {
+      q:'Explain read anomalies and the isolation level that prevents each.',
+      a:'<ul><li><b>Dirty read</b> — reading uncommitted data from another transaction. Prevented by <code>READ COMMITTED</code> and above.</li><li><b>Non-repeatable read</b> — re-reading the same row inside a transaction yields a different value. Prevented by <code>REPEATABLE READ</code> and above.</li><li><b>Phantom read</b> — re-running the same range query returns new rows inserted by another transaction. Prevented by <code>SERIALIZABLE</code> (or by predicate/gap locks in InnoDB).</li><li><b>Lost update</b> — two transactions read-modify-write the same row and one overwrites the other. Prevented by <code>SELECT … FOR UPDATE</code> or optimistic version columns.</li></ul>'
+    },
+    {
+      q:'What is MVCC?',
+      a:'<p>Multi-Version Concurrency Control. Instead of locking readers out of writers, the database keeps multiple versions of each row. A reader sees the version consistent with its snapshot, so <b>readers never block writers and writers never block readers</b>.</p><p>Costs: version storage (in PostgreSQL, dead tuples that <code>VACUUM</code> must clean up) and the need for a transaction id / snapshot mechanism. Used by PostgreSQL, Oracle, MySQL InnoDB, and SQL Server (with RCSI).</p>'
+    },
+    {
+      q:'How does a B-tree index actually work, and why is it the default?',
+      a:'<p>A B+ tree keeps keys sorted in a shallow, balanced tree of pages. Internal nodes hold separator keys; leaf nodes hold the keys plus row pointers and are linked together in a doubly-linked list.</p><p><b>Why it is the default:</b> a search is O(log n) with a very small constant (3–4 levels typically handles millions of rows), and the linked leaves make <b>range scans</b> and <code>ORDER BY</code> cheap. Insertions and deletions keep the tree balanced.</p><p>Contrast with hash indexes (O(1) equality only, no ranges) and bitmap indexes (great for low-cardinality columns in analytics).</p>'
+    },
+    {
+      q:'What is index selectivity and why does it matter?',
+      a:'<p>Selectivity = distinct values / total rows. A highly selective index (e.g. <code>user_id</code>) returns few rows per lookup and is extremely useful. A low-selectivity index (e.g. <code>is_active</code> with 2 values) is often <b>ignored by the planner</b>, because a sequential scan is cheaper than thousands of random page reads.</p><p>This is why indexing boolean flags is usually pointless, and why partial indexes (<code>WHERE status = \'active\'</code>) exist.</p>'
+    },
+    {
+      q:'What can cause an index to be ignored (full table scan)?',
+      a:'<ul><li>A function or implicit cast on the indexed column: <code>WHERE YEAR(hire_date) = 2020</code>.</li><li>Leading wildcard <code>LIKE \'%abc\'</code>.</li><li>Type mismatch forcing a cast, e.g. comparing a <code>varchar</code> to an <code>int</code>.</li><li>Very low selectivity — scanning is genuinely cheaper.</li><li>Stale statistics; the planner\'s estimate is wrong.</li><li>Small tables where a scan costs less than an index traversal.</li><li><code>OR</code> conditions across different columns without a suitable composite index.</li><li>Fetching such a large fraction of the table that random I/O dominates.</li></ul>'
+    },
+    {
+      q:'Compare hash join, nested loop join, and merge join.',
+      a:'<ul><li><b>Nested loop</b> — for each row of the outer input, probe the inner. Excellent when the outer side is tiny and the inner has a good index (O(outer × log inner)). Terrible on two large unindexed tables.</li><li><b>Hash join</b> — build a hash table on the smaller input, probe it with the larger. Best for large, unsorted, equi-joins. Uses memory (and spills if it does not fit).</li><li><b>Merge join</b> — sort both inputs on the join key, then walk them in parallel. Efficient when both sides are already sorted (e.g. from indexes) or when an output sort is needed anyway.</li></ul><p>The optimiser picks based on statistics; you influence it with indexes and by rewriting predicates.</p>'
+    },
+    {
+      q:'Fact table vs dimension table?',
+      a:'<p><b>Fact tables</b> store measurable events — one row per transaction or observation — with foreign keys to dimensions plus numeric <b>measures</b> (amount, quantity, duration). They are tall and narrow and grow continuously.</p><p><b>Dimension tables</b> store the descriptive context — one row per entity (customer, product, date, store) with attributes you filter and group by. They are short and wide.</p><p>Together they form a star schema: <code>fact_sales</code> joined to <code>dim_customer</code>, <code>dim_product</code>, <code>dim_date</code>.</p>'
+    },
+    {
+      q:'Data warehouse vs data lake vs lakehouse?',
+      a:'<ul><li><b>Warehouse</b> — schema-on-write, structured, highly optimised for SQL analytics (Snowflake, BigQuery, Redshift). Expensive for raw/unstructured data.</li><li><b>Data lake</b> — schema-on-read, cheap object storage, stores raw structured, semi-structured and unstructured data. Risk: becomes a "data swamp" without governance.</li><li><b>Lakehouse</b> — open table formats on top of object storage (Delta Lake, Iceberg, Hudi) that add ACID transactions, schema enforcement, and time travel to a lake, so it can serve warehouse-style SQL directly.</li></ul>'
+    },
+    {
+      q:'ETL vs ELT?',
+      a:'<p><b>ETL</b> — transform before loading into the warehouse. Traditional, works well when the target is expensive and you only want clean data in it.</p><p><b>ELT</b> — load raw data first, transform inside the warehouse using SQL. Dominant in cloud warehouses because storage and compute are cheap and elastic, and you keep the raw data for reprocessing and audit. Tools: dbt, Dataform.</p>'
+    },
+    {
+      q:'Why are columnar databases so much faster for analytics?',
+      a:'<ul><li><b>Column pruning</b> — a query touching 3 of 200 columns reads only those 3 columns from disk.</li><li><b>Compression</b> — values in a column share a type and often repeat, so run-length and dictionary encoding compress dramatically better than row-wise storage.</li><li><b>Vectorised execution</b> — operations run over whole batches of column values, exploiting CPU caches and SIMD.</li><li><b>Late materialisation</b> — filters are applied on compressed column blocks before rows are assembled.</li></ul><p>The flip side: single-row <code>INSERT</code>/<code>UPDATE</code> and point lookups are slow, which is exactly why OLTP systems stay row-oriented.</p>'
+    },
+    {
+      q:'How would you optimise a slow query on a 1-billion-row table?',
+      a:'<p>A structured answer:</p><ol><li><b>Measure first.</b> <code>EXPLAIN ANALYZE</code>; find the highest-cost node. Never optimise blind.</li><li><b>Reduce data early.</b> Push filters down, select only needed columns, avoid <code>SELECT *</code>.</li><li><b>Index.</b> Add composite indexes matching the <code>WHERE</code>/<code>JOIN</code> patterns; consider covering indexes so the table is never touched.</li><li><b>Rewrite.</b> Replace correlated subqueries with joins or window functions; replace <code>OR</code> with <code>UNION ALL</code>; avoid functions on indexed columns; use <code>EXISTS</code> instead of <code>IN</code> for anti-joins.</li><li><b>Pre-aggregate.</b> Build a summary table or materialised view refreshed on a schedule.</li><li><b>Partition.</b> Range-partition by date so the query scans only the relevant partitions.</li><li><b>Fix statistics.</b> Run <code>ANALYZE</code>; stale stats cause bad plans.</li><li><b>Change storage.</b> Columnar format / warehouse engine for scan-heavy analytical workloads.</li></ol>'
+    },
+    {
+      q:'What is write-ahead logging (WAL) and how does it guarantee durability?',
+      a:'<p>Before any page is modified on disk, the change is appended to a sequential log and flushed. On a crash, the database replays the log to redo committed changes and undo uncommitted ones.</p><p>Because the log is sequential, <code>fsync</code> on it is far cheaper than random writes to data pages — which is why durability does not destroy write throughput. It also powers replication (ship the WAL to replicas) and point-in-time recovery.</p>'
+    },
+    {
+      q:'What is a deadlock, and how do you prevent one in an application?',
+      a:'<p>A deadlock is a cycle of transactions each waiting for a lock held by another. The database detects the cycle and aborts one transaction.</p><p><b>Prevention:</b></p><ul><li>Acquire locks in a consistent global order (e.g. always update the lower account id first in a transfer).</li><li>Keep transactions short and do not hold locks across user interaction or network calls.</li><li>Use lower isolation levels where correctness allows.</li><li>Use <code>NOWAIT</code> / <code>SKIP LOCKED</code> for queue-style workloads.</li><li>Always implement retry-with-backoff in the application.</li></ul>'
+    },
+    {
+      q:'Horizontal vs vertical scaling for databases?',
+      a:'<p><b>Vertical scaling</b> (bigger machine) — simplest, no code changes, but hits a hard cost/ceiling and creates a single point of failure.</p><p><b>Horizontal scaling</b> (more machines) — read replicas for read-heavy workloads, sharding for write-heavy workloads. Requires handling replication lag, cross-shard queries, distributed transactions, and rebalancing.</p><p>Practical order: optimise queries and indexes → cache → vertical scale → read replicas → shard.</p>'
+    },
+    {
+      q:'Correlated subquery vs JOIN — which is faster and why?',
+      a:'<p>Usually the <b>JOIN</b> (or window function) is faster. A naive correlated subquery is conceptually evaluated once per outer row — O(n × m). Modern optimisers often decorrelate it into a join automatically, but you cannot rely on that across engines and versions.</p><p><b>Exceptions:</b> with a highly selective outer filter and an index on the correlated column, a correlated <code>EXISTS</code> can beat a full join because it can stop at the first match. Always measure.</p>'
+    },
+    {
+      q:'How do you handle the NOT IN + NULL trap?',
+      a:'<p><code>x NOT IN (1, 2, NULL)</code> evaluates to <code>UNKNOWN</code> for every row — so the query returns <b>zero rows</b>, silently. The same happens when the subquery returns a NULL.</p><p><b>Fixes:</b> use <code>NOT EXISTS</code>, use <code>LEFT JOIN … IS NULL</code>, or add <code>WHERE col IS NOT NULL</code> to the subquery. This is one of the highest-signal SQL gotchas in interviews.</p>'
+    },
+    {
+      q:'UNION vs INTERSECT vs EXCEPT — and what are the performance implications?',
+      a:'<ul><li><code>UNION</code> — all rows from both, deduplicated (implies a sort/hash).</li><li><code>UNION ALL</code> — all rows, no dedup, fastest.</li><li><code>INTERSECT</code> — rows present in both, deduplicated.</li><li><code>EXCEPT</code> / <code>MINUS</code> — rows in the first set not in the second, deduplicated.</li></ul><p>All three of the deduplicating operators require a sort or hash step; <code>UNION ALL</code> does not. Note that <code>EXCEPT</code> behaves like <code>NOT IN</code> with respect to NULLs — it treats NULLs as equal, which is subtly different from <code>=</code> semantics.</p>'
+    },
+    {
+      q:'What is data skew in a distributed join, and how do you fix it?',
+      a:'<p>Skew means one join key value is vastly more common than others (e.g. <code>country = \'US\'</code> in a user table). In a hash join, all rows with that key land on a single partition/worker, which becomes the bottleneck while the rest idle.</p><p><b>Fixes:</b> salt the hot key (append a random bucket number, explode the other side), broadcast the small side instead of shuffling, split the hot key into a separate job and union the results, or use a warehouse feature like skew hints / adaptive query execution.</p>'
+    },
+    {
+      q:'A dashboard number disagrees with the source system. How do you debug it?',
+      a:'<p>A systematic answer beats a clever one:</p><ol><li><b>Check the grain.</b> Is a fan-out join double-counting rows? Test with <code>COUNT(*)</code> vs <code>COUNT(DISTINCT id)</code>.</li><li><b>Check the filters.</b> Timezone boundaries, inclusive/exclusive date ranges, soft-deleted rows, test accounts.</li><li><b>Check NULL handling.</b> <code>SUM</code> vs <code>COUNT</code> over a nullable column, <code>NOT IN</code> with NULLs.</li><li><b>Check the join type.</b> An <code>INNER JOIN</code> silently drops rows the source system counts.</li><li><b>Check refresh timing.</b> Is the warehouse 24h behind?</li><li><b>Reconcile at the row level.</b> Pull a small sample of ids from both sides and diff them.</li></ol>'
+    },
+    {
+      q:'When would you deliberately denormalise for a data science workload?',
+      a:'<p>When (1) the same expensive multi-table join is executed constantly by notebooks and dashboards, (2) the source tables are append-only so duplication is safe, and (3) storage/compression is cheap relative to compute.</p><p>Typical outputs: a wide feature table for model training, a pre-joined "one big table" for BI, or a materialised aggregate for a daily metric. The maintenance cost is a scheduled rebuild and the discipline to keep the definition documented in one place.</p>'
+    },
+    {
+      q:'What are the trade-offs between strict normalisation and analytical query performance?',
+      a:'<p>Normalisation minimises redundancy and guarantees consistency, but every analytical query pays for it in joins — and joins across large tables are the dominant cost in columnar warehouses.</p><p>Hence the standard architecture: <b>normalise at the source (OLTP), denormalise at the consumption layer (star schema / wide tables)</b>. The ETL/ELT layer owns the transformation, and the analytics layer stays fast and simple.</p>'
+    },
+    {
+      q:'How do window functions execute internally, and why can they be expensive?',
+      a:'<p>Logically the engine must (1) partition the rows, (2) sort each partition by the <code>ORDER BY</code> key, (3) walk each partition maintaining the frame state.</p><p>Sorting dominates. If an index already provides the required ordering the sort can be skipped; otherwise it is an O(n log n) operation that may spill to disk. Multiple window functions with <b>different</b> <code>PARTITION BY</code>/<code>ORDER BY</code> clauses force multiple sorts, which is why reusing a single window definition across several functions is a real optimisation.</p>'
+    }
+  ]
+}
+];
+
+/* ============================================================
+   STATE + STORAGE
+   ============================================================ */
+const LS_THEME = 'sqlnb.theme.v1';
+const LS_MASTER = 'sqlnb.mastered.v1';
+
+let mastered = {};
+try { mastered = JSON.parse(localStorage.getItem(LS_MASTER) || '{}') || {}; } catch(e){ mastered = {}; }
+
+const REGISTRY = []; // { id, section }
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function esc(str){
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function saveMastered(){
+  try { localStorage.setItem(LS_MASTER, JSON.stringify(mastered)); } catch(e){}
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function qCard(item, id){
+  const checked = mastered[id] ? 'checked' : '';
+  const haystack = esc((item.q + ' ' + (item.a || '') + ' ' + (item.code || '')).toLowerCase());
+  return `
+  <article class="q" data-id="${id}" data-search="${haystack}">
+    <div class="q-top">
+      <span class="q-id">${id}</span>
+      <h4 class="q-text">${esc(item.q)}</h4>
+    </div>
+    <div class="q-bar">
+      <button class="btn reveal" type="button">Show answer</button>
+      <label class="mastered">
+        <input type="checkbox" data-mid="${id}" ${checked}>
+        Mastered
+      </label>
+    </div>
+    <div class="q-body" hidden>
+      <div class="ans">${item.a || ''}</div>
+      ${item.code ? `<div class="codewrap"><button class="copy" type="button">Copy</button><pre><code>${esc(item.code)}</code></pre></div>` : ''}
+      ${item.tip ? `<p class="tip">💡 ${item.tip}</p>` : ''}
+    </div>
+  </article>`;
+}
+
+function block(sec, kind, title, sub){
+  const list = sec[kind];
+  const prefix = sec.id.charAt(0).toUpperCase() + (kind === 'sql' ? 'S' : 'T');
+  const cards = list.map((item, i) => {
+    const id = prefix + (i + 1);
+    REGISTRY.push({ id, section: sec.id });
+    return qCard(item, id);
+  }).join('');
+
+  return `
+  <div class="q-block" data-kind="${kind}">
+    <h3 class="block-title">${title}</h3>
+    <p class="block-sub">${sub}</p>
+    ${cards}
+  </div>`;
+}
+
+function render(){
+  const content = document.getElementById('content');
+
+  content.innerHTML = DATA.map(sec => `
+    <section class="chapter" id="${sec.id}" data-section="${sec.id}">
+      <header class="chapter-head">
+        <div class="chapter-top">
+          <div class="chapter-icon">${sec.icon}</div>
+          <div>
+            <span class="chapter-tag">${sec.level}</span>
+            <h2>${sec.name}</h2>
+          </div>
+          <div class="chapter-count" id="count-${sec.id}">0 / 0</div>
+        </div>
+        <p class="chapter-blurb">${sec.blurb}</p>
+      </header>
+      ${block(sec, 'sql', '🧮 SQL Query Questions', 'Cover the answer, write the query yourself, then reveal and compare.')}
+      ${block(sec, 'theory', '📘 Theory Questions', 'Answer out loud in 30–60 seconds before revealing.')}
+    </section>
+  `).join('');
+
+  document.getElementById('totalChip').textContent = REGISTRY.length + ' questions';
+  updateProgress();
+}
+
+/* ============================================================
+   PROGRESS
+   ============================================================ */
+function updateProgress(){
+  const total = REGISTRY.length;
+  let done = 0;
+
+  DATA.forEach(sec => {
+    const ids = REGISTRY.filter(r => r.section === sec.id).map(r => r.id);
+    const d = ids.filter(id => mastered[id]).length;
+    done += d;
+    const el = document.getElementById('count-' + sec.id);
+    if (el) el.textContent = `${d} / ${ids.length} mastered`;
+    const nav = document.getElementById('nav-' + sec.id);
+    if (nav) nav.textContent = `${d}/${ids.length}`;
+  });
+
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = done + ' of ' + total + ' mastered';
+  document.getElementById('progressPct').textContent = pct + '%';
+}
+
+/* ============================================================
+   SEARCH
+   ============================================================ */
+function applySearch(term){
+  const t = term.trim().toLowerCase();
+
+  document.querySelectorAll('.q').forEach(card => {
+    const hit = !t || card.dataset.search.includes(t);
+    card.hidden = !hit;
+  });
+
+  document.querySelectorAll('.q-block').forEach(b => {
+    const any = Array.from(b.querySelectorAll('.q')).some(c => !c.hidden);
+    b.hidden = !any;
+  });
+
+  document.querySelectorAll('.chapter').forEach(ch => {
+    const any = Array.from(ch.querySelectorAll('.q')).some(c => !c.hidden);
+    ch.hidden = !any;
+  });
+}
+
+/* ============================================================
+   THEMES
+   ============================================================ */
+function applyTheme(id){
+  document.documentElement.setAttribute('data-theme', id);
+  try { localStorage.setItem(LS_THEME, id); } catch(e){}
+  document.querySelectorAll('.theme-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.theme === id);
+  });
+}
+
+function initThemes(){
+  const wrap = document.getElementById('themes');
+  wrap.innerHTML = THEMES.map(t => `
+    <button class="theme-btn" type="button" data-theme="${t.id}">
+      <span class="sw" style="background:${t.grad}"></span>
+      <span>${t.name}</span>
+    </button>
+  `).join('');
+
+  wrap.addEventListener('click', e => {
+    const btn = e.target.closest('.theme-btn');
+    if (btn) applyTheme(btn.dataset.theme);
+  });
+
+  let saved = 'light';
+  try { saved = localStorage.getItem(LS_THEME) || 'light'; } catch(e){}
+  if (!THEMES.some(t => t.id === saved)) saved = 'light';
+  applyTheme(saved);
+}
+
+/* ============================================================
+   EVENT WIRING
+   ============================================================ */
+document.addEventListener('click', e => {
+  /* reveal / hide answer */
+  const reveal = e.target.closest('.reveal');
+  if (reveal){
+    const card = reveal.closest('.q');
+    const body = card.querySelector('.q-body');
+    const open = body.hidden;
+    body.hidden = !open;
+    reveal.textContent = open ? 'Hide answer' : 'Show answer';
+    reveal.classList.toggle('active', open);
+    return;
+  }
+
+  /* copy code */
+  const copy = e.target.closest('.copy');
+  if (copy){
+    const codeEl = copy.closest('.codewrap').querySelector('code');
+    const text = codeEl.textContent;
+    const done = () => {
+      const old = copy.textContent;
+      copy.textContent = 'Copied!';
+      setTimeout(() => { copy.textContent = old; }, 1200);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done).catch(done);
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch(err){}
+      document.body.removeChild(ta);
+      done();
+    }
+  }
+});
+
+document.addEventListener('change', e => {
+  const cb = e.target.closest('input[data-mid]');
+  if (!cb) return;
+  const id = cb.dataset.mid;
+  if (cb.checked) mastered[id] = true;
+  else delete mastered[id];
+  saveMastered();
+  updateProgress();
+});
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+initThemes();
+render();
+
+document.getElementById('search').addEventListener('input', e => {
+  applySearch(e.target.value);
+});
+
+document.getElementById('expandAll').addEventListener('click', () => {
+  document.querySelectorAll('.q').forEach(card => {
+    if (card.hidden) return;
+    const body = card.querySelector('.q-body');
+    const btn = card.querySelector('.reveal');
+    body.hidden = false;
+    btn.textContent = 'Hide answer';
+    btn.classList.add('active');
+  });
+});
+
+document.getElementById('collapseAll').addEventListener('click', () => {
+  document.querySelectorAll('.q').forEach(card => {
+    const body = card.querySelector('.q-body');
+    const btn = card.querySelector('.reveal');
+    body.hidden = true;
+    btn.textContent = 'Show answer';
+    btn.classList.remove('active');
+  });
+});
+
+document.getElementById('resetProgress').addEventListener('click', () => {
+  if (!confirm('Reset all mastered checkboxes?')) return;
+  mastered = {};
+  saveMastered();
+  document.querySelectorAll('input[data-mid]').forEach(cb => { cb.checked = false; });
+  updateProgress();
+});
+</script>
+
+</body>
+</html>
