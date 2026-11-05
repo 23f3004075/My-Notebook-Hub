@@ -6,4 +6,4 @@ It is collection of several notebooks regarding concepts like DSA, Python Functi
 * HTML + CSS
 * JS
 
-[Check the Notebook here:](index.html)
+[Check the Notebook here:](https://23f3004075.github.io/My-Notebook-Hub/)
