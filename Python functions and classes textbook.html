@@ -1,0 +1,4611 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python Functions &amp; Classes — A Practical Textbook</title>
+<style>
+/* ============================================================
+   THEME TOKENS
+   ============================================================ */
+:root{
+  --sidebar-w: 312px;
+  --topbar-h: 58px;
+  --radius: 10px;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --maxw: 900px;
+}
+
+html[data-theme="light"]{
+  color-scheme: light;
+  --bg:#ffffff; --panel:#f8fafc; --panel-2:#eef2f7; --text:#0f172a; --muted:#5a6a85;
+  --border:#e2e8f0; --accent:#2563eb; --accent-soft:#dbeafe; --accent-text:#1d4ed8;
+  --code-bg:#f6f8fa; --code-border:#e2e8f0; --inline-bg:#eef2f7; --inline-text:#b02a5b;
+  --tok-com:#6a737d; --tok-str:#0a7d3f; --tok-kw:#a626a4; --tok-num:#b76b01; --tok-dec:#b8860b;
+  --shadow: 0 1px 2px rgba(15,23,42,.06), 0 10px 30px rgba(15,23,42,.06);
+  --ok:#0a7d3f; --warn:#b45309; --bad:#b91c1c;
+}
+html[data-theme="dark"]{
+  color-scheme: dark;
+  --bg:#0d1117; --panel:#111823; --panel-2:#161f2c; --text:#e6edf3; --muted:#8b949e;
+  --border:#232c38; --accent:#58a6ff; --accent-soft:#1b2b45; --accent-text:#79c0ff;
+  --code-bg:#0b1017; --code-border:#1f2733; --inline-bg:#1a2230; --inline-text:#ffa1c0;
+  --tok-com:#7d8590; --tok-str:#7ee787; --tok-kw:#ff7b72; --tok-num:#79c0ff; --tok-dec:#d2a8ff;
+  --shadow: 0 1px 2px rgba(0,0,0,.5);
+  --ok:#3fb950; --warn:#d29922; --bad:#f85149;
+}
+html[data-theme="solarized-light"]{
+  color-scheme: light;
+  --bg:#fdf6e3; --panel:#f7f0dc; --panel-2:#eee8d5; --text:#073642; --muted:#657b83;
+  --border:#e3d9bf; --accent:#268bd2; --accent-soft:#d9eaf5; --accent-text:#1a6fa8;
+  --code-bg:#eee8d5; --code-border:#ded6bd; --inline-bg:#eee8d5; --inline-text:#d33682;
+  --tok-com:#93a1a1; --tok-str:#2aa198; --tok-kw:#859900; --tok-num:#d33682; --tok-dec:#b58900;
+  --shadow: 0 1px 3px rgba(101,123,131,.14);
+  --ok:#859900; --warn:#b58900; --bad:#dc322f;
+}
+html[data-theme="solarized-dark"]{
+  color-scheme: dark;
+  --bg:#002b36; --panel:#073642; --panel-2:#0a4453; --text:#eee8d5; --muted:#93a1a1;
+  --border:#0e4d5c; --accent:#268bd2; --accent-soft:#0b4a63; --accent-text:#6fc6f0;
+  --code-bg:#073642; --code-border:#0e4d5c; --inline-bg:#0a4453; --inline-text:#d33682;
+  --tok-com:#586e75; --tok-str:#2aa198; --tok-kw:#859900; --tok-num:#d33682; --tok-dec:#b58900;
+  --shadow: 0 1px 2px rgba(0,0,0,.4);
+  --ok:#859900; --warn:#b58900; --bad:#dc322f;
+}
+html[data-theme="nord"]{
+  color-scheme: dark;
+  --bg:#2e3440; --panel:#3b4252; --panel-2:#434c5e; --text:#eceff4; --muted:#a7b1c2;
+  --border:#434c5e; --accent:#88c0d0; --accent-soft:#3f5666; --accent-text:#8fbcbb;
+  --code-bg:#272c36; --code-border:#3b4252; --inline-bg:#3b4252; --inline-text:#d08770;
+  --tok-com:#616e88; --tok-str:#a3be8c; --tok-kw:#81a1c1; --tok-num:#b48ead; --tok-dec:#ebcb8b;
+  --shadow: 0 1px 3px rgba(0,0,0,.3);
+  --ok:#a3be8c; --warn:#ebcb8b; --bad:#bf616a;
+}
+html[data-theme="dracula"]{
+  color-scheme: dark;
+  --bg:#282a36; --panel:#21222c; --panel-2:#343746; --text:#f8f8f2; --muted:#a8a8b3;
+  --border:#3d4050; --accent:#bd93f9; --accent-soft:#3b2f56; --accent-text:#caa9fa;
+  --code-bg:#21222c; --code-border:#3d4050; --inline-bg:#343746; --inline-text:#ff79c6;
+  --tok-com:#6272a4; --tok-str:#f1fa8c; --tok-kw:#ff79c6; --tok-num:#bd93f9; --tok-dec:#50fa7b;
+  --shadow: 0 1px 3px rgba(0,0,0,.35);
+  --ok:#50fa7b; --warn:#f1fa8c; --bad:#ff5555;
+}
+html[data-theme="contrast"]{
+  color-scheme: dark;
+  --bg:#000000; --panel:#0a0a0a; --panel-2:#151515; --text:#ffffff; --muted:#c9c9c9;
+  --border:#4a4a4a; --accent:#ffd400; --accent-soft:#3a3000; --accent-text:#ffe45c;
+  --code-bg:#0a0a0a; --code-border:#4a4a4a; --inline-bg:#1a1a1a; --inline-text:#00e5ff;
+  --tok-com:#a0a0a0; --tok-str:#7CFC00; --tok-kw:#00e5ff; --tok-num:#ff9100; --tok-dec:#ffd400;
+  --shadow: none;
+  --ok:#7CFC00; --warn:#ffd400; --bad:#ff5252;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:var(--sans); font-size:16px; line-height:1.68;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent); text-decoration:none}
+a:hover{text-decoration:underline}
+::selection{background:var(--accent); color:#fff}
+
+/* Scrollbars */
+::-webkit-scrollbar{width:11px;height:11px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border); border-radius:6px; border:3px solid var(--bg)}
+::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+
+/* ============================================================
+   TOP BAR
+   ============================================================ */
+.topbar{
+  position:fixed; top:0; left:0; right:0; height:var(--topbar-h); z-index:50;
+  display:flex; align-items:center; gap:12px; padding:0 14px;
+  background:var(--panel); border-bottom:1px solid var(--border);
+}
+.brand{display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:-.01em; white-space:nowrap}
+.brand .logo{
+  width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--accent),var(--accent-text));
+  color:#fff; font-weight:800; font-size:15px; font-family:var(--mono);
+}
+.brand small{display:block; font-weight:400; font-size:11.5px; color:var(--muted); line-height:1.1}
+.spacer{flex:1}
+.icon-btn{
+  background:var(--panel-2); color:var(--text); border:1px solid var(--border);
+  border-radius:8px; padding:7px 11px; cursor:pointer; font-size:14px; line-height:1;
+  transition:.15s;
+}
+.icon-btn:hover{border-color:var(--accent); color:var(--accent)}
+#menuBtn{display:none}
+
+.theme-select{
+  background:var(--panel-2); color:var(--text); border:1px solid var(--border);
+  border-radius:8px; padding:7px 10px; font-family:var(--sans); font-size:13.5px;
+  cursor:pointer; outline:none;
+}
+.theme-select:focus{border-color:var(--accent)}
+
+/* progress bar */
+#progress{
+  position:fixed; top:var(--topbar-h); left:0; height:3px; width:0%;
+  background:linear-gradient(90deg,var(--accent),var(--accent-text)); z-index:51;
+  transition:width .1s linear;
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.sidebar{
+  position:fixed; top:var(--topbar-h); bottom:0; left:0; width:var(--sidebar-w);
+  background:var(--panel); border-right:1px solid var(--border);
+  overflow-y:auto; padding:14px 10px 60px; z-index:40;
+}
+.search-wrap{position:sticky; top:0; background:var(--panel); padding-bottom:10px; z-index:2}
+#navSearch{
+  width:100%; padding:9px 12px; border-radius:9px; border:1px solid var(--border);
+  background:var(--bg); color:var(--text); font-size:14px; outline:none; font-family:var(--sans);
+}
+#navSearch:focus{border-color:var(--accent)}
+.nav-part{
+  font-size:11px; text-transform:uppercase; letter-spacing:.11em; font-weight:700;
+  color:var(--muted); margin:18px 8px 7px;
+}
+.nav-link{
+  display:block; padding:6.5px 11px; margin:1px 0; border-radius:7px;
+  color:var(--text); font-size:14.1px; border-left:2px solid transparent;
+  transition:.12s; cursor:pointer;
+}
+.nav-link:hover{background:var(--panel-2); text-decoration:none}
+.nav-link.active{
+  background:var(--accent-soft); color:var(--accent-text);
+  border-left-color:var(--accent); font-weight:600;
+}
+.hidden{display:none !important}
+
+/* ============================================================
+   MAIN
+   ============================================================ */
+main{
+  margin-left:var(--sidebar-w); padding:calc(var(--topbar-h) + 34px) 40px 140px;
+  max-width:calc(var(--maxw) + 80px);
+}
+section{scroll-margin-top:calc(var(--topbar-h) + 20px); margin-bottom:64px}
+h1{font-size:2.1rem; line-height:1.22; letter-spacing:-.02em; margin:0 0 14px}
+h2{
+  font-size:1.62rem; line-height:1.25; letter-spacing:-.015em;
+  margin:0 0 16px; padding-bottom:10px; border-bottom:1px solid var(--border);
+}
+h3{font-size:1.16rem; margin:30px 0 10px; letter-spacing:-.01em}
+h4{font-size:1rem; margin:22px 0 8px; color:var(--accent-text)}
+p{margin:0 0 14px}
+ul,ol{margin:0 0 16px; padding-left:24px}
+li{margin:5px 0}
+.lede{font-size:1.09rem; color:var(--muted)}
+hr{border:0; border-top:1px solid var(--border); margin:32px 0}
+
+/* code */
+code{
+  font-family:var(--mono); font-size:.875em;
+  background:var(--inline-bg); color:var(--inline-text);
+  padding:2px 6px; border-radius:5px;
+}
+pre{
+  position:relative; background:var(--code-bg); border:1px solid var(--code-border);
+  border-radius:var(--radius); padding:16px 18px; overflow-x:auto; margin:0 0 20px;
+  font-size:13.4px; line-height:1.62;
+}
+pre code{background:none; color:var(--text); padding:0; font-size:inherit; border-radius:0}
+.tok-com{color:var(--tok-com); font-style:italic}
+.tok-str{color:var(--tok-str)}
+.tok-kw{color:var(--tok-kw)}
+.tok-num{color:var(--tok-num)}
+.tok-dec{color:var(--tok-dec)}
+
+.copy-btn{
+  position:absolute; top:8px; right:8px; font-size:11px; padding:4px 9px;
+  background:var(--panel-2); color:var(--muted); border:1px solid var(--border);
+  border-radius:6px; cursor:pointer; opacity:0; transition:.15s; font-family:var(--sans);
+}
+pre:hover .copy-btn{opacity:1}
+.copy-btn:hover{color:var(--accent); border-color:var(--accent)}
+
+/* callouts */
+.box{
+  border:1px solid var(--border); border-left:4px solid var(--accent);
+  background:var(--panel); border-radius:8px; padding:14px 18px; margin:0 0 20px;
+}
+.box .box-title{font-weight:700; font-size:.86rem; text-transform:uppercase; letter-spacing:.07em;
+  color:var(--accent-text); margin-bottom:7px}
+.box p:last-child, .box ul:last-child, .box ol:last-child{margin-bottom:0}
+.box.tip{border-left-color:var(--ok)} .box.tip .box-title{color:var(--ok)}
+.box.warn{border-left-color:var(--warn)} .box.warn .box-title{color:var(--warn)}
+.box.bad{border-left-color:var(--bad)} .box.bad .box-title{color:var(--bad)}
+.box.connect{border-left-color:var(--accent-text); background:var(--accent-soft)}
+
+/* tables */
+table{
+  width:100%; border-collapse:collapse; margin:0 0 20px; font-size:14.2px;
+  display:block; overflow-x:auto;
+}
+th,td{border:1px solid var(--border); padding:8px 12px; text-align:left; vertical-align:top}
+th{background:var(--panel-2); font-weight:700; font-size:13px; text-transform:uppercase;
+  letter-spacing:.04em; color:var(--muted)}
+tr:nth-child(even) td{background:var(--panel)}
+td code{font-size:.85em}
+
+/* ascii diagram */
+pre.diagram{font-size:12.4px; line-height:1.5; color:var(--text); background:var(--panel)}
+
+/* misc */
+.pill{
+  display:inline-block; font-size:11.5px; font-weight:700; letter-spacing:.05em;
+  padding:2px 9px; border-radius:20px; background:var(--accent-soft); color:var(--accent-text);
+  text-transform:uppercase; vertical-align:middle; margin-left:8px;
+}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+@media(max-width:760px){ .grid2{grid-template-columns:1fr} }
+.toc-mini{columns:2; column-gap:28px}
+@media(max-width:760px){ .toc-mini{columns:1} }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 980px){
+  #menuBtn{display:inline-block}
+  .sidebar{transform:translateX(-102%); transition:transform .22s ease; box-shadow:var(--shadow); width:290px}
+  body.sidebar-open .sidebar{transform:translateX(0)}
+  main{margin-left:0; padding:calc(var(--topbar-h) + 24px) 20px 120px}
+  h1{font-size:1.72rem} h2{font-size:1.36rem}
+  .brand small{display:none}
+}
+@media (max-width: 520px){
+  .theme-select{max-width:120px}
+  body{font-size:15.3px}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================ TOP BAR ============================ -->
+<header class="topbar">
+  <button class="icon-btn" id="menuBtn" aria-label="Toggle navigation">☰</button>
+  <div class="brand">
+    <div class="logo">Py</div>
+    <div>Functions &amp; Classes<small>A practical, connected textbook</small></div>
+  </div>
+  <div class="spacer"></div>
+  <select class="theme-select" id="themeSelect" aria-label="Theme">
+    <option value="light">☀️ Light</option>
+    <option value="dark">🌙 Dark</option>
+    <option value="solarized-light">🌤 Solarized Light</option>
+    <option value="solarized-dark">🌑 Solarized Dark</option>
+    <option value="nord">❄️ Nord</option>
+    <option value="dracula">🧛 Dracula</option>
+    <option value="contrast">🔳 High Contrast</option>
+  </select>
+  <button class="icon-btn" id="topBtn" title="Back to top">↑</button>
+</header>
+<div id="progress"></div>
+
+<!-- ============================ SIDEBAR ============================ -->
+<aside class="sidebar" id="sidebar">
+  <div class="search-wrap">
+    <input id="navSearch" type="search" placeholder="Filter chapters…" autocomplete="off">
+  </div>
+  <nav id="nav"></nav>
+</aside>
+
+<!-- ============================ CONTENT ============================ -->
+<main id="content">
+
+<!-- ============================================================
+     PART 0 — ORIENTATION
+     ============================================================ -->
+<section id="intro" data-part="Orientation" data-title="How to Use This Book">
+  <h1>Python Functions &amp; Classes</h1>
+  <p class="lede">A complete, practical textbook on the two fundamental units of Python
+  abstraction — <strong>functions</strong> and <strong>classes</strong> — and, crucially,
+  on how they plug into real applications: web APIs, CLIs, GUIs, databases, async
+  services, plugin systems, and test suites.</p>
+
+  <div class="box">
+    <div class="box-title">What you will be able to do</div>
+    <ul>
+      <li>Design functions that are small, testable, and composable — from simple helpers to decorators and generators.</li>
+      <li>Design classes that model your domain without over-engineering: dataclasses, protocols, mixins, composition.</li>
+      <li>Understand the machinery underneath: scopes, closures, descriptors, MRO, metaclasses, dunder methods.</li>
+      <li>Wire these units into complete applications and understand the dependency flow between layers.</li>
+    </ul>
+  </div>
+
+  <h3>How the book is organised</h3>
+  <table>
+    <thead><tr><th>Part</th><th>Theme</th><th>Chapters</th></tr></thead>
+    <tbody>
+      <tr><td><strong>I</strong></td><td>Foundations of functions</td><td>Basics, parameters, returns, scope, first-class functions, lambdas</td></tr>
+      <tr><td><strong>II</strong></td><td>Advanced functions</td><td>Decorators, generators, functools, recursion, typing, docs, errors</td></tr>
+      <tr><td><strong>III</strong></td><td>Classes &amp; objects</td><td>Basics, attributes, methods, inheritance, dunders, dataclasses, ABCs, composition, slots, descriptors, metaclasses, context managers</td></tr>
+      <tr><td><strong>IV</strong></td><td>Connecting to applications</td><td>Architecture, modules, web APIs, CLI, GUI, data, async, plugins, serialization, testing, logging, patterns, best practices</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Conventions used</h3>
+  <ul>
+    <li><span class="pill">Box</span> A key idea worth remembering.</li>
+    <li><span class="pill">Connect</span> How the concept links to a real application layer.</li>
+    <li><span class="pill">Warn</span> A classic mistake or footgun.</li>
+    <li>Code is Python 3.11+ unless stated. <code>Self</code> type hints and <code>match</code> statements assume 3.11/3.10+.</li>
+  </ul>
+
+  <h3>Prerequisites</h3>
+  <p>You should be comfortable with variables, strings, lists, dicts, <code>for</code> loops,
+  and <code>if</code> statements. Everything else is built from the ground up.</p>
+
+  <div class="box tip">
+    <div class="box-title">The one-sentence summary</div>
+    <p>A <strong>function</strong> is a reusable <em>verb</em> — it takes inputs and produces an output.
+    A <strong>class</strong> is a reusable <em>noun</em> — it bundles data with the verbs that operate on it.
+    A <strong>program</strong> is nouns and verbs wired together by modules, and the whole point of this book
+    is to show you that wiring.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     PART I — FOUNDATIONS
+     ============================================================ -->
+<section id="func-basics" data-part="Part I — Function Foundations" data-title="1. Functions: The Basics">
+  <h2>1. Functions: The Basics</h2>
+
+  <p>A function is a named block of code that performs a task. You <em>define</em> it once with
+  <code>def</code>, and <em>call</em> it as many times as you like.</p>
+
+<pre><code class="python">def greet(name, punctuation="!"):
+    """Return a friendly greeting."""
+    message = f"Hello, {name}{punctuation}"
+    return message
+
+result = greet("Ada")        # call site
+print(result)                # Hello, Ada!
+print(greet("Grace", "?"))   # Hello, Grace?
+</code></pre>
+
+  <h3>Anatomy of a definition</h3>
+<pre class="diagram">def  greet ( name, punctuation="!" )  ->  str :
+ │     │      │         │                │     │
+ │     │      │         │                │     └─ colon ends the header
+ │     │      │         │                └─────── return annotation (optional)
+ │     │      │         └──────────────────────── parameter with a default value
+ │     │      └────────────────────────────────── parameter (required)
+ │     └───────────────────────────────────────── function name (a variable!)
+ └─────────────────────────────────────────────── keyword that starts a def
+
+    """Return a friendly greeting."""   ← docstring (first statement)
+    message = f"Hello, {name}{punctuation}"  ← body, indented
+    return message                      ← return statement (optional)</code></pre>
+
+  <h3>Vocabulary you must not mix up</h3>
+  <table>
+    <thead><tr><th>Term</th><th>Meaning</th><th>In the example</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Parameter</strong></td><td>Name in the definition</td><td><code>name</code>, <code>punctuation</code></td></tr>
+      <tr><td><strong>Argument</strong></td><td>Value passed at the call site</td><td><code>"Ada"</code>, <code>"?"</code></td></tr>
+      <tr><td><strong>Signature</strong></td><td>Name + parameters + annotations</td><td><code>greet(name, punctuation="!")</code></td></tr>
+      <tr><td><strong>Body</strong></td><td>The indented block</td><td>the two lines after the colon</td></tr>
+      <tr><td><strong>Return value</strong></td><td>What the caller receives</td><td>the string</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Why functions exist</h3>
+  <ol>
+    <li><strong>Reuse</strong> — write once, call many times.</li>
+    <li><strong>Naming</strong> — <code>calculate_tax()</code> documents intent better than 12 lines of arithmetic.</li>
+    <li><strong>Testing</strong> — a function with inputs and outputs is trivially unit-testable.</li>
+    <li><strong>Composition</strong> — small functions combine into big behaviour.</li>
+    <li><strong>Isolation</strong> — local variables cannot leak out and corrupt the rest of the program.</li>
+    <li><strong>Deferred execution</strong> — the body does not run until you call it, which enables callbacks, decorators, and lazy pipelines.</li>
+  </ol>
+
+  <div class="box">
+    <div class="box-title">Functions are objects</div>
+    <p><code>def greet(...)</code> is an assignment statement. It creates a function object and binds it
+    to the name <code>greet</code> in the current namespace. That single fact is what makes decorators,
+    callbacks, and dispatch tables possible — see <a href="#firstclass">Chapter 6</a>.</p>
+  </div>
+
+  <h3>Returning early</h3>
+  <p>Guard clauses keep the happy path un-indented and readable.</p>
+
+<pre><code class="python">def parse_age(raw):
+    if raw is None:
+        return None
+    text = str(raw).strip()
+    if not text.isdigit():
+        return None
+    age = int(text)
+    if age &lt; 0 or age &gt; 150:
+        return None
+    return age
+</code></pre>
+</section>
+
+<section id="params" data-part="Part I — Function Foundations" data-title="2. Parameters in Depth">
+  <h2>2. Parameters in Depth</h2>
+
+  <p>Python's parameter system is one of the most flexible of any mainstream language.
+  The full grammar, in order, is:</p>
+
+<pre><code class="python">def full(positional_only, /, standard, *args, keyword_only, **kwargs):
+    ...
+</code></pre>
+
+  <table>
+    <thead><tr><th>Kind</th><th>Syntax</th><th>Call style</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Positional-only</td><td>before <code>/</code></td><td><code>f(1)</code></td><td>Cannot be passed by name; good for API stability</td></tr>
+      <tr><td>Positional-or-keyword</td><td>plain name</td><td><code>f(1)</code> or <code>f(x=1)</code></td><td>The default kind</td></tr>
+      <tr><td>Variadic positional</td><td><code>*args</code></td><td><code>f(1, 2, 3)</code></td><td>Collected into a tuple</td></tr>
+      <tr><td>Keyword-only</td><td>after <code>*</code></td><td><code>f(k=1)</code></td><td>Forces clarity at the call site</td></tr>
+      <tr><td>Variadic keyword</td><td><code>**kwargs</code></td><td><code>f(a=1, b=2)</code></td><td>Collected into a dict</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Default values</h3>
+
+<pre><code class="python">def connect(host, port=5432, timeout=30, ssl=True):
+    ...
+
+connect("db.local")                       # port=5432, timeout=30, ssl=True
+connect("db.local", 6432)                 # port=6432
+connect("db.local", timeout=5)            # keyword form
+connect("db.local", ssl=False, port=6432) # order does not matter for keywords
+</code></pre>
+
+  <div class="box bad">
+    <div class="box-title">The mutable-default trap</div>
+    <p>Default values are evaluated <strong>once</strong>, when the <code>def</code> statement runs — not on every call.</p>
+<pre><code class="python">def bad(item, bucket=[]):     # ONE list shared by every call
+    bucket.append(item)
+    return bucket
+
+bad(1)   # [1]
+bad(2)   # [1, 2]   ← surprise!
+</code></pre>
+    <p>The fix is the <em>sentinel</em> pattern:</p>
+<pre><code class="python">def good(item, bucket=None):
+    if bucket is None:
+        bucket = []
+    bucket.append(item)
+    return bucket
+</code></pre>
+  </div>
+
+  <h3>Collecting extra arguments</h3>
+
+<pre><code class="python">def log_event(event, *details, level="INFO", **metadata):
+    print(f"[{level}] {event}")
+    for d in details:
+        print("  -", d)
+    for key, value in metadata.items():
+        print(f"  {key} = {value}")
+
+log_event("login", "user=ada", "ip=10.0.0.1", level="WARN", request_id="abc123")
+</code></pre>
+
+  <p>Inside the function <code>details</code> is a <code>tuple</code> and <code>metadata</code> is a
+  <code>dict</code>. A very common real-world pattern is a wrapper that forwards everything it receives:</p>
+
+<pre><code class="python">def forward(*args, **kwargs):
+    return target(*args, **kwargs)   # unpacking at the call site
+</code></pre>
+
+  <div class="box">
+    <div class="box-title">The two <code>*</code> meanings</div>
+    <ul>
+      <li><strong>In a definition</strong>: <code>*args</code> <em>packs</em> extra positional arguments into a tuple; <code>**kwargs</code> <em>packs</em> extra keyword arguments into a dict.</li>
+      <li><strong>At a call site</strong>: <code>f(*seq)</code> <em>unpacks</em> a sequence into positional arguments; <code>f(**mapping)</code> <em>unpacks</em> a dict into keyword arguments.</li>
+    </ul>
+  </div>
+
+  <h3>Keyword-only arguments</h3>
+  <p>Put a bare <code>*</code> in the signature to force everything after it to be passed by name.
+  This is excellent for functions with several boolean flags.</p>
+
+<pre><code class="python">def render(template, *, cache=True, minify=False, escape=True):
+    ...
+
+render("page.html", minify=True)   # readable
+# render("page.html", True, False, True)   # TypeError — good!
+</code></pre>
+
+  <h3>Positional-only arguments</h3>
+  <p>The <code>/</code> marker makes the names private to the function, so you can rename them later
+  without breaking callers.</p>
+
+<pre><code class="python">def distance(from_, to, /, *, unit="km"):
+    ...
+
+distance(1, 2)             # ok
+distance(from_=1, to=2)    # TypeError
+</code></pre>
+
+  <div class="box connect">
+    <div class="box-title">Connect — why this matters in libraries</div>
+    <p>Every decorator you will ever write (<a href="#decorators">Chapter 8</a>) uses
+    <code>*args, **kwargs</code> to stay signature-agnostic. Every ORM, web framework,
+    and CLI library passes configuration as keyword arguments so that user code stays
+    readable. Mastering parameter kinds is what lets you design APIs other people
+    enjoy using.</p>
+  </div>
+</section>
+
+<section id="returns" data-part="Part I — Function Foundations" data-title="3. Return Values">
+  <h2>3. Return Values &amp; <code>None</code></h2>
+
+  <p><code>return</code> does two things: it ends the function immediately, and it hands a value
+  back to the caller. A function without an explicit <code>return</code> returns <code>None</code>.</p>
+
+<pre><code class="python">def log(msg):
+    print(msg)          # no return → returns None
+
+value = log("hi")       # prints "hi"
+print(value)            # None
+</code></pre>
+
+  <h3>Multiple return values are really a tuple</h3>
+
+<pre><code class="python">def min_max(numbers):
+    return min(numbers), max(numbers)
+
+lo, hi = min_max([3, 1, 4, 1, 5])
+print(lo, hi)                    # 1 5
+
+pair = min_max([3, 1, 4, 1, 5])
+print(pair)                      # (1, 5)
+print(type(pair))                # &lt;class 'tuple'&gt;
+</code></pre>
+
+  <h3>Returning <code>None</code> deliberately</h3>
+  <p><code>None</code> is the standard "no value" sentinel. Use it consistently, and always
+  document whether a function can return <code>None</code> — with type hints:</p>
+
+<pre><code class="python">def find_user(user_id: int) -&gt; "User | None":
+    ...
+</code></pre>
+
+  <div class="box warn">
+    <div class="box-title">Do not signal errors with <code>None</code></div>
+    <p>Returning <code>None</code> for "not found" is fine. Returning <code>None</code> for
+    "the database exploded" is not — the caller cannot distinguish the two. Raise an
+    exception instead (<a href="#errors">Chapter 14</a>).</p>
+  </div>
+
+  <h3>Early return vs. nested conditionals</h3>
+
+<pre><code class="python"># Harder to read
+def process(order):
+    if order is not None:
+        if order.is_valid():
+            if order.total &gt; 0:
+                return charge(order)
+
+# Easier to read — guard clauses
+def process(order):
+    if order is None:
+        raise ValueError("order required")
+    if not order.is_valid():
+        raise ValueError("invalid order")
+    if order.total &lt;= 0:
+        raise ValueError("empty order")
+    return charge(order)
+</code></pre>
+
+  <h3>Functions that return functions</h3>
+  <p>Because functions are objects, a function can return another function. This is the foundation
+  of factories, closures, and decorators.</p>
+
+<pre><code class="python">def multiplier(factor):
+    def multiply(x):
+        return x * factor
+    return multiply
+
+double = multiplier(2)
+triple = multiplier(3)
+print(double(10), triple(10))   # 20 30
+</code></pre>
+</section>
+
+<section id="scope" data-part="Part I — Function Foundations" data-title="4. Scope, LEGB, Closures">
+  <h2>4. Scope, LEGB &amp; Closures</h2>
+
+  <p>When Python sees a name, it searches four namespaces in order — the <strong>LEGB</strong> rule:</p>
+
+<pre class="diagram">L — Local       names assigned inside the current function
+E — Enclosing   names in any enclosing function (for nested functions)
+G — Global      names at the top level of the module
+B — Built-in    names in the builtins module (len, print, range, …)</code></pre>
+
+<pre><code class="python">x = "global"
+
+def outer():
+    x = "enclosing"
+    def inner():
+        x = "local"
+        print(x)      # local
+    inner()
+    print(x)          # enclosing
+
+outer()
+print(x)              # global
+</code></pre>
+
+  <h3>Assignment makes a name local</h3>
+  <p>If you <em>assign</em> to a name anywhere in a function, Python treats it as local for the
+  whole function — even before the assignment line.</p>
+
+<pre><code class="python">counter = 0
+
+def increment():
+    counter += 1      # UnboundLocalError!
+</code></pre>
+
+  <h3><code>global</code> and <code>nonlocal</code></h3>
+
+<pre><code class="python">counter = 0
+
+def increment():
+    global counter
+    counter += 1
+
+def make_counter():
+    count = 0
+    def step():
+        nonlocal count      # rebind the enclosing variable
+        count += 1
+        return count
+    return step
+
+c = make_counter()
+print(c(), c(), c())        # 1 2 3
+</code></pre>
+
+  <div class="box tip">
+    <div class="box-title">Prefer closures over <code>global</code></div>
+    <p>Module-level mutable state makes programs hard to test and impossible to run twice in
+    parallel. A closure (like <code>make_counter</code> above) keeps the state private and
+    creates a fresh copy per call.</p>
+  </div>
+
+  <h3>Closures, precisely</h3>
+  <p>A closure is a function that remembers values from the scope in which it was created,
+  even after that scope has finished executing. The remembered variables live in
+  <code>fn.__closure__</code>.</p>
+
+<pre><code class="python">def make_greeter(greeting):
+    def greet(name):
+        return f"{greeting}, {name}!"
+    return greet
+
+hello = make_greeter("Hello")
+howdy = make_greeter("Howdy")
+
+print(hello("Ada"))    # Hello, Ada!
+print(howdy("Ada"))    # Howdy, Ada!
+
+print(hello.__closure__[0].cell_contents)   # Hello
+</code></pre>
+
+  <h3>The late-binding loop gotcha</h3>
+
+<pre><code class="python">funcs = []
+for i in range(3):
+    funcs.append(lambda: i)
+
+print([f() for f in funcs])    # [2, 2, 2]  ← all share the same i
+</code></pre>
+
+  <p>Closures capture the <em>variable</em>, not its value at definition time. Fix it with a default
+  argument, which is evaluated immediately:</p>
+
+<pre><code class="python">funcs = [lambda i=i: i for i in range(3)]
+print([f() for f in funcs])    # [0, 1, 2]
+</code></pre>
+
+  <div class="box connect">
+    <div class="box-title">Connect — where closures show up in real code</div>
+    <ul>
+      <li><strong>Decorators</strong> wrap a function in a closure that remembers it.</li>
+      <li><strong>Web frameworks</strong> use closures for dependency injection and request handlers.</li>
+      <li><strong>GUI toolkits</strong> bind callbacks as closures over widget state.</li>
+      <li><strong>Configuration factories</strong> produce pre-configured functions
+      (<code>make_logger("api")</code>, <code>connect_to("prod")</code>).</li>
+    </ul>
+  </div>
+
+  <h3>Inspection helpers</h3>
+<pre><code class="python">print(globals().keys())        # module namespace
+print(locals())                # current local namespace (inside a function)
+print(dir(__builtins__))       # built-in names
+</code></pre>
+</section>
+
+<section id="firstclass" data-part="Part I — Function Foundations" data-title="5. First-Class Functions">
+  <h2>5. First-Class &amp; Higher-Order Functions</h2>
+
+  <p>In Python, functions are ordinary objects. You can assign them, store them in containers,
+  pass them as arguments, return them, and attach attributes to them.</p>
+
+<pre><code class="python">def shout(text):
+    return text.upper()
+
+def whisper(text):
+    return text.lower()
+
+# 1. Assign to a variable
+speak = shout
+print(speak("hi"))          # HI
+
+# 2. Store in a data structure
+voices = {"loud": shout, "quiet": whisper}
+print(voices["quiet"]("HI"))  # hi
+
+# 3. Pass as an argument
+def apply_twice(fn, value):
+    return fn(fn(value))
+
+print(apply_twice(shout, "hello"))   # HELLO
+
+# 4. Return from a function
+def pick(volume):
+    return shout if volume &gt; 5 else whisper
+
+# 5. Attach attributes
+shout.category = "audio"
+print(shout.category)       # audio
+print(shout.__name__)       # shout
+</code></pre>
+
+  <h3>Higher-order functions</h3>
+  <p>A higher-order function is one that takes a function as an argument, returns one, or both.
+  The built-ins <code>map</code>, <code>filter</code>, <code>sorted</code>, and
+  <code>functools.reduce</code> are the classic examples.</p>
+
+<pre><code class="python">words = ["banana", "Apple", "cherry"]
+
+print(sorted(words, key=str.lower))        # ['Apple', 'banana', 'cherry']
+print(list(map(str.upper, words)))         # ['BANANA', 'APPLE', 'CHERRY']
+print(list(filter(lambda w: "a" in w, words)))
+</code></pre>
+
+  <h3>The dispatch-table pattern</h3>
+  <p>Replaces long <code>if/elif</code> chains with a dictionary of functions. This is one of the
+  most useful refactorings in Python.</p>
+
+<pre><code class="python">def add(a, b): return a + b
+def sub(a, b): return a - b
+def mul(a, b): return a * b
+def div(a, b): return a / b
+
+OPERATIONS = {
+    "+": add,
+    "-": sub,
+    "*": mul,
+    "/": div,
+}
+
+def calculate(op, a, b):
+    if op not in OPERATIONS:
+        raise ValueError(f"unknown operator: {op}")
+    return OPERATIONS[op](a, b)
+
+print(calculate("*", 6, 7))    # 42
+</code></pre>
+
+  <div class="box connect">
+    <div class="box-title">Connect — dispatch tables in frameworks</div>
+    <p>Web routers map URL paths to handler functions. CLI tools map subcommand names to
+    functions. State machines map state names to transition functions. In every case the
+    underlying mechanism is exactly the dict-of-functions above — which is why
+    "functions are objects" is not trivia, it is architecture.</p>
+  </div>
+
+  <h3>Callable objects</h3>
+  <p>Any object with a <code>__call__</code> method is callable. This lets you build
+  "functions with state" without closures.</p>
+
+<pre><code class="python">class Counter:
+    def __init__(self):
+        self.n = 0
+    def __call__(self):
+        self.n += 1
+        return self.n
+
+c = Counter()
+print(c(), c(), c())    # 1 2 3
+print(callable(c))      # True
+</code></pre>
+
+  <table>
+    <thead><tr><th>Check</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code>callable(obj)</code></td><td>Can it be called with <code>()</code>?</td></tr>
+      <tr><td><code>fn.__name__</code></td><td>The name it was defined with</td></tr>
+      <tr><td><code>fn.__doc__</code></td><td>Its docstring</td></tr>
+      <tr><td><code>fn.__defaults__</code></td><td>Default values of positional parameters</td></tr>
+      <tr><td><code>fn.__code__.co_varnames</code></td><td>Parameter and local names</td></tr>
+      <tr><td><code>inspect.signature(fn)</code></td><td>The full, introspectable signature</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="lambda" data-part="Part I — Function Foundations" data-title="6. Lambdas &amp; Functional Tools">
+  <h2>6. Lambdas &amp; Functional Tools</h2>
+
+  <p>A <code>lambda</code> is an anonymous function limited to a <em>single expression</em>.
+  There is no <code>return</code> — the expression itself is the return value.</p>
+
+<pre><code class="python">square = lambda x: x * x
+# exactly equivalent to
+def square(x):
+    return x * x
+</code></pre>
+
+  <h3>Where lambdas genuinely help</h3>
+  <p>As short <code>key=</code> functions and inline callbacks, where a full <code>def</code>
+  would add noise:</p>
+
+<pre><code class="python">people = [
+    {"name": "Ada",   "age": 36},
+    {"name": "Grace", "age": 45},
+    {"name": "Alan",  "age": 41},
+]
+
+by_age = sorted(people, key=lambda p: p["age"])
+by_name_length = sorted(people, key=lambda p: len(p["name"]))
+print([p["name"] for p in by_age])   # ['Ada', 'Alan', 'Grace']
+</code></pre>
+
+  <h3>Where lambdas hurt</h3>
+  <div class="box bad">
+    <div class="box-title">Do not assign a lambda to a name</div>
+<pre><code class="python"># Bad — loses the docstring, shows "&lt;lambda&gt;" in tracebacks
+handler = lambda event: process(event)
+
+# Good
+def handler(event):
+    """Process an incoming event."""
+    return process(event)
+</code></pre>
+  </div>
+
+  <p>Lambdas cannot contain statements: no <code>if/else</code> blocks (only the ternary
+  <code>a if cond else b</code>), no loops, no <code>try</code>, no assignments, no annotations.</p>
+
+  <h3><code>map</code>, <code>filter</code>, <code>reduce</code></h3>
+
+<pre><code class="python">from functools import reduce
+
+nums = [1, 2, 3, 4, 5]
+
+squares = list(map(lambda n: n ** 2, nums))         # [1, 4, 9, 16, 25]
+evens   = list(filter(lambda n: n % 2 == 0, nums))  # [2, 4]
+total   = reduce(lambda acc, n: acc + n, nums, 0)   # 15
+</code></pre>
+
+  <div class="box tip">
+    <div class="box-title">Prefer comprehensions for readability</div>
+    <p>In modern Python, a comprehension is usually clearer and faster than
+    <code>map</code>/<code>filter</code> with lambdas:</p>
+<pre><code class="python">squares = [n ** 2 for n in nums]
+evens   = [n for n in nums if n % 2 == 0]
+total   = sum(nums)
+</code></pre>
+    <p>Keep <code>map</code>/<code>filter</code> for when you already have a named function
+    (<code>map(str.strip, lines)</code>) and <code>reduce</code> for genuinely non-obvious
+    aggregations.</p>
+  </div>
+
+  <h3>Operator functions instead of lambdas</h3>
+  <p>The <code>operator</code> module provides fast, readable replacements:</p>
+
+<pre><code class="python">from operator import itemgetter, attrgetter, methodcaller
+
+records = [("Ada", 36), ("Grace", 45)]
+print(sorted(records, key=itemgetter(1)))
+
+class User:
+    def __init__(self, name): self.name = name
+users = [User("Ada"), User("Alan")]
+print(sorted(users, key=attrgetter("name")))
+
+words = ["  hi  ", " there "]
+print(list(map(methodcaller("strip"), words)))
+</code></pre>
+</section>
+
+<!-- ============================================================
+     PART II — ADVANCED FUNCTIONS
+     ============================================================ -->
+<section id="decorators" data-part="Part II — Advanced Functions" data-title="7. Decorators">
+  <h2>7. Decorators</h2>
+
+  <p>A decorator is a function that takes a function and returns a replacement function.
+  The <code>@</code> syntax is pure sugar:</p>
+
+<pre><code class="python">@my_decorator
+def f():
+    ...
+
+# is exactly:
+def f():
+    ...
+f = my_decorator(f)
+</code></pre>
+
+  <h3>A minimal decorator</h3>
+
+<pre><code class="python">import functools
+
+def logged(func):
+    @functools.wraps(func)          # preserves __name__, __doc__, __wrapped__
+    def wrapper(*args, **kwargs):
+        print(f"→ calling {func.__name__}")
+        result = func(*args, **kwargs)
+        print(f"← {func.__name__} returned {result!r}")
+        return result
+    return wrapper
+
+@logged
+def add(a, b):
+    """Add two numbers."""
+    return a + b
+
+add(2, 3)
+print(add.__name__)   # 'add'  (thanks to functools.wraps)
+print(add.__doc__)    # 'Add two numbers.'
+</code></pre>
+
+  <div class="box warn">
+    <div class="box-title">Always use <code>functools.wraps</code></div>
+    <p>Without it, the decorated function is named <code>wrapper</code>, loses its docstring
+    and signature, and breaks tooling like <code>help()</code>, IDEs, and
+    <code>pytest</code> fixtures.</p>
+  </div>
+
+  <h3>Decorators that take arguments</h3>
+  <p>You need three levels of nesting: the outermost function receives the arguments and returns
+  the actual decorator.</p>
+
+<pre><code class="python">import functools, time
+
+def retry(times=3, delay=0.5, exceptions=(Exception,)):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            last = None
+            for attempt in range(1, times + 1):
+                try:
+                    return func(*args, **kwargs)
+                except exceptions as exc:
+                    last = exc
+                    if attempt &lt; times:
+                        time.sleep(delay * attempt)
+            raise last
+        return wrapper
+    return decorator
+
+@retry(times=5, delay=1.0, exceptions=(ConnectionError, TimeoutError))
+def fetch(url):
+    ...
+</code></pre>
+
+  <h3>A practical decorator: timing</h3>
+
+<pre><code class="python">import functools, time
+
+def timed(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        start = time.perf_counter()
+        try:
+            return func(*args, **kwargs)
+        finally:
+            elapsed = (time.perf_counter() - start) * 1000
+            print(f"{func.__name__} took {elapsed:.2f} ms")
+    return wrapper
+</code></pre>
+
+  <h3>A practical decorator: memoisation</h3>
+
+<pre><code class="python">import functools
+
+@functools.lru_cache(maxsize=128)
+def fib(n):
+    return n if n &lt; 2 else fib(n - 1) + fib(n - 2)
+
+print(fib(100))          # instant
+print(fib.cache_info())  # CacheInfo(hits=98, misses=101, ...)
+</code></pre>
+
+  <h3>Stacking decorators</h3>
+  <p>Decorators apply bottom-up:</p>
+
+<pre><code class="python">@logged
+@timed
+@retry(times=3)
+def job():
+    ...
+# job = logged(timed(retry(times=3)(job)))
+</code></pre>
+
+  <h3>Class-based decorators</h3>
+  <p>Useful when the decorator needs to keep state across calls.</p>
+
+<pre><code class="python">import functools
+
+class CountCalls:
+    def __init__(self, func):
+        functools.update_wrapper(self, func)
+        self.func = func
+        self.count = 0
+
+    def __call__(self, *args, **kwargs):
+        self.count += 1
+        print(f"{self.func.__name__} called {self.count} time(s)")
+        return self.func(*args, **kwargs)
+
+@CountCalls
+def ping():
+    return "pong"
+
+ping(); ping()
+print(ping.count)     # 2
+</code></pre>
+
+  <h3>Decorating methods</h3>
+  <p>Because <code>wrapper</code> accepts <code>*args</code>, <code>self</code> is passed through
+  automatically.</p>
+
+<pre><code class="python">class Service:
+    @timed
+    def handle(self, request):
+        return process(request)
+
+    @classmethod
+    @timed
+    def create(cls):
+        return cls()
+
+    @property
+    @timed          # careful: this times the getter
+    def status(self):
+        return "ok"
+</code></pre>
+
+  <div class="box tip">
+    <div class="box-title">Order of <code>@classmethod</code> / <code>@property</code></div>
+    <p><code>@classmethod</code> and <code>@staticmethod</code> must be the <strong>outermost</strong>
+    decorator. <code>@property</code> must be outermost when combined with a custom decorator.</p>
+  </div>
+
+  <h3>Where decorators are used in the wild</h3>
+  <table>
+    <thead><tr><th>Framework</th><th>Decorator</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td>Flask</td><td><code>@app.route("/users")</code></td><td>Register a URL handler</td></tr>
+      <tr><td>FastAPI</td><td><code>@app.get("/items")</code></td><td>Register an HTTP GET endpoint</td></tr>
+      <tr><td>Click / Typer</td><td><code>@click.command()</code></td><td>Turn a function into a CLI command</td></tr>
+      <tr><td>pytest</td><td><code>@pytest.fixture</code></td><td>Mark a function as a test fixture</td></tr>
+      <tr><td>Django</td><td><code>@login_required</code></td><td>Authorization check</td></tr>
+      <tr><td>dataclasses</td><td><code>@dataclass</code></td><td>Generate boilerplate methods</td></tr>
+      <tr><td>unittest</td><td><code>@patch("module.thing")</code></td><td>Swap objects during tests</td></tr>
+    </tbody>
+  </table>
+
+  <div class="box connect">
+    <div class="box-title">Connect — decorators are the plugin glue</div>
+    <p>When a framework asks you to write a plain function and mark it with <code>@something</code>,
+    what actually happens is: your function is stored in a registry, wrapped with middleware,
+    or converted into a route object. The framework then calls your function later, with
+    arguments it supplies. That is the entire contract.</p>
+  </div>
+</section>
+
+<section id="generators" data-part="Part II — Advanced Functions" data-title="8. Generators &amp; Iterators">
+  <h2>8. Generators &amp; Iterators</h2>
+
+  <p>Any function containing <code>yield</code> becomes a <strong>generator function</strong>.
+  Calling it does not run the body — it returns a generator object that produces values lazily,
+  one at a time.</p>
+
+<pre><code class="python">def countdown(n):
+    while n &gt; 0:
+        yield n
+        n -= 1
+
+for value in countdown(3):
+    print(value)      # 3, 2, 1
+</code></pre>
+
+  <h3>Why laziness matters</h3>
+
+<pre><code class="python"># Eager: builds the whole list in memory
+def read_all(path):
+    return [line.strip() for line in open(path)]
+
+# Lazy: one line at a time, constant memory
+def read_lines(path):
+    with open(path) as fh:
+        for line in fh:
+            yield line.strip()
+</code></pre>
+
+  <p>The generator version can process a 50 GB log file on a laptop. It also starts producing
+  results immediately, so the consumer can stop early.</p>
+
+  <h3>Generator expressions</h3>
+  <p>The lazy cousin of the list comprehension — parentheses instead of brackets.</p>
+
+<pre><code class="python">squares_list = [n * n for n in range(1_000_000)]   # ~40 MB
+squares_gen  = (n * n for n in range(1_000_000))   # a few hundred bytes
+
+total = sum(n * n for n in range(1_000_000))       # no intermediate list
+</code></pre>
+
+  <h3>Generator state and the protocol</h3>
+  <p>A generator is an iterator. It implements <code>__iter__</code> and <code>__next__</code>.
+  When the function returns, <code>StopIteration</code> is raised.</p>
+
+<pre><code class="python">gen = countdown(2)
+print(next(gen))    # 2
+print(next(gen))    # 1
+print(next(gen))    # StopIteration
+</code></pre>
+
+  <h3>Two-way communication: <code>send</code>, <code>throw</code>, <code>close</code></h3>
+
+<pre><code class="python">def accumulator():
+    total = 0
+    while True:
+        value = yield total      # yields total, receives value on next send()
+        if value is None:
+            break
+        total += value
+
+acc = accumulator()
+next(acc)             # prime the generator → 0
+print(acc.send(10))   # 10
+print(acc.send(5))    # 15
+acc.close()
+</code></pre>
+
+  <h3><code>yield from</code> — delegating</h3>
+
+<pre><code class="python">def chain_all(*iterables):
+    for it in iterables:
+        yield from it
+
+print(list(chain_all([1, 2], "ab", (3, 4))))   # [1, 2, 'a', 'b', 3, 4]
+</code></pre>
+
+  <h3>Building pipelines</h3>
+  <p>Generators compose beautifully — each stage is a small, testable, lazy transformation.</p>
+
+<pre><code class="python">def read(path):
+    with open(path) as fh:
+        yield from fh
+
+def parse(lines):
+    for line in lines:
+        line = line.strip()
+        if line and not line.startswith("#"):
+            yield line
+
+def to_records(lines):
+    for line in lines:
+        key, _, value = line.partition("=")
+        yield key.strip(), value.strip()
+
+pipeline = to_records(parse(read("config.ini")))
+config = dict(pipeline)
+</code></pre>
+
+  <div class="box connect">
+    <div class="box-title">Connect — generators in real applications</div>
+    <ul>
+      <li><strong>Database cursors</strong> stream rows instead of loading a whole table.</li>
+      <li><strong>Web frameworks</strong> stream large responses chunk by chunk.</li>
+      <li><strong>Log processors</strong> filter and aggregate terabytes with constant memory.</li>
+      <li><strong>Test data factories</strong> generate infinite synthetic records.</li>
+      <li><strong>asyncio</strong> uses a related protocol — coroutines are generator-like
+      (<a href="#async">Chapter 33</a>).</li>
+    </ul>
+  </div>
+
+  <h3>Writing your own iterator class</h3>
+
+<pre><code class="python">class Fib:
+    def __init__(self, limit):
+        self.limit = limit
+    def __iter__(self):
+        a, b = 0, 1
+        while a &lt; self.limit:
+            yield a
+            a, b = b, a + b
+
+print(list(Fib(50)))    # [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
+</code></pre>
+</section>
+
+<section id="functools" data-part="Part II — Advanced Functions" data-title="9. functools &amp; itertools">
+  <h2>9. <code>functools</code> &amp; <code>itertools</code></h2>
+
+  <h3><code>functools.partial</code> — freeze arguments</h3>
+
+<pre><code class="python">from functools import partial
+
+def power(base, exponent):
+    return base ** exponent
+
+square = partial(power, exponent=2)
+cube   = partial(power, exponent=3)
+
+print(square(5), cube(3))    # 25 27
+
+# Real use: pre-configure a callback
+import logging
+log_error = partial(logging.log, logging.ERROR)
+log_error("something failed")
+</code></pre>
+
+  <h3><code>functools.lru_cache</code> / <code>cache</code></h3>
+
+<pre><code class="python">from functools import cache, lru_cache
+
+@cache                       # unbounded, simplest
+def factorial(n):
+    return 1 if n &lt; 2 else n * factorial(n - 1)
+
+@lru_cache(maxsize=256)      # bounded
+def expensive(a, b):
+    ...
+
+# Instance method caching — careful with `self` keeping objects alive
+class Parser:
+    @lru_cache(maxsize=1000)
+    def parse(self, text):
+        ...
+</code></pre>
+
+  <div class="box warn">
+    <div class="box-title">Cache keys must be hashable</div>
+    <p>Arguments become dictionary keys. Lists and dicts are unhashable — convert them
+    (<code>tuple(items)</code>, <code>tuple(sorted(d.items()))</code>) before caching.</p>
+  </div>
+
+  <h3><code>functools.singledispatch</code> — function overloading by type</h3>
+
+<pre><code class="python">from functools import singledispatch
+
+@singledispatch
+def render(value):
+    raise TypeError(f"cannot render {type(value)}")
+
+@render.register
+def _(value: str):
+    return value
+
+@render.register
+def _(value: int):
+    return f"{value:,}"
+
+@render.register
+def _(value: list):
+    return ", ".join(render(v) for v in value)
+
+print(render("hi"))        # hi
+print(render(1234567))     # 1,234,567
+print(render([1, "a"]))    # 1, a
+</code></pre>
+
+  <h3>Other <code>functools</code> helpers</h3>
+  <table>
+    <thead><tr><th>Tool</th><th>Use</th></tr></thead>
+    <tbody>
+      <tr><td><code>wraps</code></td><td>Copy metadata in decorators</td></tr>
+      <tr><td><code>reduce</code></td><td>Fold a sequence into one value</td></tr>
+      <tr><td><code>total_ordering</code></td><td>Fill in comparison methods from <code>__eq__</code> + one other</td></tr>
+      <tr><td><code>cached_property</code></td><td>Compute once per instance, then store in <code>__dict__</code></td></tr>
+      <tr><td><code>cmp_to_key</code></td><td>Convert an old-style comparator to a key function</td></tr>
+    </tbody>
+  </table>
+
+  <h3><code>itertools</code> — the standard toolbox for lazy sequences</h3>
+
+<pre><code class="python">import itertools as it
+
+# Infinite
+list(it.islice(it.count(10, 2), 5))          # [10, 12, 14, 16, 18]
+list(it.islice(it.cycle("AB"), 5))           # ['A','B','A','B','A']
+list(it.islice(it.repeat("x", 3), 10))       # ['x','x','x']
+
+# Combining
+list(it.chain([1, 2], [3], [4, 5]))          # [1,2,3,4,5]
+list(it.chain.from_iterable([[1,2],[3]]))    # [1,2,3]
+list(it.product([1,2], "ab"))                # [(1,'a'),(1,'b'),(2,'a'),(2,'b')]
+list(it.combinations([1,2,3], 2))            # [(1,2),(1,3),(2,3)]
+list(it.permutations([1,2,3], 2))            # 6 pairs
+
+# Grouping (input must be sorted by the key first)
+data = [("a",1), ("a",2), ("b",3)]
+for key, group in it.groupby(data, key=lambda t: t[0]):
+    print(key, list(group))
+
+# Windowing
+list(it.pairwise([1, 2, 3, 4]))              # [(1,2),(2,3),(3,4)]
+list(it.accumulate([1, 2, 3, 4]))            # [1,3,6,10]
+list(it.compress("ABCDEF", [1,0,1,0,1,0]))   # ['A','C','E']
+</code></pre>
+
+  <div class="box connect">
+    <div class="box-title">Connect — itertools in data pipelines</div>
+    <p>ETL jobs use <code>chain</code> to merge sources, <code>groupby</code> to bucket
+    records, <code>islice</code> to take the first N from an unbounded stream, and
+    <code>product</code> to generate a configuration matrix. All of it is lazy, so
+    memory stays flat regardless of input size.</p>
+  </div>
+</section>
+
+<section id="recursion" data-part="Part II — Advanced Functions" data-title="10. Recursion">
+  <h2>10. Recursion</h2>
+
+  <p>A recursive function calls itself. Every recursion needs a <strong>base case</strong>
+  that stops the descent.</p>
+
+<pre><code class="python">def factorial(n):
+    if n &lt;= 1:          # base case
+        return 1
+    return n * factorial(n - 1)   # recursive case
+</code></pre>
+
+  <h3>The three rules</h3>
+  <ol>
+    <li><strong>Base case</strong> — a condition that returns without recursing.</li>
+    <li><strong>Progress</strong> — every recursive call must move toward the base case.</li>
+    <li><strong>Trust the recursion</strong> — assume the smaller call already works.</li>
+  </ol>
+
+  <h3>The recursion limit</h3>
+
+<pre><code class="python">import sys
+print(sys.getrecursionlimit())    # usually 1000
+
+def deep(n):
+    return 0 if n == 0 else deep(n - 1)
+
+# deep(5000)   → RecursionError
+sys.setrecursionlimit(10000)      # raise it (can crash the interpreter if too high)
+</code></pre>
+
+  <div class="box warn">
+    <div class="box-title">Python has no tail-call optimisation</div>
+    <p>Unlike Scheme or Haskell, a tail-recursive Python function still consumes a stack frame
+    per call. For deep or unbounded recursion, convert to a loop or use an explicit stack.</p>
+  </div>
+
+  <h3>Recursion vs iteration</h3>
+
+<pre><code class="python"># Recursive
+def factorial_r(n):
+    return 1 if n &lt;= 1 else n * factorial_r(n - 1)
+
+# Iterative — no stack limit
+def factorial_i(n):
+    result = 1
+    for i in range(2, n + 1):
+        result *= i
+    return result
+</code></pre>
+
+  <h3>Recursion shines on tree-shaped data</h3>
+
+<pre><code class="python">def walk(node, depth=0):
+    print("  " * depth + node["name"])
+    for child in node.get("children", []):
+        walk(child, depth + 1)
+
+tree = {
+    "name": "root",
+    "children": [
+        {"name": "src", "children": [{"name": "main.py"}]},
+        {"name": "tests"},
+    ],
+}
+walk(tree)
+</code></pre>
+
+  <h3>Memoised recursion</h3>
+  <p>Naive recursive algorithms often recompute the same subproblem exponentially many times.
+  Caching collapses that to linear time.</p>
+
+<pre><code class="python">from functools import cache
+
+@cache
+def fib(n):
+    return n if n &lt; 2 else fib(n - 1) + fib(n - 2)
+</code></pre>
+
+  <div class="box tip">
+    <div class="box-title">Convert deep recursion to an explicit stack</div>
+<pre><code class="python">def factorial_stack(n):
+    stack = list(range(2, n + 1))
+    result = 1
+    while stack:
+        result *= stack.pop()
+    return result
+</code></pre>
+  </div>
+</section>
+
+<section id="typing" data-part="Part II — Advanced Functions" data-title="11. Type Hints">
+  <h2>11. Type Hints &amp; Annotations</h2>
+
+  <p>Python is dynamically typed, but annotations let you describe intended types.
+  They are <em>not enforced at runtime</em> — they document, power IDE autocompletion,
+  and enable static checkers like <code>mypy</code>, <code>pyright</code>, and
+  <code>ruff</code>.</p>
+
+<pre><code class="python">def average(numbers: list[float]) -&gt; float:
+    return sum(numbers) / len(numbers)
+
+class User:
+    def __init__(self, name: str, age: int) -&gt; None:
+        self.name = name
+        self.age = age
+</code></pre>
+
+  <h3>The essential vocabulary</h3>
+  <table>
+    <thead><tr><th>Annotation</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td><code>int</code>, <code>str</code>, <code>float</code>, <code>bool</code></td><td>Built-in scalars</td></tr>
+      <tr><td><code>list[int]</code>, <code>dict[str, int]</code>, <code>set[str]</code>, <code>tuple[int, str]</code></td><td>Parameterised containers (3.9+)</td></tr>
+      <tr><td><code>X | None</code></td><td>Optional value (3.10+)</td></tr>
+      <tr><td><code>X | Y</code></td><td>Union — either type</td></tr>
+      <tr><td><code>Any</code></td><td>Opt out of checking</td></tr>
+      <tr><td><code>Callable[[int, str], bool]</code></td><td>A function taking (int, str) returning bool</td></tr>
+      <tr><td><code>Iterable[int]</code>, <code>Iterator[int]</code>, <code>Sequence[str]</code>, <code>Mapping[str, int]</code></td><td>Abstract protocols from <code>collections.abc</code></td></tr>
+      <tr><td><code>Literal["r", "w"]</code></td><td>One of a fixed set of values</td></tr>
+      <tr><td><code>TypedDict</code></td><td>A dict with a fixed schema</td></tr>
+      <tr><td><code>TypeVar("T")</code></td><td>Generic type variable</td></tr>
+      <tr><td><code>Protocol</code></td><td>Structural typing (duck typing, checked)</td></tr>
+      <tr><td><code>Self</code> (3.11+)</td><td>The instance's own type, for fluent APIs</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Generics</h3>
+
+<pre><code class="python">from typing import TypeVar, Generic
+
+T = TypeVar("T")
+
+def first(items: list[T]) -&gt; T:
+    return items[0]
+
+class Stack(Generic[T]):
+    def __init__(self) -&gt; None:
+        self._items: list[T] = []
+    def push(self, item: T) -&gt; None:
+        self._items.append(item)
+    def pop(self) -&gt; T:
+        return self._items.pop()
+
+s: Stack[int] = Stack()
+</code></pre>
+
+  <h3>TypedDict and Literal</h3>
+
+<pre><code class="python">from typing import TypedDict, Literal
+
+class Config(TypedDict):
+    host: str
+    port: int
+    mode: Literal["dev", "prod"]
+
+cfg: Config = {"host": "localhost", "port": 8000, "mode": "dev"}
+</code></pre>
+
+  <h3>Overloads</h3>
+
+<pre><code class="python">from typing import overload
+
+@overload
+def parse(value: str) -&gt; dict: ...
+@overload
+def parse(value: bytes) -&gt; dict: ...
+
+def parse(value):
+    if isinstance(value, bytes):
+        value = value.decode()
+    return json.loads(value)
+</code></pre>
+
+  <div class="box tip">
+    <div class="box-title">Typing strategy that works</div>
+    <ol>
+      <li>Annotate all <strong>public function signatures</strong> and class attributes.</li>
+      <li>Let the checker infer locals — do not annotate every variable.</li>
+      <li>Run <code>mypy --strict</code> on new modules; relax it for legacy code.</li>
+      <li>Use <code>Protocol</code> instead of abstract base classes when you only care
+      about behaviour, not inheritance.</li>
+    </ol>
+  </div>
+
+  <div class="box connect">
+    <div class="box-title">Connect — why types matter in applications</div>
+    <p>FastAPI reads your type hints and generates request validation, JSON schemas,
+    and OpenAPI documentation automatically. Pydantic, SQLModel, and Django Ninja do the
+    same. Dataclasses use them for field metadata. Your annotations are not decoration —
+    in modern Python they are executable API contracts.</p>
+  </div>
+</section>
+
+<section id="docstrings" data-part="Part II — Advanced Functions" data-title="12. Docstrings &amp; doctest">
+  <h2>12. Docstrings, Help &amp; doctest</h2>
+
+  <p>The first string literal in a module, class, or function is its docstring. It is stored in
+  <code>__doc__</code> and shown by <code>help()</code>, IDEs, and documentation generators.</p>
+
+<pre><code class="python">def withdraw(account, amount):
+    """Withdraw money from an account.
+
+    Args:
+        account: The Account instance to debit.
+        amount: Positive amount in the account's currency.
+
+    Returns:
+        The new balance.
+
+    Raises:
+        ValueError: If amount is not positive.
+        InsufficientFunds: If the balance would go negative.
+
+    Example:
+        &gt;&gt;&gt; withdraw(acct, 50)
+        150
+    """
+</code></pre>
+
+  <h3>Three common styles</h3>
+  <table>
+    <thead><tr><th>Style</th><th>Tooling</th><th>Signature look</th></tr></thead>
+    <tbody>
+      <tr><td>Google</td><td>Sphinx napoleon, mkdocstrings</td><td><code>Args:</code> / <code>Returns:</code></td></tr>
+      <tr><td>NumPy</td><td>Sphinx, scientific stack</td><td><code>Parameters</code> / <code>Returns</code> underlined</td></tr>
+      <tr><td>reStructuredText</td><td>Sphinx native</td><td><code>:param x:</code> / <code>:returns:</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>doctest — documentation that runs</h3>
+
+<pre><code class="python">def add(a, b):
+    """Add two numbers.
+
+    &gt;&gt;&gt; add(2, 3)
+    5
+    &gt;&gt;&gt; add(-1, 1)
+    0
+    """
+    return a + b
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
+</code></pre>
+
+  <p>Run it with <code>python -m doctest module.py -v</code>, or let <code>pytest</code>
+  pick it up with <code>--doctest-modules</code>.</p>
+
+  <div class="box">
+    <div class="box-title">A docstring is a test you get for free</div>
+    <p>Every example in a docstring is an executable assertion. It keeps documentation
+    honest — the moment an example goes stale, CI fails.</p>
+  </div>
+
+  <h3>Module-level and class-level docstrings</h3>
+
+<pre><code class="python">"""Payment processing utilities.
+
+This module provides the PaymentGateway abstraction and
+concrete implementations for Stripe and PayPal.
+"""
+
+class PaymentGateway:
+    """Abstract base for all payment providers.
+
+    Attributes:
+        currency: ISO-4217 currency code.
+    """
+</code></pre>
+</section>
+
+<section id="errors" data-part="Part II — Advanced Functions" data-title="13. Errors &amp; Exceptions">
+  <h2>13. Errors &amp; Exceptions in Functions</h2>
+
+  <p>Exceptions are Python's error channel. They keep the happy path clean instead of
+  threading error codes through every return value.</p>
+
+<pre><code class="python">def divide(a, b):
+    if b == 0:
+        raise ValueError("division by zero is not allowed")
+    return a / b
+</code></pre>
+
+  <h3>The full statement</h3>
+
+<pre><code class="python">try:
+    risky()
+except (ValueError, KeyError) as exc:
+    handle(exc)
+except Exception as exc:
+    log.exception("unexpected failure")
+    raise
+else:
+    print("no exception occurred")
+finally:
+    cleanup()          # always runs
+</code></pre>
+
+  <table>
+    <thead><tr><th>Clause</th><th>Runs when</th></tr></thead>
+    <tbody>
+      <tr><td><code>try</code></td><td>Always — the guarded block</td></tr>
+      <tr><td><code>except</code></td><td>A matching exception was raised</td></tr>
+      <tr><td><code>else</code></td><td>No exception was raised</td></tr>
+      <tr><td><code>finally</code></td><td>Always, even on <code>return</code> or unhandled exception</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Custom exception hierarchies</h3>
+
+<pre><code class="python">class AppError(Exception):
+    """Base class for all application errors."""
+
+class ValidationError(AppError):
+    def __init__(self, field, message):
+        super().__init__(f"{field}: {message}")
+        self.field = field
+        self.message = message
+
+class NotFoundError(AppError):
+    pass
+
+# Callers can catch broadly or narrowly
+try:
+    handle(request)
+except ValidationError as exc:
+    return error_response(400, exc.field)
+except AppError:
+    return error_response(500, "internal error")
+</code></pre>
+
+  <h3>Exception chaining</h3>
+
+<pre><code class="python">try:
+    config = json.loads(text)
+except json.JSONDecodeError as exc:
+    raise ConfigError("invalid configuration file") from exc
+</code></pre>
+
+  <p>The <code>from exc</code> clause preserves the original traceback as
+  <code>__cause__</code>, so debugging is not lost.</p>
+
+  <h3>EAFP vs LBYL</h3>
+
+<pre><code class="python"># LBYL — Look Before You Leap (race conditions possible)
+if key in mapping:
+    value = mapping[key]
+else:
+    value = default
+
+# EAFP — Easier to Ask Forgiveness than Permission (Pythonic)
+try:
+    value = mapping[key]
+except KeyError:
+    value = default
+
+# Often better still — the purpose-built API
+value = mapping.get(key, default)
+</code></pre>
+
+  <div class="box bad">
+    <div class="box-title">Anti-patterns</div>
+    <ul>
+      <li><code>except:</code> or <code>except Exception: pass</code> — swallows bugs silently.</li>
+      <li>Using exceptions for ordinary control flow in hot loops.</li>
+      <li>Catching an exception you cannot actually handle — let it propagate.</li>
+      <li>Raising bare <code>Exception</code> — callers cannot catch it selectively.</li>
+    </ul>
+  </div>
+
+  <div class="box connect">
+    <div class="box-title">Connect — exceptions at application boundaries</div>
+    <p>Well-designed apps raise rich, typed exceptions deep inside and translate them once
+    at the boundary: an HTTP layer converts <code>NotFoundError</code> into a 404,
+    a CLI converts it into an exit code, a GUI into a message box. The core stays
+    framework-agnostic.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     PART III — CLASSES
+     ============================================================ -->
+<section id="class-basics" data-part="Part III — Classes &amp; Objects" data-title="14. Classes: The Basics">
+  <h2>14. Classes: The Basics</h2>
+
+  <p>A class bundles <strong>data</strong> (attributes) with <strong>behaviour</strong> (methods).
+  An <em>instance</em> is one concrete object created from the class blueprint.</p>
+
+<pre><code class="python">class BankAccount:
+    """A simple bank account."""
+
+    bank_name = "PyBank"          # class attribute — shared by all instances
+
+    def __init__(self, owner, balance=0):
+        self.owner = owner        # instance attribute — unique per object
+        self.balance = balance
+
+    def deposit(self, amount):
+        if amount &lt;= 0:
+            raise ValueError("amount must be positive")
+        self.balance += amount
+        return self.balance
+
+    def withdraw(self, amount):
+        if amount &gt; self.balance:
+            raise ValueError("insufficient funds")
+        self.balance -= amount
+        return self.balance
+
+    def __repr__(self):
+        return f"BankAccount(owner={self.owner!r}, balance={self.balance!r})"
+
+
+acct = BankAccount("Ada", 100)
+acct.deposit(50)
+print(acct)                # BankAccount(owner='Ada', balance=150)
+print(acct.bank_name)      # PyBank
+</code></pre>
+
+  <h3><code>self</code> explained</h3>
+  <p><code>self</code> is the instance, passed automatically as the first argument.
+  <code>acct.deposit(50)</code> is executed as <code>BankAccount.deposit(acct, 50)</code>.
+  The name <code>self</code> is a convention, not a keyword — but never use anything else.</p>
+
+  <h3>The lifecycle</h3>
+  <table>
+    <thead><tr><th>Step</th><th>What happens</th></tr></thead>
+    <tbody>
+      <tr><td><code>BankAccount("Ada", 100)</code></td><td>Python calls <code>type.__call__</code></td></tr>
+      <tr><td><code>__new__</code></td><td>Allocates the instance (rarely overridden)</td></tr>
+      <tr><td><code>__init__</code></td><td>Initialises it — this is where you set attributes</td></tr>
+      <tr><td>Return</td><td>The fully constructed instance is handed back</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Namespaces: where attributes actually live</h3>
+
+<pre><code class="python">print(acct.__dict__)         # {'owner': 'Ada', 'balance': 150}
+print(BankAccount.__dict__.keys())   # includes 'bank_name', 'deposit', ...
+
+acct.bank_name = "Other"     # creates an INSTANCE attribute that shadows the class one
+del acct.bank_name           # now falls back to the class attribute again
+</code></pre>
+
+  <h3>Attribute lookup order</h3>
+<pre class="diagram">instance.__dict__  →  type(instance).__dict__  →  base classes (MRO)  →  __getattr__  →  AttributeError</pre>
+
+  <h3>Classes are objects too</h3>
+
+<pre><code class="python">print(type(acct))         # &lt;class 'BankAccount'&gt;
+print(type(BankAccount))  # &lt;class 'type'&gt;
+
+# You can create classes at runtime
+Point = type("Point", (), {"__init__": lambda self, x, y: (setattr(self, "x", x),
+                                                          setattr(self, "y", y))})
+p = Point(1, 2)
+print(p.x, p.y)           # 1 2
+</code></pre>
+
+  <div class="box">
+    <div class="box-title">The one rule of <code>__init__</code></div>
+    <p><code>__init__</code> must return <code>None</code>. Returning anything else raises
+    <code>TypeError</code>. Object construction is the job of <code>__new__</code>.</p>
+  </div>
+</section>
+
+<section id="attributes" data-part="Part III — Classes &amp; Objects" data-title="15. Attributes &amp; Properties">
+  <h2>15. Attributes, Properties &amp; Encapsulation</h2>
+
+  <h3>Instance vs class attributes</h3>
+
+<pre><code class="python">class Config:
+    debug = False              # class attribute — default for all instances
+
+    def __init__(self, name):
+        self.name = name       # instance attribute
+
+a = Config("a")
+b = Config("b")
+
+Config.debug = True            # affects a and b (they read through the class)
+a.debug = False                # shadows it for `a` only
+print(a.debug, b.debug)        # False True
+</code></pre>
+
+  <div class="box warn">
+    <div class="box-title">Mutable class attributes are shared</div>
+<pre><code class="python">class Team:
+    members = []               # DANGER: one list for every instance
+
+t1, t2 = Team(), Team()
+t1.members.append("Ada")
+print(t2.members)              # ['Ada']  ← leaked!
+</code></pre>
+    <p>Initialise mutable state in <code>__init__</code> instead.</p>
+  </div>
+
+  <h3>Properties — computed attributes</h3>
+  <p>A property lets you expose a method as if it were an attribute, so you can add validation
+  or computation later without breaking callers.</p>
+
+<pre><code class="python">class Temperature:
+    def __init__(self, celsius=0):
+        self._celsius = celsius
+
+    @property
+    def celsius(self):
+        """Temperature in °C."""
+        return self._celsius
+
+    @celsius.setter
+    def celsius(self, value):
+        if value &lt; -273.15:
+            raise ValueError("below absolute zero")
+        self._celsius = value
+
+    @celsius.deleter
+    def celsius(self):
+        del self._celsius
+
+    @property
+    def fahrenheit(self):
+        return self._celsius * 9 / 5 + 32
+
+t = Temperature(25)
+print(t.fahrenheit)     # 77.0
+t.celsius = 30          # goes through the setter
+# t.celsius = -500      # ValueError
+</code></pre>
+
+  <h3><code>cached_property</code> — compute once, store forever</h3>
+
+<pre><code class="python">from functools import cached_property
+
+class Dataset:
+    def __init__(self, rows):
+        self.rows = rows
+
+    @cached_property
+    def summary(self):
+        print("computing…")           # runs only on first access
+        return {"count": len(self.rows), "total": sum(self.rows)}
+
+d = Dataset([1, 2, 3])
+d.summary   # prints "computing…"
+d.summary   # silent — cached in d.__dict__
+</code></pre>
+
+  <h3>Name mangling (Python's "private")</h3>
+
+<pre><code class="python">class Wallet:
+    def __init__(self):
+        self._balance = 0        # convention: internal, do not touch
+        self.__pin = "1234"      # mangled to _Wallet__pin
+
+w = Wallet()
+print(w._balance)               # 0 — accessible, just polite
+print(w._Wallet__pin)           # "1234" — mangling is not security
+</code></pre>
+
+  <div class="box tip">
+    <div class="box-title">Python's philosophy: "we're all consenting adults"</div>
+    <p>Use <code>_single_underscore</code> to say "internal". Use <code>__double</code> only to
+    avoid name collisions in subclasses. Never rely on either for security.</p>
+  </div>
+
+  <h3><code>__slots__</code> preview</h3>
+  <p>Defining <code>__slots__</code> forbids arbitrary attributes and saves a lot of memory.
+  See <a href="#slots">Chapter 22</a>.</p>
+</section>
+
+<section id="methods" data-part="Part III — Classes &amp; Objects" data-title="16. Instance, Class &amp; Static Methods">
+  <h2>16. Instance, Class &amp; Static Methods</h2>
+
+  <table>
+    <thead><tr><th>Decorator</th><th>First arg</th><th>Can access</th><th>Typical use</th></tr></thead>
+    <tbody>
+      <tr><td>(none)</td><td><code>self</code></td><td>Instance + class</td><td>Normal behaviour</td></tr>
+      <tr><td><code>@classmethod</code></td><td><code>cls</code></td><td>Class only</td><td>Alternative constructors, factories</td></tr>
+      <tr><td><code>@staticmethod</code></td><td>nothing</td><td>Neither</td><td>Pure helpers namespaced to the class</td></tr>
+    </tbody>
+  </table>
+
+<pre><code class="python">import json
+from datetime import datetime
+
+class Order:
+    tax_rate = 0.08
+
+    def __init__(self, items, created=None):
+        self.items = items
+        self.created = created or datetime.now()
+
+    # --- instance method: needs a specific order ---
+    def total(self):
+        subtotal = sum(i["price"] * i["qty"] for i in self.items)
+        return round(subtotal * (1 + self.tax_rate), 2)
+
+    # --- classmethod: alternative constructor ---
+    @classmethod
+    def from_json(cls, payload):
+        data = json.loads(payload)
+        return cls(items=data["items"])
+
+    @classmethod
+    def from_csv_line(cls, line):
+        ...
+
+    # --- staticmethod: no access to instance or class ---
+    @staticmethod
+    def is_valid_sku(sku):
+        return bool(sku) and sku.isalnum() and len(sku) == 8
+
+o = Order.from_json('{"items": [{"price": 10, "qty": 2}]}')
+print(o.total())
+print(Order.is_valid_sku("ABC12345"))    # True
+</code></pre>
+
+  <h3>Why <code>@classmethod</code> beats <code>@staticmethod</code> for factories</h3>
+  <p><code>cls</code> makes the factory <strong>inheritance-aware</strong>: a subclass calling
+  <code>SubOrder.from_json(...)</code> gets a <code>SubOrder</code>, not an <code>Order</code>.</p>
+
+<pre><code class="python">class PriorityOrder(Order):
+    def total(self):
+        return super().total() * 1.1
+
+p = PriorityOrder.from_json('{"items": [{"price": 10, "qty": 2}]}')
+print(type(p))    # &lt;class 'PriorityOrder'&gt;  — cls did the right thing
+</code></pre>
+
+  <div class="box connect">
+    <div class="box-title">Connect — factory classmethods everywhere</div>
+    <p><code>dict.fromkeys()</code>, <code>datetime.fromtimestamp()</code>,
+    <code>Path.cwd()</code>, <code>bytes.fromhex()</code> — the standard library is full of
+    them. In application code, they are how you load a model from a database row, build a
+    config from environment variables, or reconstruct an object from an API payload.</p>
+  </div>
+
+  <h3>Instance method as a first-class object</h3>
+
+<pre><code class="python">acct = BankAccount("Ada", 100)
+deposit = acct.deposit     # a bound method — remembers `acct`
+deposit(50)
+print(acct.balance)        # 150
+
+print(BankAccount.deposit)      # &lt;function BankAccount.deposit&gt; (unbound)
+print(acct.deposit)             # &lt;bound method BankAccount.deposit of ...&gt;
+</code></pre>
+</section>
+
+<section id="inheritance" data-part="Part III — Classes &amp; Objects" data-title="17. Inheritance &amp; MRO">
+  <h2>17. Inheritance, <code>super()</code> &amp; MRO</h2>
+
+  <p>Inheritance expresses an <strong>is-a</strong> relationship: a <code>SavingsAccount</code>
+  is a <code>BankAccount</code>.</p>
+
+<pre><code class="python">class Animal:
+    def __init__(self, name):
+        self.name = name
+    def speak(self):
+        return "..."
+    def describe(self):
+        return f"{self.name} says {self.speak()}"
+
+class Dog(Animal):
+    def speak(self):
+        return "Woof"
+
+class Cat(Animal):
+    def speak(self):
+        return "Meow"
+
+for a in [Dog("Rex"), Cat("Mia")]:
+    print(a.describe())    # Rex says Woof / Mia says Meow
+</code></pre>
+
+  <h3><code>super()</code> — cooperative inheritance</h3>
+
+<pre><code class="python">class SavingsAccount(BankAccount):
+    def __init__(self, owner, balance=0, interest_rate=0.05):
+        super().__init__(owner, balance)     # let the parent set up its state
+        self.interest_rate = interest_rate
+
+    def add_interest(self):
+        self.balance *= (1 + self.interest_rate)
+        return self.balance
+</code></pre>
+
+  <div class="box warn">
+    <div class="box-title">Always call <code>super().__init__()</code></div>
+    <p>Skipping it leaves the parent's attributes unset and produces mysterious
+    <code>AttributeError</code>s later.</p>
+  </div>
+
+  <h3>Multiple inheritance and the MRO</h3>
+
+<pre><code class="python">class A:
+    def greet(self): return "A"
+class B(A):
+    def greet(self): return "B"
+class C(A):
+    def greet(self): return "C"
+class D(B, C):
+    pass
+
+print(D().greet())        # B
+print([c.__name__ for c in D.__mro__])
+# ['D', 'B', 'C', 'A', 'object']
+</code></pre>
+
+  <p>Python uses the <strong>C3 linearisation</strong> algorithm to compute a consistent order.
+  <code>super()</code> means "the next class in the MRO of <em>this instance</em>",
+  not "my parent".</p>
+
+  <h3>Cooperative multiple inheritance</h3>
+  <p>For mixins to compose, every class in the chain must pass <code>*args, **kwargs</code>
+  along:</p>
+
+<pre><code class="python">class Base:
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+class TimestampMixin(Base):
+    def __init__(self, **kwargs):
+        self.created = now()
+        super().__init__(**kwargs)
+
+class LogMixin(Base):
+    def __init__(self, **kwargs):
+        self.log = []
+        super().__init__(**kwargs)
+
+class User(TimestampMixin, LogMixin, Base):
+    def __init__(self, name, **kwargs):
+        self.name = name
+        super().__init__(**kwargs)
+
+u = User("Ada")
+print(u.name, u.created, u.log)    # all three set
+</code></pre>
+
+  <h3>Mixins</h3>
+  <p>A mixin is a small class that adds one behaviour and is never instantiated on its own.
+  Name them <code>...Mixin</code>.</p>
+
+<pre><code class="python">class JsonSerializableMixin:
+    def to_json(self):
+        import json
+        return json.dumps(self.__dict__, default=str)
+
+class User(JsonSerializableMixin):
+    def __init__(self, name):
+        self.name = name
+
+print(User("Ada").to_json())    # {"name": "Ada"}
+</code></pre>
+
+  <h3>Type checks</h3>
+
+<pre><code class="python">isinstance(dog, Animal)          # True — checks the whole MRO
+issubclass(Dog, Animal)          # True
+isinstance(True, int)            # True (bool subclasses int)
+
+# Better: check for behaviour, not identity
+if hasattr(obj, "read"):
+    ...
+</code></pre>
+
+  <div class="box tip">
+    <div class="box-title">Prefer composition over deep hierarchies</div>
+    <p>Inheritance is the tightest coupling in OOP. Hierarchies deeper than 2–3 levels
+    become fragile. See <a href="#composition">Chapter 21</a>.</p>
+  </div>
+</section>
+
+<section id="dunder" data-part="Part III — Classes &amp; Objects" data-title="18. Magic / Dunder Methods">
+  <h2>18. Magic (Dunder) Methods</h2>
+
+  <p>Dunder methods let your objects integrate with Python's syntax: <code>+</code>,
+  <code>len()</code>, <code>for</code>, <code>with</code>, <code>==</code>, and more.</p>
+
+  <h3>String representation</h3>
+
+<pre><code class="python">class Money:
+    def __init__(self, amount, currency="USD"):
+        self.amount = amount
+        self.currency = currency
+
+    def __repr__(self):
+        """Unambiguous — for developers, ideally eval-able."""
+        return f"Money({self.amount!r}, {self.currency!r})"
+
+    def __str__(self):
+        """Readable — for end users."""
+        return f"{self.amount:.2f} {self.currency}"
+
+    def __format__(self, spec):
+        if spec == "short":
+            return f"{self.amount:.0f}{self.currency[0]}"
+        return format(str(self), spec)
+
+m = Money(1234.5)
+print(repr(m))       # Money(1234.5, 'USD')
+print(str(m))        # 1234.50 USD
+print(f"{m:short}")  # 1234U
+print([m])           # [Money(1234.5, 'USD')]  — list uses repr
+</code></pre>
+
+  <div class="box tip">
+    <div class="box-title">If you write only one dunder, write <code>__repr__</code></div>
+    <p>It makes debugging, logging, and REPL exploration dramatically better. Default
+    <code>__str__</code> falls back to <code>__repr__</code>.</p>
+  </div>
+
+  <h3>Equality and hashing</h3>
+
+<pre><code class="python">class Point:
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+
+    def __eq__(self, other):
+        if not isinstance(other, Point):
+            return NotImplemented
+        return (self.x, self.y) == (other.x, other.y)
+
+    def __hash__(self):
+        return hash((self.x, self.y))
+
+print(Point(1, 2) == Point(1, 2))     # True
+print({Point(1, 2): "a"}[Point(1, 2)])  # 'a'
+</code></pre>
+
+  <div class="box warn">
+    <div class="box-title">The eq/hash contract</div>
+    <p>If two objects are equal, they <strong>must</strong> have the same hash. Defining
+    <code>__eq__</code> without <code>__hash__</code> makes the class unhashable
+    (Python sets <code>__hash__ = None</code>). Mutable objects usually should not be
+    hashable at all.</p>
+  </div>
+
+  <h3>Ordering</h3>
+
+<pre><code class="python">from functools import total_ordering
+
+@total_ordering
+class Version:
+    def __init__(self, text):
+        self.parts = tuple(int(p) for p in text.split("."))
+    def __eq__(self, other):
+        return self.parts == other.parts
+    def __lt__(self, other):
+        return self.parts &lt; other.parts
+
+print(sorted([Version("1.2"), Version("1.10"), Version("0.9")])[0])   # 0.9
+</code></pre>
+
+  <h3>Containers and iteration</h3>
+
+<pre><code class="python">class Playlist:
+    def __init__(self, songs):
+        self._songs = list(songs)
+
+    def __len__(self):            # len(playlist)
+        return len(self._songs)
+
+    def __getitem__(self, index): # playlist[0], slicing
+        return self._songs[index]
+
+    def __iter__(self):           # for song in playlist
+        return iter(self._songs)
+
+    def __contains__(self, item): # "x" in playlist
+        return item in self._songs
+
+    def __reversed__(self):
+        return reversed(self._songs)
+
+p = Playlist(["a", "b", "c"])
+print(len(p), p[1], list(p), "b" in p)
+</code></pre>
+
+  <h3>Arithmetic operators</h3>
+
+<pre><code class="python">class Vector:
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+    def __add__(self, other):  return Vector(self.x + other.x, self.y + other.y)
+    def __sub__(self, other):  return Vector(self.x - other.x, self.y - other.y)
+    def __mul__(self, k):      return Vector(self.x * k, self.y * k)
+    def __rmul__(self, k):     return self * k        # 3 * v
+    def __neg__(self):         return Vector(-self.x, -self.y)
+    def __abs__(self):         return (self.x ** 2 + self.y ** 2) ** 0.5
+    def __repr__(self):        return f"Vector({self.x}, {self.y})"
+
+v = Vector(1, 2) + Vector(3, 4)
+print(v, 3 * v, abs(Vector(3, 4)))
+</code></pre>
+
+  <h3>Quick reference</h3>
+  <table>
+    <thead><tr><th>Category</th><th>Dunders</th></tr></thead>
+    <tbody>
+      <tr><td>Construction</td><td><code>__new__</code>, <code>__init__</code>, <code>__del__</code></td></tr>
+      <tr><td>Representation</td><td><code>__repr__</code>, <code>__str__</code>, <code>__format__</code>, <code>__bytes__</code></td></tr>
+      <tr><td>Comparison</td><td><code>__eq__</code>, <code>__ne__</code>, <code>__lt__</code>, <code>__le__</code>, <code>__gt__</code>, <code>__ge__</code>, <code>__hash__</code>, <code>__bool__</code></td></tr>
+      <tr><td>Containers</td><td><code>__len__</code>, <code>__getitem__</code>, <code>__setitem__</code>, <code>__delitem__</code>, <code>__contains__</code>, <code>__iter__</code>, <code>__next__</code>, <code>__reversed__</code></td></tr>
+      <tr><td>Arithmetic</td><td><code>__add__</code>, <code>__sub__</code>, <code>__mul__</code>, <code>__truediv__</code>, <code>__floordiv__</code>, <code>__mod__</code>, <code>__pow__</code>, <code>__matmul__</code> + <code>__r*__</code> / <code>__i*__</code> variants</td></tr>
+      <tr><td>Conversion</td><td><code>__int__</code>, <code>__float__</code>, <code>__index__</code>, <code>__complex__</code></td></tr>
+      <tr><td>Context</td><td><code>__enter__</code>, <code>__exit__</code></td></tr>
+      <tr><td>Attribute access</td><td><code>__getattr__</code>, <code>__getattribute__</code>, <code>__setattr__</code>, <code>__delattr__</code>, <code>__dir__</code></td></tr>
+      <tr><td>Callable</td><td><code>__call__</code></td></tr>
+      <tr><td>Descriptors</td><td><code>__get__</code>, <code>__set__</code>, <code>__delete__</code>, <code>__set_name__</code></td></tr>
+      <tr><td>Class creation</td><td><code>__init_subclass__</code>, <code>__set_name__</code>, <code>__class_getitem__</code></td></tr>
+      <tr><td>Pickling</td><td><code>__getstate__</code>, <code>__setstate__</code>, <code>__reduce__</code>, <code>__copy__</code>, <code>__deepcopy__</code></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="dataclasses" data-part="Part III — Classes &amp; Objects" data-title="19. Dataclasses">
+  <h2>19. Dataclasses</h2>
+
+  <p><code>@dataclass</code> generates <code>__init__</code>, <code>__repr__</code>, and
+  <code>__eq__</code> from class-level annotations. It removes pages of boilerplate for
+  classes that are mainly data containers.</p>
+
+<pre><code class="python">from dataclasses import dataclass, field
+
+@dataclass
+class Product:
+    sku: str
+    name: str
+    price: float = 0.0
+    tags: list[str] = field(default_factory=list)
+
+    def __post_init__(self):
+        self.sku = self.sku.upper()
+        if self.price &lt; 0:
+            raise ValueError("price cannot be negative")
+
+p = Product("abc123", "Widget", 9.99, ["tools"])
+print(p)             # Product(sku='ABC123', name='Widget', price=9.99, tags=['tools'])
+print(p == Product("ABC123", "Widget", 9.99, ["tools"]))   # True
+</code></pre>
+
+  <div class="box warn">
+    <div class="box-title">Never use a mutable default directly</div>
+<pre><code class="python">@dataclass
+class Bad:
+    tags: list[str] = []          # ValueError: mutable default not allowed
+</code></pre>
+    <p>Dataclasses actually raise for this — use <code>field(default_factory=list)</code>.</p>
+  </div>
+
+  <h3>Useful options</h3>
+
+<pre><code class="python">from dataclasses import dataclass, field, asdict, astuple
+
+@dataclass(frozen=True, slots=True, order=True)
+class Coordinate:
+    x: float
+    y: float
+    label: str = field(default="", compare=False, repr=False)
+
+c = Coordinate(1.0, 2.0)
+# c.x = 5            # FrozenInstanceError — immutable
+print(sorted([Coordinate(3,1), Coordinate(1,2)]))
+print(asdict(c))     # {'x': 1.0, 'y': 2.0, 'label': ''}
+print(astuple(c))    # (1.0, 2.0, '')
+</code></pre>
+
+  <table>
+    <thead><tr><th>Option</th><th>Effect</th></tr></thead>
+    <tbody>
+      <tr><td><code>frozen=True</code></td><td>Immutable; auto-generates <code>__hash__</code></td></tr>
+      <tr><td><code>order=True</code></td><td>Generates <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code></td></tr>
+      <tr><td><code>slots=True</code> (3.10+)</td><td>Adds <code>__slots__</code>, lowers memory</td></tr>
+      <tr><td><code>kw_only=True</code> (3.10+)</td><td>All fields become keyword-only</td></tr>
+      <tr><td><code>eq=False</code></td><td>Use identity comparison, keep <code>__hash__</code></td></tr>
+      <tr><td><code>unsafe_hash=True</code></td><td>Force a hash even for mutable classes</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Inheritance</h3>
+
+<pre><code class="python">@dataclass
+class Base:
+    id: int
+
+@dataclass
+class User(Base):
+    name: str
+    email: str = ""
+
+# Field order: inherited fields first
+print(User(1, "Ada"))    # User(id=1, name='Ada', email='')
+</code></pre>
+
+  <h3>Choosing a data container</h3>
+  <table>
+    <thead><tr><th>Tool</th><th>Best for</th></tr></thead>
+    <tbody>
+      <tr><td><code>@dataclass</code></td><td>General-purpose records with methods</td></tr>
+      <tr><td><code>NamedTuple</code></td><td>Immutable, tuple-compatible, very light</td></tr>
+      <tr><td><code>TypedDict</code></td><td>Dict-shaped data (e.g. JSON payloads)</td></tr>
+      <tr><td>Pydantic <code>BaseModel</code></td><td>Runtime validation + parsing from JSON</td></tr>
+      <tr><td>Plain class</td><td>Complex behaviour, custom construction</td></tr>
+    </tbody>
+  </table>
+
+  <div class="box connect">
+    <div class="box-title">Connect — dataclasses as application DTOs</div>
+    <p>Dataclasses are the natural choice for data-transfer objects between layers:
+    a repository returns a <code>@dataclass</code> <code>UserRecord</code>, the service layer
+    transforms it into a <code>UserProfile</code>, and the API layer serialises it with
+    <code>asdict()</code>. They are also excellent for configuration objects and test fixtures.</p>
+  </div>
+</section>
+
+<section id="abc" data-part="Part III — Classes &amp; Objects" data-title="20. ABCs, Protocols &amp; Duck Typing">
+  <h2>20. Abstract Base Classes, Protocols &amp; Duck Typing</h2>
+
+  <h3>Duck typing</h3>
+  <p>"If it walks like a duck and quacks like a duck…" — Python cares about behaviour, not
+  ancestry. <code>for</code> works with anything that implements <code>__iter__</code>,
+  regardless of what it inherits from.</p>
+
+<pre><code class="python">def save_all(writer, records):
+    for r in records:
+        writer.write(r)     # works with File, Socket, StringIO, Mock…
+
+class NullWriter:
+    def write(self, text): pass
+
+save_all(NullWriter(), ["a", "b"])     # fine
+</code></pre>
+
+  <h3>Abstract Base Classes — enforce a contract</h3>
+
+<pre><code class="python">from abc import ABC, abstractmethod
+
+class Repository(ABC):
+    @abstractmethod
+    def get(self, key: str) -&gt; dict: ...
+
+    @abstractmethod
+    def put(self, key: str, value: dict) -&gt; None: ...
+
+    def exists(self, key: str) -&gt; bool:      # concrete helper
+        try:
+            self.get(key)
+            return True
+        except KeyError:
+            return False
+
+class MemoryRepo(Repository):
+    def __init__(self):
+        self._data = {}
+    def get(self, key):
+        return self._data[key]
+    def put(self, key, value):
+        self._data[key] = value
+
+# Repository()          → TypeError: can't instantiate abstract class
+</code></pre>
+
+  <h3>Protocols — structural typing</h3>
+  <p>A <code>Protocol</code> describes a shape without requiring inheritance. Static checkers
+  verify that an object matches; runtime code does not care at all.</p>
+
+<pre><code class="python">from typing import Protocol, runtime_checkable
+
+@runtime_checkable
+class Drawable(Protocol):
+    def draw(self) -&gt; None: ...
+
+class Circle:
+    def draw(self) -&gt; None:
+        print("○")
+
+class Square:
+    def draw(self) -&gt; None:
+        print("□")
+
+def render_all(shapes: list[Drawable]) -&gt; None:
+    for s in shapes:
+        s.draw()
+
+render_all([Circle(), Square()])       # works — no inheritance needed
+print(isinstance(Circle(), Drawable))  # True (thanks to runtime_checkable)
+</code></pre>
+
+  <div class="box">
+    <div class="box-title">ABC or Protocol?</div>
+    <ul>
+      <li><strong>ABC</strong> when you own the hierarchy and want to enforce it at runtime.</li>
+      <li><strong>Protocol</strong> when you want to accept anything that behaves correctly —
+      especially useful for third-party classes you cannot modify.</li>
+    </ul>
+  </div>
+
+  <h3>Registering virtual subclasses</h3>
+
+<pre><code class="python">from collections.abc import Sequence
+
+class MyList:
+    def __init__(self, items): self._items = list(items)
+    def __len__(self): return len(self._items)
+    def __getitem__(self, i): return self._items[i]
+
+Sequence.register(MyList)
+print(isinstance(MyList([1]), Sequence))    # True
+</code></pre>
+
+  <div class="box connect">
+    <div class="box-title">Connect — pluggable backends</div>
+    <p>Define a <code>Repository</code> ABC (or <code>StorageBackend</code> Protocol) in your
+    core package. Then implement <code>PostgresRepo</code>, <code>RedisRepo</code>, and
+    <code>InMemoryRepo</code> — tests use the in-memory one, production uses Postgres,
+    and no core code changes.</p>
+  </div>
+</section>
+
+<section id="composition" data-part="Part III — Classes &amp; Objects" data-title="21. Composition vs Inheritance">
+  <h2>21. Composition vs Inheritance</h2>
+
+  <table>
+    <thead><tr><th></th><th>Inheritance (is-a)</th><th>Composition (has-a)</th></tr></thead>
+    <tbody>
+      <tr><td>Coupling</td><td>Tight</td><td>Loose</td></tr>
+      <tr><td>Runtime flexibility</td><td>Fixed at class definition</td><td>Swap collaborators any time</td></tr>
+      <tr><td>Testability</td><td>Often needs the parent</td><td>Inject a fake</td></tr>
+      <tr><td>Best for</td><td>True taxonomies, mixins, framework contracts</td><td>Almost everything else</td></tr>
+    </tbody>
+  </table>
+
+  <h3>The problem with inheritance-first design</h3>
+
+<pre><code class="python"># Fragile: what if we need logging AND retrying AND caching?
+class HttpClient:
+    def get(self, url): ...
+
+class LoggingHttpClient(HttpClient): ...
+class RetryingHttpClient(HttpClient): ...
+class CachingRetryingLoggingHttpClient(RetryingHttpClient, LoggingHttpClient): ...  # explosion
+</code></pre>
+
+  <h3>Composition</h3>
+
+<pre><code class="python">class HttpClient:
+    def get(self, url):
+        ...
+
+class RetryPolicy:
+    def __init__(self, attempts=3):
+        self.attempts = attempts
+    def run(self, fn, *args, **kwargs):
+        for i in range(self.attempts):
+            try:
+                return fn(*args, **kwargs)
+            except Exception:
+                if i == self.attempts - 1:
+                    raise
+
+class Cache:
+    def __init__(self):
+        self._store = {}
+    def get_or_compute(self, key, fn):
+        if key not in self._store:
+            self._store[key] = fn()
+        return self._store[key]
+
+class ApiClient:
+    """Composes a transport, a retry policy, and a cache."""
+
+    def __init__(self, transport, retry=None, cache=None):
+        self.transport = transport
+        self.retry = retry or RetryPolicy(1)
+        self.cache = cache or Cache()
+
+    def get(self, url):
+        return self.cache.get_or_compute(
+            url,
+            lambda: self.retry.run(self.transport.get, url),
+        )
+</code></pre>
+
+  <p>Now every capability is independently testable and independently swappable.</p>
+
+  <h3>Delegation</h3>
+  <p>When composition wraps a single object, forward calls explicitly — or use
+  <code>__getattr__</code> to forward automatically.</p>
+
+<pre><code class="python">class LoggedList:
+    def __init__(self, items=None):
+        self._items = list(items or [])
+    def append(self, value):
+        print(f"appending {value!r}")
+        self._items.append(value)
+    def __getattr__(self, name):
+        # forward everything else to the wrapped list
+        return getattr(self._items, name)
+
+lst = LoggedList([1, 2])
+lst.append(3)
+print(lst.count(1))    # 1  — forwarded
+</code></pre>
+
+  <div class="box tip">
+    <div class="box-title">Rule of thumb</div>
+    <p>Start with composition. Introduce inheritance when you have a genuine
+    <em>is-a</em> relationship, when the framework requires it (Django models,
+    <code>Exception</code>, <code>ABC</code>), or when you need a mixin.</p>
+  </div>
+</section>
+
+<section id="slots" data-part="Part III — Classes &amp; Objects" data-title="22. __slots__ &amp; Memory">
+  <h2>22. <code>__slots__</code> &amp; Memory</h2>
+
+  <p>By default every instance carries a <code>__dict__</code> — a hash table that costs
+  roughly 100+ bytes even when empty. <code>__slots__</code> replaces it with fixed
+  descriptors.</p>
+
+<pre><code class="python">class PointDict:
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+
+class PointSlots:
+    __slots__ = ("x", "y")
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+
+import sys
+print(sys.getsizeof(PointDict(1, 2).__dict__))   # ~104 bytes (empty dict!)
+print(sys.getsizeof(PointSlots(1, 2)))           # ~56 bytes, no dict at all
+</code></pre>
+
+  <p>For a million instances that difference is hundreds of megabytes.</p>
+
+  <table>
+    <thead><tr><th></th><th><code>__slots__</code></th><th>Normal class</th></tr></thead>
+    <tbody>
+      <tr><td>Memory per instance</td><td>Low</td><td>High</td></tr>
+      <tr><td>Attribute access speed</td><td>Slightly faster</td><td>Fast</td></tr>
+      <tr><td>New attributes at runtime</td><td>❌ Forbidden</td><td>✅ Allowed</td></tr>
+      <tr><td>Multiple inheritance</td><td>Only one non-slot base</td><td>✅</td></tr>
+      <tr><td><code>__dict__</code> / <code>vars()</code></td><td>Absent</td><td>Present</td></tr>
+      <tr><td>Pickle</td><td>Needs <code>__getstate__</code></td><td>Works by default</td></tr>
+      <tr><td><code>functools.cached_property</code></td><td>❌ (needs <code>__dict__</code>)</td><td>✅</td></tr>
+    </tbody>
+  </table>
+
+  <h3>With inheritance</h3>
+
+<pre><code class="python">class Base:
+    __slots__ = ("a",)
+
+class Child(Base):
+    __slots__ = ("b",)      # must redeclare; slots accumulate
+
+c = Child()
+c.a, c.b = 1, 2
+# c.z = 3                 # AttributeError
+</code></pre>
+
+  <h3>With dataclasses</h3>
+
+<pre><code class="python">from dataclasses import dataclass
+
+@dataclass(slots=True)      # Python 3.10+
+class Event:
+    name: str
+    payload: dict
+</code></pre>
+
+  <div class="box warn">
+    <div class="box-title">Do not optimise prematurely</div>
+    <p>Use <code>__slots__</code> when you have profiled a memory problem, or when you
+    genuinely create millions of small objects (parsers, game entities, network packets).
+    Otherwise it adds friction for no benefit.</p>
+  </div>
+</section>
+
+<section id="descriptors" data-part="Part III — Classes &amp; Objects" data-title="23. Descriptors">
+  <h2>23. Descriptors</h2>
+
+  <p>A descriptor is an object that defines <code>__get__</code>, <code>__set__</code>, or
+  <code>__delete__</code> and lives as a <em>class attribute</em>. It is the mechanism behind
+  <code>property</code>, <code>classmethod</code>, <code>staticmethod</code>, and every
+  ORM field you have ever used.</p>
+
+<pre><code class="python">class Validated:
+    """A descriptor that validates on assignment."""
+
+    def __init__(self, validator, default=None):
+        self.validator = validator
+        self.default = default
+        self.name = None
+
+    def __set_name__(self, owner, name):
+        self.name = name          # the attribute name in the owner class
+
+    def __get__(self, instance, owner=None):
+        if instance is None:
+            return self           # accessed on the class
+        return instance.__dict__.get(self.name, self.default)
+
+    def __set__(self, instance, value):
+        if not self.validator(value):
+            raise ValueError(f"invalid value for {self.name}: {value!r}")
+        instance.__dict__[self.name] = value
+
+    def __delete__(self, instance):
+        del instance.__dict__[self.name]
+
+
+class Person:
+    name = Validated(lambda v: isinstance(v, str) and v.strip(), default="")
+    age  = Validated(lambda v: isinstance(v, int) and 0 &lt;= v &lt; 150, default=0)
+
+p = Person()
+p.age = 30
+# p.age = -5        # ValueError
+# p.name = ""       # ValueError
+print(p.age, Person.age)   # 30 &lt;Validated object&gt;
+</code></pre>
+
+  <h3>Data vs non-data descriptors</h3>
+  <table>
+    <thead><tr><th>Kind</th><th>Defines</th><th>Priority</th></tr></thead>
+    <tbody>
+      <tr><td>Non-data</td><td>only <code>__get__</code></td><td>Instance <code>__dict__</code> wins</td></tr>
+      <tr><td>Data</td><td><code>__get__</code> + <code>__set__</code></td><td>Descriptor wins over instance dict</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Why methods work at all</h3>
+  <p>A plain function is a non-data descriptor. When you access <code>obj.method</code>,
+  the function's <code>__get__</code> returns a <em>bound method</em> that pre-fills
+  <code>self</code>. That is the entire magic of <code>self</code>.</p>
+
+<pre><code class="python">def f(self):
+    return self
+
+class C:
+    m = f
+
+c = C()
+print(c.m)        # &lt;bound method f of ...&gt;
+print(C.m)        # &lt;function f&gt;
+print(c.m.__self__ is c)   # True
+</code></pre>
+
+  <div class="box connect">
+    <div class="box-title">Connect — descriptors in real libraries</div>
+    <ul>
+      <li><strong>Django ORM</strong>: <code>models.CharField()</code> is a descriptor that turns
+      Python attribute access into SQL.</li>
+      <li><strong>SQLAlchemy</strong>: <code>Column</code> and <code>relationship</code> are descriptors.</li>
+      <li><strong>Pydantic</strong>: field validators hook into attribute access.</li>
+      <li><strong>functools</strong>: <code>cached_property</code> is a non-data descriptor.</li>
+    </ul>
+    <p>You rarely write descriptors — but recognising them explains why frameworks feel
+    like magic when they are not.</p>
+  </div>
+</section>
+
+<section id="metaclasses" data-part="Part III — Classes &amp; Objects" data-title="24. Metaclasses">
+  <h2>24. Metaclasses</h2>
+
+  <p>A metaclass is "the class of a class". Just as an object is an instance of a class,
+  a class is an instance of a metaclass — normally <code>type</code>.</p>
+
+<pre class="diagram">object  ←  instance of  ←  Instance
+  ▲
+  │ subclass
+type    ←  instance of  ←  MyClass (a class object)
+  ▲
+  │ subclass (metaclass)
+MyMeta  ←  creates   ←  MyClass</pre>
+
+  <h3>The simplest example: a registry</h3>
+
+<pre><code class="python">class PluginMeta(type):
+    registry = {}
+
+    def __new__(mcls, name, bases, namespace, **kwargs):
+        cls = super().__new__(mcls, name, bases, namespace, **kwargs)
+        if not name.startswith("_"):
+            mcls.registry[name.lower()] = cls
+        return cls
+
+class Plugin(metaclass=PluginMeta):
+    pass
+
+class CsvExporter(Plugin):
+    pass
+
+class JsonExporter(Plugin):
+    pass
+
+print(PluginMeta.registry)
+# {'csvexporter': ..., 'jsonexporter': ...}
+</code></pre>
+
+  <h3><code>__init_subclass__</code> — usually the better tool</h3>
+  <p>If all you need is a hook when a subclass is created, you do not need a metaclass at all.</p>
+
+<pre><code class="python">class Plugin:
+    registry = {}
+
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        Plugin.registry[cls.__name__.lower()] = cls
+
+class CsvExporter(Plugin): pass
+class JsonExporter(Plugin): pass
+
+print(Plugin.registry.keys())
+</code></pre>
+
+  <div class="box tip">
+    <div class="box-title">Metaclass decision tree</div>
+    <ol>
+      <li>Do I need to change how <em>attribute access on instances</em> works? → use
+      <code>__getattr__</code> / <code>__getattribute__</code> or a descriptor.</li>
+      <li>Do I need to run code when a <em>subclass</em> is created? → <code>__init_subclass__</code>.</li>
+      <li>Do I need to run code when the <em>class itself</em> is created? → <code>__set_name__</code>
+      or a class decorator.</li>
+      <li>Do I need to change <em>class creation</em> itself (namespace injection, base
+      manipulation)? → metaclass.</li>
+    </ol>
+    <p>Metaclasses are almost never the answer. Frameworks use them; applications rarely should.</p>
+  </div>
+
+  <h3>Class decorators vs metaclasses</h3>
+
+<pre><code class="python">def add_repr(cls):
+    def __repr__(self):
+        attrs = ", ".join(f"{k}={v!r}" for k, v in vars(self).items())
+        return f"{cls.__name__}({attrs})"
+    cls.__repr__ = __repr__
+    return cls
+
+@add_repr
+class Item:
+    def __init__(self, name, qty):
+        self.name, self.qty = name, qty
+
+print(Item("bolt", 10))    # Item(name='bolt', qty=10)
+</code></pre>
+
+  <div class="box connect">
+    <div class="box-title">Connect — where metaclasses appear</div>
+    <p>Django's <code>ModelBase</code> collects fields from a model's namespace into a
+    <code>_meta</code> object. SQLAlchemy's declarative base does something similar. ABCMeta
+    enforces <code>@abstractmethod</code>. If you use these frameworks, you are already
+    depending on metaclasses — you just do not have to write them.</p>
+  </div>
+</section>
+
+<section id="context-managers" data-part="Part III — Classes &amp; Objects" data-title="25. Context Managers">
+  <h2>25. Context Managers</h2>
+
+  <p><code>with</code> guarantees cleanup, even when exceptions occur.</p>
+
+<pre><code class="python">with open("data.txt") as fh:
+    contents = fh.read()
+# file is closed here, no matter what happened above
+</code></pre>
+
+  <h3>Writing a class-based context manager</h3>
+
+<pre><code class="python">import time
+
+class Timer:
+    def __enter__(self):
+        self.start = time.perf_counter()
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.elapsed = time.perf_counter() - self.start
+        print(f"took {self.elapsed:.4f}s")
+        return False      # False → do not suppress the exception
+
+with Timer() as t:
+    sum(range(1_000_000))
+print(t.elapsed)
+</code></pre>
+
+  <table>
+    <thead><tr><th><code>__exit__</code> returns</th><th>Effect</th></tr></thead>
+    <tbody>
+      <tr><td><code>False</code> / <code>None</code></td><td>Exception propagates normally</td></tr>
+      <tr><td><code>True</code></td><td>Exception is swallowed</td></tr>
+    </tbody>
+  </table>
+
+  <h3>The generator shortcut</h3>
+
+<pre><code class="python">from contextlib import contextmanager
+
+@contextmanager
+def transaction(conn):
+    conn.begin()
+    try:
+        yield conn
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+
+with transaction(db) as conn:
+    conn.execute("INSERT ...")
+</code></pre>
+
+  <h3>More <code>contextlib</code> tools</h3>
+
+<pre><code class="python">from contextlib import suppress, closing, ExitStack, nullcontext
+
+# Ignore a specific error
+with suppress(FileNotFoundError):
+    os.remove("maybe.txt")
+
+# Guarantee close() on arbitrary objects
+with closing(urllib.request.urlopen(url)) as response:
+    data = response.read()
+
+# Dynamically manage a variable number of resources
+with ExitStack() as stack:
+    files = [stack.enter_context(open(f)) for f in paths]
+    process(files)
+
+# Optional context manager
+with (lock if threaded else nullcontext()):
+    do_work()
+</code></pre>
+
+  <h3>Async context managers</h3>
+
+<pre><code class="python">class AsyncConnection:
+    async def __aenter__(self):
+        await self.connect()
+        return self
+    async def __aexit__(self, *exc):
+        await self.close()
+
+async def main():
+    async with AsyncConnection() as conn:
+        await conn.query("...")
+</code></pre>
+
+  <div class="box connect">
+    <div class="box-title">Connect — contexts everywhere</div>
+    <ul>
+      <li>Database sessions and transactions</li>
+      <li>File and socket handles</li>
+      <li>Threading / multiprocessing locks</li>
+      <li>Temporary directories and environment changes</li>
+      <li>Timing, profiling, and tracing blocks</li>
+      <li>Test fixtures that must be torn down</li>
+    </ul>
+    <p>Rule: if you write <code>setup()</code> … <code>teardown()</code>, you want a
+    context manager.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     PART IV — CONNECTING TO APPLICATIONS
+     ============================================================ -->
+<section id="architecture" data-part="Part IV — Connecting to Applications" data-title="26. How Everything Connects">
+  <h2>26. How Everything Connects</h2>
+
+  <p>This is the chapter that turns syntax into architecture. Here is the mental model:</p>
+
+<pre class="diagram">┌──────────────────────────────────────────────────────────────────┐
+│                        APPLICATION                               │
+│                                                                  │
+│  ┌────────────┐   calls   ┌─────────────┐   calls  ┌───────────┐ │
+│  │  ENTRY     │──────────▶│  SERVICE    │─────────▶│ REPOSITORY│ │
+│  │  POINTS    │           │  LAYER      │          │  LAYER    │ │
+│  │            │◀──────────│             │◀─────────│           │ │
+│  │ functions  │  returns  │  classes    │  returns │  classes  │ │
+│  └────────────┘           └─────────────┘          └───────────┘ │
+│    • HTTP route             • business rules          • SQL      │
+│    • CLI command            • orchestration           • HTTP     │
+│    • GUI callback           • validation              • files    │
+│    • scheduled job                                               │
+└──────────────────────────────────────────────────────────────────┘
+              ▲                    ▲                     ▲
+              │                    │                     │
+         DECORATORS           DATA CLASSES          ABCs / Protocols
+         wire entry points    carry data between    define the contracts
+         to handlers          layers               between layers
+</pre>
+
+  <h3>The five roles a function or class can play</h3>
+  <table>
+    <thead><tr><th>Role</th><th>Shape</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Handler / entry point</strong></td><td>A function registered by a framework</td><td><code>@app.get("/users") def list_users(): ...</code></td></tr>
+      <tr><td><strong>Service</strong></td><td>A class orchestrating an operation</td><td><code>UserService.register(email)</code></td></tr>
+      <tr><td><strong>Data carrier</strong></td><td>A dataclass / Pydantic model</td><td><code>@dataclass class UserDTO: ...</code></td></tr>
+      <tr><td><strong>Adapter / port</strong></td><td>An ABC or Protocol</td><td><code>class Repository(Protocol): ...</code></td></tr>
+      <tr><td><strong>Utility</strong></td><td>A pure function</td><td><code>def slugify(text): ...</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>A full vertical slice</h3>
+  <p>Watch how every concept from this book appears in one small, realistic program.</p>
+
+<pre><code class="python">from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from functools import lru_cache
+import logging
+
+log = logging.getLogger(__name__)
+
+# ---- 1. DATA CARRIER (dataclass) ------------------------------
+@dataclass(frozen=True)
+class User:
+    id: int
+    email: str
+    active: bool = True
+
+# ---- 2. PORT (ABC) --------------------------------------------
+class UserRepository(ABC):
+    @abstractmethod
+    def get(self, user_id: int) -&gt; User | None: ...
+    @abstractmethod
+    def save(self, user: User) -&gt; None: ...
+
+# ---- 3. ADAPTER (implements the port) -------------------------
+class MemoryUserRepository(UserRepository):
+    def __init__(self):
+        self._rows: dict[int, User] = {}
+    def get(self, user_id):
+        return self._rows.get(user_id)
+    def save(self, user):
+        self._rows[user.id] = user
+
+# ---- 4. SERVICE (class with orchestration logic) --------------
+class UserService:
+    def __init__(self, repo: UserRepository):
+        self.repo = repo          # dependency injection
+
+    def deactivate(self, user_id: int) -&gt; User:
+        user = self.repo.get(user_id)
+        if user is None:
+            raise LookupError(f"user {user_id} not found")
+        updated = User(user.id, user.email, active=False)
+        self.repo.save(updated)
+        log.info("deactivated user %s", user_id)
+        return updated
+
+# ---- 5. ENTRY POINT (plain function, wired by the framework) --
+def handle_deactivate(user_id: int) -&gt; dict:
+    service = build_service()
+    user = service.deactivate(user_id)
+    return {"id": user.id, "active": user.active}
+
+# ---- 6. COMPOSITION ROOT (dependency wiring) ------------------
+@lru_cache
+def build_service() -&gt; UserService:
+    return UserService(MemoryUserRepository())
+</code></pre>
+
+  <div class="box connect">
+    <div class="box-title">The golden rule of layering</div>
+    <p>Dependencies point <strong>inward</strong>. Entry points know about services; services
+    know about ports; ports know about nothing. Frameworks live at the edge, so you can
+    swap Flask for FastAPI, or Postgres for SQLite, without touching business logic.</p>
+  </div>
+
+  <h3>The same service, three different front-ends</h3>
+
+<pre><code class="python"># --- as an HTTP endpoint (FastAPI) ---
+from fastapi import FastAPI, HTTPException
+
+app = FastAPI()
+
+@app.post("/users/{user_id}/deactivate")
+def deactivate_endpoint(user_id: int):
+    try:
+        return handle_deactivate(user_id)
+    except LookupError as exc:
+        raise HTTPException(404, str(exc))
+
+# --- as a CLI command (argparse) ---
+import argparse
+
+parser = argparse.ArgumentParser()
+sub = parser.add_subparsers(dest="cmd")
+d = sub.add_parser("deactivate")
+d.add_argument("user_id", type=int)
+
+args = parser.parse_args()
+if args.cmd == "deactivate":
+    print(handle_deactivate(args.user_id))
+
+# --- as a scheduled job ---
+def nightly_cleanup():
+    for uid in stale_user_ids():
+        handle_deactivate(uid)
+</code></pre>
+
+  <p>The <code>handle_deactivate</code> function is unchanged. That is the payoff of
+  separating functions (behaviour) from frameworks (delivery).</p>
+</section>
+
+<section id="modules" data-part="Part IV — Connecting to Applications" data-title="27. Modules, Packages &amp; Imports">
+  <h2>27. Modules, Packages &amp; Imports</h2>
+
+  <p>A <strong>module</strong> is a <code>.py</code> file. A <strong>package</strong> is a
+  directory containing an <code>__init__.py</code> (or a namespace package).</p>
+
+<pre class="diagram">myapp/
+├── pyproject.toml
+├── src/
+│   └── myapp/
+│       ├── __init__.py          # marks the package, defines the public API
+│       ├── config.py            # module
+│       ├── models/
+│       │   ├── __init__.py
+│       │   ├── user.py
+│       │   └── order.py
+│       ├── services/
+│       │   ├── __init__.py
+│       │   └── users.py
+│       └── api/
+│           ├── __init__.py
+│           └── routes.py
+└── tests/
+    ├── test_users.py
+    └── conftest.py</pre>
+
+  <h3>Import forms</h3>
+
+<pre><code class="python">import myapp.config                      # module object
+from myapp.config import Settings        # name in this namespace
+from myapp import config                 # same as first, shorter
+from myapp.models.user import User
+from . import sibling                    # relative import (same package)
+from ..services import users             # relative import (parent package)
+from myapp.api.routes import router as api_router   # aliasing
+
+# Avoid: star imports hide where names come from
+from myapp.config import *               # ❌
+</code></pre>
+
+  <h3><code>__init__.py</code> — define your public API</h3>
+
+<pre><code class="python"># myapp/__init__.py
+"""MyApp — a demonstration package."""
+
+from myapp.config import Settings
+from myapp.models.user import User
+
+__version__ = "1.2.0"
+__all__ = ["Settings", "User", "__version__"]
+</code></pre>
+
+  <p>Now users can write <code>from myapp import User</code> without knowing your internal
+  layout. <code>__all__</code> also controls what <code>from myapp import *</code> exports.</p>
+
+  <h3>The <code>__main__</code> idiom</h3>
+
+<pre><code class="python">def main():
+    ...
+
+if __name__ == "__main__":
+    main()
+</code></pre>
+
+  <p>This makes a module both importable (for tests and reuse) and runnable
+  (<code>python module.py</code>). Without the guard, importing the module would execute
+  the script.</p>
+
+  <h3>Circular imports</h3>
+
+<pre><code class="python"># a.py
+import b            # ❌ b imports a → ImportError
+
+# Fix 1: import inside the function (defer until call time)
+def use_b():
+    import b
+    return b.thing()
+
+# Fix 2: import the module, not the name
+import b            # then use b.Thing() instead of from b import Thing
+
+# Fix 3 (best): extract the shared piece into a third module c.py
+</code></pre>
+
+  <div class="box warn">
+    <div class="box-title">Circular imports are a design smell</div>
+    <p>They usually mean two modules are too tightly coupled. The real fix is almost always
+    to extract the shared dependency into its own module, or to depend on an
+    abstraction (<a href="#abc">Chapter 20</a>) instead of a concrete class.</p>
+  </div>
+
+  <h3>Packaging an application</h3>
+
+<pre><code class="python"># pyproject.toml (excerpt)
+# [project]
+# name = "myapp"
+# version = "1.2.0"
+# dependencies = ["fastapi", "pydantic"]
+#
+# [project.scripts]
+# myapp = "myapp.cli:main"          # creates a `myapp` shell command
+#
+# [project.entry-points."myapp.plugins"]
+# csv = "myapp.plugins.csv:CsvExporter"
+</code></pre>
+</section>
+
+<section id="apis" data-part="Part IV — Connecting to Applications" data-title="28. Web APIs">
+  <h2>28. Web APIs — Functions as Endpoints, Classes as Models</h2>
+
+  <p>Web frameworks are essentially machinery that maps HTTP requests to your functions and
+  serialises the return value.</p>
+
+  <h3>FastAPI — functions + type hints + Pydantic</h3>
+
+<pre><code class="python">from fastapi import FastAPI, HTTPException, Depends
+from pydantic import BaseModel, Field, EmailStr
+from dataclasses import dataclass
+
+app = FastAPI(title="Users API")
+
+# --- request/response models (classes) ---
+class UserIn(BaseModel):
+    email: EmailStr
+    name: str = Field(min_length=1, max_length=80)
+
+class UserOut(BaseModel):
+    id: int
+    email: EmailStr
+    name: str
+
+# --- service (class) ---
+class UserService:
+    def __init__(self, repo):
+        self.repo = repo
+    def create(self, payload: UserIn) -&gt; UserOut:
+        record = self.repo.insert(payload.model_dump())
+        return UserOut(**record)
+
+# --- dependency injection (functions!) ---
+def get_service() -&gt; UserService:
+    return UserService(build_repo())
+
+# --- endpoints (functions) ---
+@app.post("/users", response_model=UserOut, status_code=201)
+def create_user(payload: UserIn, service: UserService = Depends(get_service)):
+    return service.create(payload)
+
+@app.get("/users/{user_id}", response_model=UserOut)
+def get_user(user_id: int, service: UserService = Depends(get_service)):
+    user = service.repo.find(user_id)
+    if user is None:
+        raise HTTPException(status_code=404, detail="user not found")
+    return UserOut(**user)
+</code></pre>
+
+  <p>Notice what did <strong>not</strong> happen: no manual JSON parsing, no manual validation,
+  no manual serialisation. FastAPI read the type hints and generated all of it — plus an
+  OpenAPI schema and interactive docs at <code>/docs</code>.</p>
+
+  <h3>Flask — plain functions + decorators</h3>
+
+<pre><code class="python">from flask import Flask, jsonify, request
+
+app = Flask(__name__)
+
+@app.route("/users/&lt;int:user_id&gt;", methods=["GET"])
+def get_user(user_id):
+    user = repo.find(user_id)
+    if not user:
+        return jsonify(error="not found"), 404
+    return jsonify(user)
+
+@app.route("/users", methods=["POST"])
+def create_user():
+    payload = request.get_json(force=True)
+    user = service.create(payload)
+    return jsonify(user), 201
+</code></pre>
+
+  <h3>Calling someone else's API</h3>
+
+<pre><code class="python">import httpx
+from dataclasses import dataclass
+
+@dataclass
+class Weather:
+    city: str
+    temp_c: float
+
+def get_weather(city: str, *, timeout: float = 5.0) -&gt; Weather:
+    response = httpx.get(
+        "https://api.example.com/weather",
+        params={"city": city},
+        timeout=timeout,
+    )
+    response.raise_for_status()
+    data = response.json()
+    return Weather(city=city, temp_c=data["main"]["temp"])
+</code></pre>
+
+  <div class="box connect">
+    <div class="box-title">Connect — the pattern is always the same</div>
+    <ol>
+      <li>A framework calls <strong>your function</strong> when an event arrives.</li>
+      <li>Your function calls a <strong>service class</strong> to do the work.</li>
+      <li>The service uses <strong>adapter classes</strong> to talk to the outside world.</li>
+      <li>Data moves between layers as <strong>dataclasses or models</strong>.</li>
+      <li><strong>Decorators</strong> wire steps 1–4 together.</li>
+    </ol>
+  </div>
+</section>
+
+<section id="cli" data-part="Part IV — Connecting to Applications" data-title="29. Command-Line Apps">
+  <h2>29. Command-Line Applications</h2>
+
+  <p>A CLI is a mapping from argv to functions. Each subcommand is naturally a function.</p>
+
+  <h3>argparse — the standard library</h3>
+
+<pre><code class="python">import argparse
+import sys
+
+def cmd_init(args):
+    print(f"initialising project {args.name} in {args.path}")
+
+def cmd_run(args):
+    print(f"running with {args.workers} workers")
+
+def build_parser():
+    parser = argparse.ArgumentParser(prog="mytool", description="Demo CLI")
+    parser.add_argument("--verbose", "-v", action="count", default=0)
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    p_init = sub.add_parser("init", help="create a new project")
+    p_init.add_argument("name")
+    p_init.add_argument("--path", default=".")
+    p_init.set_defaults(func=cmd_init)
+
+    p_run = sub.add_parser("run", help="run the project")
+    p_run.add_argument("--workers", type=int, default=4)
+    p_run.set_defaults(func=cmd_run)
+
+    return parser
+
+def main(argv=None):
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    return args.func(args)          # dispatch table in action
+
+if __name__ == "__main__":
+    sys.exit(main())
+</code></pre>
+
+  <p><code>set_defaults(func=...)</code> is the dispatch-table pattern from
+  <a href="#firstclass">Chapter 5</a> applied to CLI commands.</p>
+
+  <h3>Typer — type hints do the parsing</h3>
+
+<pre><code class="python">import typer
+from pathlib import Path
+from typing import Annotated
+
+app = typer.Typer()
+
+@app.command()
+def init(
+    name: Annotated[str, typer.Argument(help="Project name")],
+    path: Annotated[Path, typer.Option("--path", "-p")] = Path("."),
+    verbose: Annotated[bool, typer.Option("--verbose", "-v")] = False,
+):
+    """Create a new project."""
+    typer.echo(f"Creating {name} at {path}")
+
+@app.command()
+def run(workers: int = 4):
+    """Run the project."""
+    typer.echo(f"Running with {workers} workers")
+
+if __name__ == "__main__":
+    app()
+</code></pre>
+
+  <h3>Exit codes and output streams</h3>
+
+<pre><code class="python">import sys
+
+def main():
+    try:
+        do_work()
+    except ConfigError as exc:
+        print(f"error: {exc}", file=sys.stderr)   # errors → stderr
+        return 2                                   # non-zero exit code
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())
+</code></pre>
+
+  <div class="box tip">
+    <div class="box-title">CLI design rules</div>
+    <ul>
+      <li>Normal output → <code>stdout</code>; errors and logs → <code>stderr</code>.</li>
+      <li>Exit <code>0</code> on success, non-zero on failure. This is how CI and shell scripts
+      detect problems.</li>
+      <li>Support <code>--help</code> on every command, automatically if possible.</li>
+      <li>Keep <code>main()</code> thin — it parses arguments and dispatches, nothing more.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="gui" data-part="Part IV — Connecting to Applications" data-title="30. GUI Applications">
+  <h2>30. GUI Applications</h2>
+
+  <p>GUI toolkits are event loops: the framework calls <em>your</em> callback functions when
+  the user clicks, types, or closes a window.</p>
+
+<pre><code class="python">import tkinter as tk
+from tkinter import ttk, messagebox
+
+class ConverterApp(ttk.Frame):
+    """A small temperature converter."""
+
+    def __init__(self, master):
+        super().__init__(master, padding=16)
+        self.grid()
+        self._build_widgets()
+
+    def _build_widgets(self):
+        ttk.Label(self, text="Celsius").grid(row=0, column=0, sticky="w")
+
+        self.celsius = tk.StringVar(value="0")
+        entry = ttk.Entry(self, textvariable=self.celsius, width=12)
+        entry.grid(row=0, column=1)
+        entry.bind("&lt;Return&gt;", self.on_convert)     # callback function
+
+        ttk.Button(self, text="Convert", command=self.on_convert)\
+            .grid(row=1, column=0, columnspan=2, pady=8)
+
+        self.result = ttk.Label(self, text="32.0 °F", font=("", 14, "bold"))
+        self.result.grid(row=2, column=0, columnspan=2)
+
+    def on_convert(self, event=None):
+        try:
+            c = float(self.celsius.get())
+        except ValueError:
+            messagebox.showerror("Invalid input", "Please enter a number")
+            return
+        self.result.config(text=f"{c * 9 / 5 + 32:.1f} °F")
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    root.title("Converter")
+    ConverterApp(root)
+    root.mainloop()
+</code></pre>
+
+  <h3>Why a class here?</h3>
+  <ul>
+    <li>The window has <strong>state</strong> (widgets, values) and <strong>behaviour</strong> (handlers) — exactly what classes are for.</li>
+    <li>Callbacks are methods, so they automatically have access to <code>self</code> and every widget.</li>
+    <li>Subclassing the toolkit's frame/widget gives you a reusable component.</li>
+  </ul>
+
+  <div class="box warn">
+    <div class="box-title">Never block the event loop</div>
+    <p>Long-running work on the main thread freezes the UI. Run it in a worker thread and post
+    results back with <code>root.after(...)</code>.</p>
+<pre><code class="python">import threading
+
+def on_start(self):
+    threading.Thread(target=self._work, daemon=True).start()
+
+def _work(self):
+    result = expensive_computation()
+    self.after(0, lambda: self.result.config(text=str(result)))
+</code></pre>
+  </div>
+
+  <div class="box connect">
+    <div class="box-title">Connect — same shape, different toolkit</div>
+    <p>PyQt/PySide, Kivy, wxPython, and Toga all follow the same pattern: subclass a component,
+    wire callbacks, run an event loop. The <code>on_convert</code> function above would work
+    nearly unchanged in any of them.</p>
+  </div>
+</section>
+
+<section id="data" data-part="Part IV — Connecting to Applications" data-title="31. Data &amp; Databases">
+  <h2>31. Data &amp; Databases</h2>
+
+  <h3>sqlite3 — the standard library</h3>
+
+<pre><code class="python">import sqlite3
+from dataclasses import dataclass
+from contextlib import contextmanager
+
+@dataclass(frozen=True)
+class User:
+    id: int
+    email: str
+    active: bool
+
+class UserRepository:
+    def __init__(self, conn: sqlite3.Connection):
+        self.conn = conn
+
+    def find(self, user_id: int) -&gt; User | None:
+        row = self.conn.execute(
+            "SELECT id, email, active FROM users WHERE id = ?", (user_id,)
+        ).fetchone()
+        return User(*row) if row else None
+
+    def all_active(self):
+        cursor = self.conn.execute(
+            "SELECT id, email, active FROM users WHERE active = 1"
+        )
+        for row in cursor:              # streams — no full list in memory
+            yield User(*row)
+
+    def save(self, user: User) -&gt; None:
+        self.conn.execute(
+            "INSERT OR REPLACE INTO users (id, email, active) VALUES (?, ?, ?)",
+            (user.id, user.email, int(user.active)),
+        )
+
+@contextmanager
+def open_db(path):
+    conn = sqlite3.connect(path)
+    conn.row_factory = sqlite3.Row
+    try:
+        yield conn
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+</code></pre>
+
+  <h3>ORMs — classes that are tables</h3>
+
+<pre><code class="python">from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+
+class Base(DeclarativeBase):
+    pass
+
+class User(Base):
+    __tablename__ = "users"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    email: Mapped[str] = mapped_column(unique=True)
+    orders: Mapped[list["Order"]] = relationship(back_populates="user")
+
+    def __repr__(self) -&gt; str:
+        return f"User(id={self.id!r}, email={self.email!r})"
+</code></pre>
+
+  <p>Every column is a <strong>descriptor</strong> (<a href="#descriptors">Chapter 23</a>).
+  Accessing <code>user.email</code> reads from the instance; the class-level object holds the
+  schema metadata.</p>
+
+  <h3>pandas &amp; numpy — functions over data</h3>
+
+<pre><code class="python">import pandas as pd
+
+df = pd.read_csv("sales.csv")
+
+def revenue(row):
+    return row["qty"] * row["price"]
+
+# Vectorised — fast
+df["revenue"] = df["qty"] * df["price"]
+
+# Apply a function per row — slower, but flexible
+df["tier"] = df["revenue"].apply(lambda r: "gold" if r &gt; 1000 else "silver")
+
+summary = (
+    df.groupby("region")
+      .agg(total=("revenue", "sum"), orders=("revenue", "count"))
+      .reset_index()
+)
+</code></pre>
+
+  <div class="box tip">
+    <div class="box-title">Vectorise before you apply</div>
+    <p>Row-wise <code>apply</code> runs Python for every row. If an operation can be expressed
+    with vectorised pandas/numpy operations, it will be 10–100× faster.</p>
+  </div>
+
+  <div class="box connect">
+    <div class="box-title">Connect — the repository pattern pays off</div>
+    <p>Because <code>UserRepository</code> is a class with a small interface, you can write
+    <code>InMemoryUserRepository</code> for tests and <code>PostgresUserRepository</code> for
+    production. Your services never change. This is the single most valuable structural
+    decision in application code.</p>
+  </div>
+</section>
+
+<section id="async" data-part="Part IV — Connecting to Applications" data-title="32. Async &amp; Concurrency">
+  <h2>32. Async &amp; Concurrency</h2>
+
+  <p><code>async def</code> declares a <strong>coroutine function</strong>. Calling it returns a
+  coroutine object; it does not run until awaited.</p>
+
+<pre><code class="python">import asyncio
+
+async def fetch_user(user_id: int) -&gt; dict:
+    await asyncio.sleep(0.1)          # simulate I/O
+    return {"id": user_id}
+
+async def main():
+    user = await fetch_user(1)
+    print(user)
+
+asyncio.run(main())
+</code></pre>
+
+  <h3>Concurrency: awaiting many things at once</h3>
+
+<pre><code class="python">async def main():
+    # Sequential — total time is the sum
+    a = await fetch_user(1)
+    b = await fetch_user(2)
+
+    # Concurrent — total time is the max
+    a, b = await asyncio.gather(fetch_user(1), fetch_user(2))
+
+    # Bounded concurrency with a semaphore
+    sem = asyncio.Semaphore(10)
+    async def limited(uid):
+        async with sem:
+            return await fetch_user(uid)
+    results = await asyncio.gather(*(limited(i) for i in range(100)))
+</code></pre>
+
+  <h3>Async context managers and iterators</h3>
+
+<pre><code class="python">from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def session():
+    conn = await connect()
+    try:
+        yield conn
+    finally:
+        await conn.close()
+
+async def stream_rows():
+    async with session() as conn:
+        async for row in conn.cursor("SELECT * FROM big_table"):
+            yield row
+</code></pre>
+
+  <h3>Choosing a concurrency model</h3>
+
+  <table>
+    <thead><tr><th>Model</th><th>Best for</th><th>Module</th></tr></thead>
+    <tbody>
+      <tr><td><strong>asyncio</strong></td><td>Thousands of concurrent network operations</td><td><code>asyncio</code>, <code>aiohttp</code>, <code>httpx</code></td></tr>
+      <tr><td><strong>Threads</strong></td><td>Blocking I/O with simple code; GIL is released during I/O</td><td><code>threading</code>, <code>concurrent.futures.ThreadPoolExecutor</code></td></tr>
+      <tr><td><strong>Processes</strong></td><td>CPU-bound work; bypasses the GIL</td><td><code>multiprocessing</code>, <code>ProcessPoolExecutor</code></td></tr>
+      <tr><td><strong>Subinterpreters</strong></td><td>Isolated CPU work (3.12+, experimental)</td><td><code>concurrent.interpreters</code></td></tr>
+    </tbody>
+  </table>
+
+<pre><code class="python">from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
+
+def blocking_io(url):
+    ...
+
+with ThreadPoolExecutor(max_workers=8) as pool:
+    results = list(pool.map(blocking_io, urls))
+
+def cpu_heavy(n):
+    return sum(i * i for i in range(n))
+
+with ProcessPoolExecutor() as pool:
+    results = list(pool.map(cpu_heavy, [10**6] * 8))
+</code></pre>
+
+  <div class="box warn">
+    <div class="box-title">Never block inside async code</div>
+    <p><code>time.sleep()</code>, <code>requests.get()</code>, and heavy computation block the
+    entire event loop. Use <code>await asyncio.sleep()</code>, an async HTTP client, or
+    <code>await loop.run_in_executor(None, blocking_fn)</code>.</p>
+  </div>
+</section>
+
+<section id="plugins" data-part="Part IV — Connecting to Applications" data-title="33. Plugin Systems">
+  <h2>33. Plugin Systems</h2>
+
+  <p>A plugin system lets external code extend your application without modifying it.
+  Three ingredients: a <strong>registry</strong>, a <strong>contract</strong>, and a
+  <strong>loader</strong>.</p>
+
+  <h3>1. A decorator-based registry</h3>
+
+<pre><code class="python"># myapp/plugins.py
+from typing import Protocol, Callable
+
+class Exporter(Protocol):
+    def export(self, rows: list[dict]) -&gt; bytes: ...
+
+REGISTRY: dict[str, Callable[[], Exporter]] = {}
+
+def register(name: str):
+    """Decorator: register a class or factory under `name`."""
+    def decorator(obj):
+        REGISTRY[name] = obj
+        return obj
+    return decorator
+
+def create(name: str) -&gt; Exporter:
+    if name not in REGISTRY:
+        raise KeyError(f"unknown exporter: {name}")
+    return REGISTRY[name]()
+</code></pre>
+
+  <h3>2. A built-in plugin</h3>
+
+<pre><code class="python"># myapp/exporters/csv_exporter.py
+import csv, io
+from myapp.plugins import register
+
+@register("csv")
+class CsvExporter:
+    def export(self, rows):
+        buffer = io.StringIO()
+        if rows:
+            writer = csv.DictWriter(buffer, fieldnames=rows[0].keys())
+            writer.writeheader()
+            writer.writerows(rows)
+        return buffer.getvalue().encode()
+</code></pre>
+
+  <h3>3. Loading plugins from installed packages</h3>
+
+<pre><code class="python"># myapp/plugin_loader.py
+from importlib.metadata import entry_points
+
+def load_all():
+    """Discover every plugin registered under the 'myapp.plugins' group."""
+    for ep in entry_points(group="myapp.plugins"):
+        factory = ep.load()          # import and return the object
+        REGISTRY[ep.name] = factory
+</code></pre>
+
+<pre><code class="python"># In the plugin package's pyproject.toml
+# [project.entry-points."myapp.plugins"]
+# parquet = "my_parquet_plugin:ParquetExporter"
+</code></pre>
+
+  <h3>Dynamic import by path</h3>
+
+<pre><code class="python">import importlib
+
+def load_object(dotted_path: str):
+    """'myapp.exporters.csv:CsvExporter' → the class object."""
+    module_path, _, attr = dotted_path.partition(":")
+    module = importlib.import_module(module_path)
+    return getattr(module, attr)
+</code></pre>
+
+  <div class="box connect">
+    <div class="box-title">Connect — this is how real ecosystems work</div>
+    <p>pytest plugins, Flask extensions, Django apps, Sphinx extensions, Airflow operators,
+    and Jupyter kernels all use exactly these three ingredients: a decorator or entry point
+    to register, a protocol or ABC to define the contract, and an importlib loader to pull
+    them in at runtime.</p>
+  </div>
+</section>
+
+<section id="serialization" data-part="Part IV — Connecting to Applications" data-title="34. Serialization">
+  <h2>34. Serialization</h2>
+
+  <p>Objects live in memory; applications must move them across boundaries as bytes.</p>
+
+  <h3>JSON — the universal interchange format</h3>
+
+<pre><code class="python">import json
+from dataclasses import dataclass, asdict
+
+@dataclass
+class User:
+    id: int
+    email: str
+    active: bool = True
+
+u = User(1, "ada@example.com")
+
+# Object → JSON
+text = json.dumps(asdict(u))
+print(text)      # {"id": 1, "email": "ada@example.com", "active": true}
+
+# JSON → object
+data = json.loads(text)
+u2 = User(**data)
+</code></pre>
+
+  <h3>Custom encoders</h3>
+
+<pre><code class="python">import json
+from datetime import datetime
+from decimal import Decimal
+
+class AppEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        if isinstance(obj, Decimal):
+            return str(obj)
+        if isinstance(obj, set):
+            return sorted(obj)
+        return super().default(obj)
+
+print(json.dumps({"when": datetime.now()}, cls=AppEncoder))
+</code></pre>
+
+  <h3>pickle — Python's native binary format</h3>
+
+<pre><code class="python">import pickle
+
+blob = pickle.dumps(u)
+restored = pickle.loads(blob)
+
+class Session:
+    def __init__(self, user, token):
+        self.user, self.token = user, token
+
+    def __getstate__(self):
+        """Control what gets pickled — e.g. drop a socket."""
+        state = self.__dict__.copy()
+        state.pop("connection", None)
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self.connection = None
+</code></pre>
+
+  <div class="box bad">
+    <div class="box-title">Never unpickle untrusted data</div>
+    <p><code>pickle</code> can execute arbitrary code during loading. Use it only for data you
+    created yourself, on a trusted channel. For anything crossing a trust boundary use JSON,
+    MessagePack, or Protobuf.</p>
+  </div>
+
+  <h3>Choosing a format</h3>
+
+  <table>
+    <thead><tr><th>Format</th><th>Human-readable</th><th>Speed</th><th>Typed</th><th>Use for</th></tr></thead>
+    <tbody>
+      <tr><td>JSON</td><td>✅</td><td>Medium</td><td>❌</td><td>Web APIs, config</td></tr>
+      <tr><td>YAML</td><td>✅</td><td>Slow</td><td>❌</td><td>Human-edited config</td></tr>
+      <tr><td>TOML</td><td>✅</td><td>Fast</td><td>✅</td><td><code>pyproject.toml</code></td></tr>
+      <tr><td>MessagePack</td><td>❌</td><td>Fast</td><td>❌</td><td>Efficient wire format</td></tr>
+      <tr><td>pickle</td><td>❌</td><td>Fast</td><td>✅</td><td>Caching trusted Python objects</td></tr>
+      <tr><td>Parquet</td><td>❌</td><td>Very fast</td><td>✅</td><td>Analytics / dataframes</td></tr>
+    </tbody>
+  </table>
+
+  <div class="box tip">
+    <div class="box-title">The dataclass ↔ dict round-trip pattern</div>
+    <p><code>asdict()</code> for nested structures, <code>**data</code> to reconstruct. Add a
+    <code>from_dict</code> classmethod when you need validation or nested reconstruction —
+    this keeps serialization logic in one place instead of scattered across the codebase.</p>
+  </div>
+</section>
+
+<section id="testing" data-part="Part IV — Connecting to Applications" data-title="35. Testing">
+  <h2>35. Testing Functions &amp; Classes</h2>
+
+  <p>Functions with explicit inputs and outputs are trivial to test. Classes are testable when
+  their collaborators are injected rather than constructed internally.</p>
+
+<pre><code class="python"># test_users.py
+import pytest
+from myapp.services import UserService
+from myapp.models import User
+
+class FakeRepo:
+    """An in-memory stand-in for the real repository."""
+    def __init__(self, users=None):
+        self.rows = {u.id: u for u in (users or [])}
+    def get(self, user_id):
+        return self.rows.get(user_id)
+    def save(self, user):
+        self.rows[user.id] = user
+
+@pytest.fixture
+def service():
+    return UserService(FakeRepo([User(1, "ada@example.com")]))
+
+def test_deactivate_returns_inactive_user(service):
+    user = service.deactivate(1)
+    assert user.active is False
+
+def test_deactivate_unknown_user_raises(service):
+    with pytest.raises(LookupError):
+        service.deactivate(999)
+</code></pre>
+
+  <h3>Parametrised tests</h3>
+
+<pre><code class="python">@pytest.mark.parametrize(
+    "raw,expected",
+    [
+        ("42", 42),
+        (" 7 ", 7),
+        ("abc", None),
+        ("", None),
+        ("-5", None),
+    ],
+)
+def test_parse_age(raw, expected):
+    assert parse_age(raw) == expected
+</code></pre>
+
+  <h3>Mocking external boundaries</h3>
+
+<pre><code class="python">from unittest.mock import patch, Mock
+
+def test_fetch_user_handles_404():
+    with patch("myapp.client.httpx.get") as mock_get:
+        mock_get.return_value.status_code = 404
+        mock_get.return_value.raise_for_status.side_effect = httpx.HTTPStatusError(
+            "404", request=Mock(), response=Mock()
+        )
+        with pytest.raises(httpx.HTTPStatusError):
+            fetch_user(1)
+</code></pre>
+
+  <h3>Testing classes vs functions</h3>
+  <table>
+    <thead><tr><th>Subject</th><th>Strategy</th></tr></thead>
+    <tbody>
+      <tr><td>Pure function</td><td>Call it, assert the return value</td></tr>
+      <tr><td>Function with side effects</td><td>Assert on the mock / recorded calls</td></tr>
+      <tr><td>Dataclass</td><td>Test equality, validation in <code>__post_init__</code>, serialisation</td></tr>
+      <tr><td>Service class</td><td>Inject fakes for dependencies; assert on observable behaviour</td></tr>
+      <tr><td>Context manager</td><td>Assert cleanup runs, including on exception</td></tr>
+      <tr><td>Decorator</td><td>Test the decorated result <em>and</em> that metadata is preserved</td></tr>
+    </tbody>
+  </table>
+
+  <div class="box tip">
+    <div class="box-title">The testing pyramid in practice</div>
+    <ul>
+      <li>Many <strong>unit tests</strong> — fast, isolated, no I/O.</li>
+      <li>Some <strong>integration tests</strong> — real database, real HTTP, in containers.</li>
+      <li>A few <strong>end-to-end tests</strong> — the whole app, the real entry points.</li>
+    </ul>
+    <p>If a function is hard to test, that is a design signal, not a testing problem.</p>
+  </div>
+</section>
+
+<section id="logging" data-part="Part IV — Connecting to Applications" data-title="36. Logging">
+  <h2>36. Logging</h2>
+
+  <p><code>print()</code> is for scripts. Libraries and applications use <code>logging</code>.</p>
+
+<pre><code class="python">import logging
+
+# One logger per module — named after the module
+logger = logging.getLogger(__name__)
+
+def process(order):
+    logger.debug("processing order %s", order.id)      # lazy formatting!
+    try:
+        result = charge(order)
+    except PaymentError:
+        logger.exception("payment failed for order %s", order.id)
+        raise
+    logger.info("order %s charged: %s", order.id, result.amount)
+    return result
+</code></pre>
+
+  <h3>Levels</h3>
+  <table>
+    <thead><tr><th>Level</th><th>Value</th><th>Use for</th></tr></thead>
+    <tbody>
+      <tr><td><code>DEBUG</code></td><td>10</td><td>Detailed diagnostic information</td></tr>
+      <tr><td><code>INFO</code></td><td>20</td><td>Normal, notable events</td></tr>
+      <tr><td><code>WARNING</code></td><td>30</td><td>Something unexpected but recoverable</td></tr>
+      <tr><td><code>ERROR</code></td><td>40</td><td>An operation failed</td></tr>
+      <tr><td><code>CRITICAL</code></td><td>50</td><td>The application cannot continue</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Configuration — once, at the entry point</h3>
+
+<pre><code class="python">import logging.config
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "standard": {
+            "format": "%(asctime)s %(levelname)-8s %(name)s: %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "standard",
+            "stream": "ext://sys.stderr",
+        },
+        "file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "standard",
+            "filename": "app.log",
+            "maxBytes": 10_000_000,
+            "backupCount": 5,
+        },
+    },
+    "root": {"level": "INFO", "handlers": ["console", "file"]},
+}
+
+logging.config.dictConfig(LOGGING)
+</code></pre>
+
+  <h3>Logging inside classes</h3>
+
+<pre><code class="python">class OrderProcessor:
+    def __init__(self, gateway):
+        self.gateway = gateway
+        self.log = logging.getLogger(f"{__name__}.{type(self).__name__}")
+
+    def process(self, order):
+        self.log.info("processing %s", order.id)
+        ...
+</code></pre>
+
+  <div class="box warn">
+    <div class="box-title">Use lazy <code>%s</code> formatting, not f-strings</div>
+<pre><code class="python">logger.debug("value = %s", expensive())    # ✅ only formatted if DEBUG is on
+logger.debug(f"value = {expensive()}")     # ❌ always computed
+</code></pre>
+  </div>
+
+  <div class="box tip">
+    <div class="box-title">Never call <code>basicConfig()</code> in a library</div>
+    <p>Libraries should only <em>create loggers</em> and emit records. Configuring handlers is
+    the application's job. Otherwise you hijack the host application's logging setup.</p>
+  </div>
+</section>
+
+<section id="patterns" data-part="Part IV — Connecting to Applications" data-title="37. Design Patterns">
+  <h2>37. Design Patterns in Python</h2>
+
+  <p>Most classic patterns are simpler in Python because functions are objects and classes are
+  first-class. Here are the ones you will actually use.</p>
+
+  <h3>Strategy — swap algorithms at runtime</h3>
+
+<pre><code class="python"># With functions (simplest)
+def flat_shipping(order):    return 5.00
+def weight_shipping(order):  return order.weight * 0.75
+
+SHIPPING = {"flat": flat_shipping, "weight": weight_shipping}
+
+def total(order, method="flat"):
+    return order.subtotal + SHIPPING[method](order)
+
+# With classes (when strategies need state)
+class ShippingStrategy(Protocol):
+    def cost(self, order) -&gt; float: ...
+
+class FreeOver100:
+    def cost(self, order):
+        return 0.0 if order.subtotal &gt; 100 else 5.0
+</code></pre>
+
+  <h3>Factory — hide construction complexity</h3>
+
+<pre><code class="python">class Notifier(Protocol):
+    def send(self, message: str) -&gt; None: ...
+
+class EmailNotifier:
+    def __init__(self, smtp): self.smtp = smtp
+    def send(self, message): ...
+
+class SlackNotifier:
+    def __init__(self, webhook): self.webhook = webhook
+    def send(self, message): ...
+
+def make_notifier(kind: str, config: dict) -&gt; Notifier:
+    builders = {
+        "email": lambda c: EmailNotifier(c["smtp"]),
+        "slack": lambda c: SlackNotifier(c["webhook"]),
+    }
+    try:
+        return builders[kind](config)
+    except KeyError:
+        raise ValueError(f"unknown notifier: {kind}")
+</code></pre>
+
+  <h3>Singleton — usually a module is enough</h3>
+
+<pre><code class="python"># config.py — importing this module gives one shared instance
+class _Config:
+    def __init__(self):
+        self.debug = False
+
+config = _Config()          # module-level singleton
+
+# Alternative: functools.lru_cache on a factory
+from functools import lru_cache
+
+@lru_cache(maxsize=None)
+def get_config() -&gt; _Config:
+    return _Config()
+</code></pre>
+
+  <h3>Observer / signals</h3>
+
+<pre><code class="python">class Signal:
+    def __init__(self):
+        self._handlers = []
+
+    def connect(self, handler):
+        self._handlers.append(handler)
+        return handler                 # allow use as a decorator
+
+    def emit(self, *args, **kwargs):
+        for handler in list(self._handlers):
+            handler(*args, **kwargs)
+
+order_shipped = Signal()
+
+@order_shipped.connect
+def send_email(order):
+    print(f"emailing about {order.id}")
+
+@order_shipped.connect
+def update_inventory(order):
+    print(f"updating inventory for {order.id}")
+
+order_shipped.emit(order)
+</code></pre>
+
+  <h3>Builder — construct complex objects step by step</h3>
+
+<pre><code class="python">class QueryBuilder:
+    def __init__(self, table):
+        self._table = table
+        self._where, self._order, self._limit = [], None, None
+
+    def where(self, condition):
+        self._where.append(condition)
+        return self                    # fluent interface
+
+    def order_by(self, column):
+        self._order = column
+        return self
+
+    def limit(self, n):
+        self._limit = n
+        return self
+
+    def build(self):
+        sql = f"SELECT * FROM {self._table}"
+        if self._where:
+            sql += " WHERE " + " AND ".join(self._where)
+        if self._order:
+            sql += f" ORDER BY {self._order}"
+        if self._limit:
+            sql += f" LIMIT {self._limit}"
+        return sql
+
+sql = (QueryBuilder("users")
+       .where("active = 1")
+       .where("age &gt;= 18")
+       .order_by("email")
+       .limit(50)
+       .build())
+</code></pre>
+
+  <h3>Decorator pattern (the OOP kind)</h3>
+
+<pre><code class="python">class DataSource(Protocol):
+    def read(self) -&gt; str: ...
+
+class FileSource:
+    def read(self): return "raw data"
+
+class CompressedSource:
+    def __init__(self, inner: DataSource):
+        self.inner = inner
+    def read(self): return decompress(self.inner.read())
+
+class EncryptedSource:
+    def __init__(self, inner: DataSource):
+        self.inner = inner
+    def read(self): return decrypt(self.inner.read())
+
+source = EncryptedSource(CompressedSource(FileSource()))
+</code></pre>
+
+  <div class="box tip">
+    <div class="box-title">Patterns are vocabulary, not recipes</div>
+    <p>If a pattern does not make the code simpler or more testable, do not use it. Python's
+    first-class functions eliminate the need for half of the classic GoF patterns.</p>
+  </div>
+</section>
+
+<section id="bestpractices" data-part="Part IV — Connecting to Applications" data-title="38. Best Practices">
+  <h2>38. Best Practices &amp; Anti-Patterns</h2>
+
+  <h3>Functions</h3>
+  <table>
+    <thead><tr><th>Do</th><th>Instead of</th></tr></thead>
+    <tbody>
+      <tr><td>Keep functions under ~30 lines</td><td>200-line functions with 12 nesting levels</td></tr>
+      <tr><td>One clear responsibility per function</td><td>"Do everything" utilities</td></tr>
+      <tr><td>Use <code>None</code> sentinel for mutable defaults</td><td><code>def f(x, items=[])</code></td></tr>
+      <tr><td>Return consistent types</td><td>Returning a str sometimes, a list other times</td></tr>
+      <tr><td>Raise exceptions for errors</td><td>Returning <code>-1</code> or <code>None</code> as an error code</td></tr>
+      <tr><td>Pure functions where possible</td><td>Functions that mutate globals</td></tr>
+      <tr><td>Keyword-only flags</td><td>Positional booleans: <code>render(page, True, False)</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Classes</h3>
+  <table>
+    <thead><tr><th>Do</th><th>Instead of</th></tr></thead>
+    <tbody>
+      <tr><td>Inject collaborators in <code>__init__</code></td><td>Instantiating dependencies inside methods</td></tr>
+      <tr><td>Prefer composition</td><td>5-level inheritance chains</td></tr>
+      <tr><td>Use <code>@dataclass</code> for data holders</td><td>Hand-written <code>__init__</code>/<code>__repr__</code>/<code>__eq__</code></td></tr>
+      <tr><td>Write <code>__repr__</code> on every class</td><td>&lt;object at 0x7f…&gt;</td></tr>
+      <tr><td>Keep <code>__init__</code> free of I/O</td><td>Network calls in constructors</td></tr>
+      <tr><td>Use <code>@property</code> for computed values</td><td>Public attributes recomputed by callers</td></tr>
+      <tr><td>Small, focused classes</td><td>"God objects" with 40 methods</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Anti-patterns to recognise</h3>
+
+  <div class="box bad">
+    <div class="box-title">The usual suspects</div>
+    <ul>
+      <li><strong>Mutable default arguments</strong> — shared state across calls.</li>
+      <li><strong>Bare <code>except:</code></strong> — hides bugs and Ctrl-C.</li>
+      <li><strong>God class</strong> — a class that does everything.</li>
+      <li><strong>Anemic domain + procedural service</strong> — classes with only getters/setters while logic lives elsewhere. Sometimes fine (DTOs), but often a smell.</li>
+      <li><strong>Deep inheritance</strong> — <code>class A(B(C(D(E))))</code>.</li>
+      <li><strong>Overusing inheritance for reuse</strong> — use a mixin or composition.</li>
+      <li><strong>Hidden dependencies</strong> — <code>import</code> inside a method to dodge a cycle.</li>
+      <li><strong>Premature abstraction</strong> — an ABC with one implementation.</li>
+      <li><strong>Singleton-by-global</strong> — module state that makes tests order-dependent.</li>
+      <li><strong>Returning <code>None</code> on error</strong> — callers cannot tell "empty" from "broken".</li>
+    </ul>
+  </div>
+
+  <h3>Naming conventions</h3>
+  <table>
+    <thead><tr><th>Thing</th><th>Convention</th><th>Example</th></tr></thead>
+    <tbody>
+      <tr><td>Module / package</td><td><code>snake_case</code></td><td><code>user_service.py</code></td></tr>
+      <tr><td>Function / method</td><td><code>snake_case</code></td><td><code>calculate_total()</code></td></tr>
+      <tr><td>Variable</td><td><code>snake_case</code></td><td><code>order_count</code></td></tr>
+      <tr><td>Class</td><td><code>PascalCase</code></td><td><code>OrderProcessor</code></td></tr>
+      <tr><td>Constant</td><td><code>UPPER_SNAKE</code></td><td><code>MAX_RETRIES</code></td></tr>
+      <tr><td>"Private"</td><td>leading underscore</td><td><code>_internal_cache</code></td></tr>
+      <tr><td>Name-mangled</td><td>double underscore</td><td><code>__secret</code></td></tr>
+      <tr><td>Type variable</td><td>Short PascalCase</td><td><code>T</code>, <code>KT</code>, <code>VT</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>A quality checklist</h3>
+  <ol>
+    <li>Does every public function have a docstring and type hints?</li>
+    <li>Can every function be tested without touching the network or disk?</li>
+    <li>Are dependencies injected rather than created internally?</li>
+    <li>Is any function longer than a screen? Can it be split?</li>
+    <li>Is any class doing more than one job? (Single Responsibility)</li>
+    <li>Does the code work if I swap the database for an in-memory fake?</li>
+    <li>Would a new team member understand a module by reading only its <code>__init__.py</code> and docstrings?</li>
+  </ol>
+</section>
+
+<section id="cheatsheet" data-part="Part IV — Connecting to Applications" data-title="39. Cheat Sheet">
+  <h2>39. Cheat Sheet</h2>
+
+  <h3>Function definition</h3>
+
+<pre><code class="python">def f(a, b=1, *args, c, d=2, **kwargs) -&gt; int:
+    """Docstring."""
+    return a + b
+
+f(1, 2, 3, 4, c=5, e=6)
+</code></pre>
+
+  <h3>Decorators</h3>
+
+<pre><code class="python">import functools
+
+def deco(func):
+    @functools.wraps(func)
+    def wrapper(*a, **kw):
+        return func(*a, **kw)
+    return wrapper
+
+def deco_args(x=1):
+    def d(func):
+        @functools.wraps(func)
+        def w(*a, **kw):
+            return func(*a, **kw)
+        return w
+    return d
+</code></pre>
+
+  <h3>Class skeleton</h3>
+
+<pre><code class="python">from dataclasses import dataclass, field
+from abc import ABC, abstractmethod
+
+class Service(ABC):
+    """One-line summary."""
+
+    registry: dict[str, type] = {}          # class attribute
+
+    def __init__(self, repo, *, timeout=30):  # constructor
+        self.repo = repo                      # instance attribute
+        self._timeout = timeout
+
+    @abstractmethod
+    def run(self) -&gt; None: ...
+
+    def __repr__(self) -&gt; str:
+        return f"{type(self).__name__}(repo={self.repo!r})"
+
+    @classmethod
+    def from_config(cls, cfg):                # alternative constructor
+        return cls(cfg["repo"])
+
+    @staticmethod
+    def validate(x):                          # no self, no cls
+        return x is not None
+
+    @property
+    def timeout(self):                        # computed attribute
+        return self._timeout
+
+@dataclass(frozen=True, slots=True)
+class Item:
+    name: str
+    tags: list[str] = field(default_factory=list)
+</code></pre>
+
+  <h3>Dunder quick table</h3>
+  <table>
+    <thead><tr><th>You want</th><th>Define</th></tr></thead>
+    <tbody>
+      <tr><td><code>print(obj)</code></td><td><code>__str__</code></td></tr>
+      <tr><td>REPL / debugger display</td><td><code>__repr__</code></td></tr>
+      <tr><td><code>obj == other</code></td><td><code>__eq__</code></td></tr>
+      <tr><td><code>hash(obj)</code>, dict keys</td><td><code>__hash__</code></td></tr>
+      <tr><td><code>obj &lt; other</code></td><td><code>__lt__</code></td></tr>
+      <tr><td><code>bool(obj)</code></td><td><code>__bool__</code></td></tr>
+      <tr><td><code>len(obj)</code></td><td><code>__len__</code></td></tr>
+      <tr><td><code>obj[k]</code></td><td><code>__getitem__</code></td></tr>
+      <tr><td><code>for x in obj</code></td><td><code>__iter__</code></td></tr>
+      <tr><td><code>obj()</code></td><td><code>__call__</code></td></tr>
+      <tr><td><code>with obj:</code></td><td><code>__enter__</code> / <code>__exit__</code></td></tr>
+      <tr><td><code>obj + other</code></td><td><code>__add__</code></td></tr>
+      <tr><td><code>f"{obj}"</code> custom format</td><td><code>__format__</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Inspection</h3>
+
+<pre><code class="python">import inspect
+
+inspect.signature(func)         # full signature
+inspect.getdoc(func)            # cleaned docstring
+inspect.getmembers(obj)         # all attributes
+inspect.isclass(obj)
+inspect.isfunction(obj)
+inspect.getsource(func)         # source code as a string
+</code></pre>
+
+  <h3>Common imports</h3>
+
+<pre><code class="python">from functools import wraps, partial, lru_cache, cache, reduce, singledispatch, cached_property
+from itertools import chain, groupby, product, combinations, islice, count, cycle, accumulate
+from collections import defaultdict, Counter, deque, namedtuple, OrderedDict
+from collections.abc import Iterable, Iterator, Sequence, Mapping, Callable
+from contextlib import contextmanager, suppress, closing, ExitStack
+from dataclasses import dataclass, field, asdict, astuple
+from abc import ABC, abstractmethod
+from typing import Protocol, TypedDict, Literal, TypeVar, Generic, Any, overload
+from pathlib import Path
+</code></pre>
+
+  <h3>Zen reminders</h3>
+
+<pre><code class="python">import this
+</code></pre>
+
+  <ul>
+    <li>Simple is better than complex.</li>
+    <li>Readability counts.</li>
+    <li>Explicit is better than implicit.</li>
+    <li>Errors should never pass silently.</li>
+    <li>If the implementation is hard to explain, it's a bad idea.</li>
+  </ul>
+
+  <div class="box tip">
+    <div class="box-title">You made it</div>
+    <p>Functions are the atoms; classes are the molecules; modules are the materials;
+    applications are the buildings. The frameworks change every few years — the concepts in
+    this book do not. Write small functions, honest classes, and let the wiring stay visible.</p>
+  </div>
+</section>
+
+</main>
+
+<script>
+/* ============================================================
+   1. THEME MANAGEMENT
+   ============================================================ */
+(function () {
+  const THEMES = ["light","dark","solarized-light","solarized-dark","nord","dracula","contrast"];
+  const root = document.documentElement;
+  const select = document.getElementById("themeSelect");
+
+  function apply(theme) {
+    if (!THEMES.includes(theme)) theme = "light";
+    root.setAttribute("data-theme", theme);
+    select.value = theme;
+    try { localStorage.setItem("pytext-theme", theme); } catch (e) {}
+  }
+
+  let stored = null;
+  try { stored = localStorage.getItem("pytext-theme"); } catch (e) {}
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  apply(stored || (prefersDark ? "dark" : "light"));
+
+  select.addEventListener("change", () => apply(select.value));
+})();
+
+/* ============================================================
+   2. PYTHON SYNTAX HIGHLIGHTER
+   ============================================================ */
+(function () {
+  const KEYWORDS =
+    "False|None|True|and|as|assert|async|await|break|class|continue|def|del|elif|else|" +
+    "except|finally|for|from|global|if|import|in|is|lambda|nonlocal|not|or|pass|raise|" +
+    "return|try|while|with|yield|match|case|self|cls";
+
+  const RE = new RegExp(
+    "(#[^\\n]*)" +                                                        // 1 comment
+    "|(\"\"\"[\\s\\S]*?\"\"\"|'''[\\s\\S]*?'''|\"(?:\\\\.|[^\"\\\\\\n])*\"|'(?:\\\\.|[^'\\\\\\n])*')" + // 2 string
+    "|(@[A-Za-z_][\\w.]*)" +                                              // 3 decorator
+    "|\\b(" + KEYWORDS + ")\\b" +                                         // 4 keyword
+    "|\\b(\\d+(?:\\.\\d+)?)\\b",                                          // 5 number
+    "g"
+  );
+
+  function esc(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function highlight(text) {
+    const escaped = esc(text);
+    return escaped.replace(RE, function (m, com, str, dec, kw, num) {
+      if (com) return '<span class="tok-com">' + com + "</span>";
+      if (str) return '<span class="tok-str">' + str + "</span>";
+      if (dec) return '<span class="tok-dec">' + dec + "</span>";
+      if (kw)  return '<span class="tok-kw">'  + kw  + "</span>";
+      if (num) return '<span class="tok-num">' + num + "</span>";
+      return m;
+    });
+  }
+
+  document.querySelectorAll("pre > code").forEach(function (codeEl) {
+    let raw = codeEl.textContent;
+    raw = raw.replace(/^\n/, "").replace(/\s+$/, "");
+    codeEl.innerHTML = highlight(raw);
+  });
+})();
+
+/* ============================================================
+   3. COPY BUTTONS
+   ============================================================ */
+(function () {
+  document.querySelectorAll("pre").forEach(function (pre) {
+    if (pre.classList.contains("diagram")) return;
+    const btn = document.createElement("button");
+    btn.className = "copy-btn";
+    btn.type = "button";
+    btn.textContent = "copy";
+    btn.addEventListener("click", function () {
+      const code = pre.querySelector("code");
+      const text = code ? code.textContent : pre.textContent;
+      navigator.clipboard.writeText(text).then(function () {
+        btn.textContent = "copied!";
+        setTimeout(function () { btn.textContent = "copy"; }, 1400);
+      }).catch(function () {
+        btn.textContent = "failed";
+        setTimeout(function () { btn.textContent = "copy"; }, 1400);
+      });
+    });
+    pre.appendChild(btn);
+  });
+})();
+
+/* ============================================================
+   4. BUILD SIDEBAR NAVIGATION
+   ============================================================ */
+(function () {
+  const nav = document.getElementById("nav");
+  const sections = document.querySelectorAll("main section");
+  const linkMap = new Map();
+  let currentPart = null;
+
+  sections.forEach(function (sec) {
+    const part = sec.getAttribute("data-part") || "";
+    if (part !== currentPart) {
+      currentPart = part;
+      const header = document.createElement("div");
+      header.className = "nav-part";
+      header.textContent = part || "Contents";
+      nav.appendChild(header);
+    }
+    const a = document.createElement("a");
+    a.className = "nav-link";
+    a.href = "#" + sec.id;
+    a.dataset.target = sec.id;
+    a.textContent = sec.getAttribute("data-title") || sec.id;
+    nav.appendChild(a);
+    linkMap.set(sec.id, a);
+  });
+
+  /* --- scroll spy --- */
+  const links = Array.from(nav.querySelectorAll(".nav-link"));
+
+  const observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      links.forEach(function (l) { l.classList.remove("active"); });
+      const link = linkMap.get(entry.target.id);
+      if (link) {
+        link.classList.add("active");
+        const nr = nav.parentElement.getBoundingClientRect();
+        const lr = link.getBoundingClientRect();
+        if (lr.top < nr.top + 60 || lr.bottom > nr.bottom - 20) {
+          link.scrollIntoView({ block: "nearest" });
+        }
+      }
+    });
+  }, { rootMargin: "-12% 0px -75% 0px", threshold: 0 });
+
+  sections.forEach(function (s) { observer.observe(s); });
+
+  /* --- close sidebar on mobile after navigation --- */
+  nav.addEventListener("click", function (e) {
+    if (e.target.classList.contains("nav-link") && window.innerWidth <= 980) {
+      document.body.classList.remove("sidebar-open");
+    }
+  });
+})();
+
+/* ============================================================
+   5. SEARCH / FILTER
+   ============================================================ */
+(function () {
+  const input = document.getElementById("navSearch");
+  const nav = document.getElementById("nav");
+
+  input.addEventListener("input", function () {
+    const q = input.value.trim().toLowerCase();
+    const links = nav.querySelectorAll(".nav-link");
+    const parts = nav.querySelectorAll(".nav-part");
+
+    links.forEach(function (link) {
+      const match = !q || link.textContent.toLowerCase().includes(q);
+      link.classList.toggle("hidden", !match);
+    });
+
+    // Hide part headers that have no visible links beneath them
+    parts.forEach(function (part) {
+      let node = part.nextElementSibling;
+      let anyVisible = false;
+      while (node && !node.classList.contains("nav-part")) {
+        if (node.classList.contains("nav-link") && !node.classList.contains("hidden")) {
+          anyVisible = true;
+          break;
+        }
+        node = node.nextElementSibling;
+      }
+      part.classList.toggle("hidden", !anyVisible);
+    });
+  });
+})();
+
+/* ============================================================
+   6. MOBILE MENU, TOP BUTTON, PROGRESS BAR
+   ============================================================ */
+(function () {
+  document.getElementById("menuBtn").addEventListener("click", function () {
+    document.body.classList.toggle("sidebar-open");
+  });
+
+  document.getElementById("topBtn").addEventListener("click", function () {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  const bar = document.getElementById("progress");
+  function updateProgress() {
+    const doc = document.documentElement;
+    const max = doc.scrollHeight - doc.clientHeight;
+    const pct = max > 0 ? (doc.scrollTop / max) * 100 : 0;
+    bar.style.width = pct + "%";
+  }
+  window.addEventListener("scroll", updateProgress, { passive: true });
+  window.addEventListener("resize", updateProgress);
+  updateProgress();
+
+  // Close the mobile sidebar when clicking outside it
+  document.addEventListener("click", function (e) {
+    if (window.innerWidth > 980) return;
+    if (!document.body.classList.contains("sidebar-open")) return;
+    const sidebar = document.getElementById("sidebar");
+    const btn = document.getElementById("menuBtn");
+    if (!sidebar.contains(e.target) && !btn.contains(e.target)) {
+      document.body.classList.remove("sidebar-open");
+    }
+  });
+})();
+</script>
+</body>
+</html>

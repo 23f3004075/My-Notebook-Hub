@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Project Hub</title>
+  <meta name="description" content="A hub for all my hosted HTML pages." />
+  <style>
+    :root {
+      --bg: #0f1220;
+      --bg-2: #141830;
+      --card: #1a1f3d;
+      --card-hover: #232a52;
+      --text: #e8eaf6;
+      --muted: #9aa3c7;
+      --accent: #6c8cff;
+      --accent-2: #b16cff;
+      --border: rgba(255, 255, 255, 0.08);
+      --radius: 14px;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(108, 140, 255, 0.18), transparent 60%),
+        radial-gradient(900px 500px at 110% 10%, rgba(177, 108, 255, 0.15), transparent 60%),
+        linear-gradient(180deg, var(--bg), var(--bg-2));
+      min-height: 100vh;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 4rem 1.25rem 3rem;
+    }
+
+    header.hero {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--border);
+      background: rgba(108, 140, 255, 0.08);
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-size: clamp(1.9rem, 4vw, 2.75rem);
+      margin: 0 0 0.75rem;
+      line-height: 1.15;
+      background: linear-gradient(90deg, #ffffff, #a9b8ff 60%, #d3a8ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      margin: 0 auto;
+      max-width: 620px;
+      font-size: 1.02rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      padding: 1.35rem 1.25rem;
+      background: linear-gradient(180deg, var(--card), rgba(26, 31, 61, 0.6));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(108,140,255,0.18), rgba(177,108,255,0.18));
+      opacity: 0;
+      transition: opacity 0.18s ease;
+      pointer-events: none;
+    }
+
+    .card:hover,
+    .card:focus-visible {
+      transform: translateY(-3px);
+      background: var(--card-hover);
+      border-color: rgba(108, 140, 255, 0.5);
+      box-shadow: var(--shadow);
+      outline: none;
+    }
+
+    .card:hover::before,
+    .card:focus-visible::before { opacity: 1; }
+
+    .card:focus-visible {
+      box-shadow: var(--shadow), 0 0 0 3px rgba(108, 140, 255, 0.35);
+    }
+
+    .icon {
+      font-size: 1.5rem;
+      line-height: 1;
+      margin-bottom: 0.35rem;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+    }
+
+    .arrow {
+      color: var(--muted);
+      transition: transform 0.18s ease, color 0.18s ease;
+    }
+
+    .card:hover .arrow,
+    .card:focus-visible .arrow {
+      transform: translateX(4px);
+      color: var(--accent);
+    }
+
+    .card-desc {
+      color: var(--muted);
+      font-size: 0.94rem;
+      margin: 0;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-top: 3rem;
+    }
+
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header class="hero">
+      <span class="badge">Project Hub</span>
+      <h1>Welcome to My Project Hub</h1>
+      <p class="subtitle">
+        A single place to access all of my hosted pages. Pick a card below to get started.
+      </p>
+    </header>
+
+    <ul class="grid">
+      <!-- 🔽 EDIT THESE CARDS: change href, icon, title, description -->
+      <li>
+        <a class="card" href="page1.html">
+          <span class="icon">📄</span>
+          <h2 class="card-title">Page One <span class="arrow">→</span></h2>
+          <p class="card-desc">A short description of what Page One contains.</p>
+        </a>
+      </li>
+
+      <li>
+        <a class="card" href="page2.html">
+          <span class="icon">🧪</span>
+          <h2 class="card-title">Page Two <span class="arrow">→</span></h2>
+          <p class="card-desc">Another project or experiment lives here.</p>
+        </a>
+      </li>
+
+      <li>
+        <a class="card" href="subfolder/page3.html">
+          <span class="icon">📁</span>
+          <h2 class="card-title">Page Three (subfolder) <span class="arrow">→</span></h2>
+          <p class="card-desc">Example of linking to a file inside a subfolder.</p>
+        </a>
+      </li>
+
+      <!-- Add more <li> cards as needed -->
+    </ul>
+
+    <footer>
+      Hosted with <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a>
+    </footer>
+  </main>
+</body>
+</html>

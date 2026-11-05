@@ -1,0 +1,2564 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI System Engineering Interview Notebook · RAG · FastAPI · OOD · Production</title>
+  <style>
+    /* ---------- THEME TOKENS ---------- */
+    :root {
+      --bg: #f6f8fa;
+      --surface: #ffffff;
+      --surface-2: #f0f3f6;
+      --border: #d0d7de;
+      --text: #1f2328;
+      --text-muted: #57606a;
+      --accent: #0969da;
+      --accent-soft: #ddf4ff;
+      --code-bg: #f6f8fa;
+      --code-text: #24292f;
+      --green: #1a7f37;
+      --green-soft: #dafbe1;
+      --orange: #9a6700;
+      --orange-soft: #fff8c5;
+      --red: #cf222e;
+      --red-soft: #ffebe9;
+      --shadow: 0 1px 3px rgba(0,0,0,.08);
+      --radius: 10px;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface-2: #1c2128;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --accent: #58a6ff;
+      --accent-soft: #0c2d4a;
+      --code-bg: #0d1117;
+      --code-text: #e6edf3;
+      --green: #3fb950;
+      --green-soft: #0f2d1a;
+      --orange: #d29922;
+      --orange-soft: #2d2000;
+      --red: #f85149;
+      --red-soft: #3d0c0c;
+      --shadow: 0 1px 3px rgba(0,0,0,.4);
+    }
+
+    /* ---------- RESET & BASE ---------- */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 15px;
+      transition: background .2s, color .2s;
+    }
+
+    /* ---------- HEADER ---------- */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      backdrop-filter: blur(8px);
+      transition: background .2s, border-color .2s;
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 1.05rem;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-badge {
+      background: var(--accent);
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: .72rem;
+      font-weight: 600;
+    }
+
+    .search-wrap {
+      flex: 1;
+      max-width: 480px;
+      position: relative;
+    }
+
+    .search-wrap input {
+      width: 100%;
+      padding: 8px 12px 8px 34px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+      font-size: .88rem;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .search-wrap input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    .search-wrap::before {
+      content: "⌕";
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      pointer-events: none;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: auto;
+    }
+
+    .theme-toggle {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 7px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: .85rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background .2s, border-color .2s;
+    }
+
+    .theme-toggle:hover { background: var(--accent-soft); border-color: var(--accent); }
+
+    .expand-all-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: .8rem;
+    }
+
+    /* ---------- LAYOUT ---------- */
+    .layout {
+      display: flex;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* ---------- SIDEBAR ---------- */
+    nav.sidebar {
+      width: 270px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 65px;
+      height: calc(100vh - 65px);
+      overflow-y: auto;
+      padding: 24px 16px 40px;
+      border-right: 1px solid var(--border);
+      background: var(--surface);
+      transition: background .2s, border-color .2s;
+    }
+
+    nav.sidebar h4 {
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      margin-top: 18px;
+    }
+
+    nav.sidebar h4:first-child { margin-top: 0; }
+
+    nav.sidebar a {
+      display: block;
+      padding: 6px 10px;
+      border-radius: 6px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: .84rem;
+      margin-bottom: 2px;
+      transition: background .15s, color .15s;
+      border-left: 2px solid transparent;
+    }
+
+    nav.sidebar a:hover { background: var(--surface-2); color: var(--text); }
+
+    nav.sidebar a.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-left-color: var(--accent);
+      font-weight: 600;
+    }
+
+    nav.sidebar a.sub { padding-left: 22px; font-size: .8rem; }
+
+    /* ---------- MAIN ---------- */
+    main {
+      flex: 1;
+      min-width: 0;
+      padding: 32px 40px 120px;
+    }
+
+    /* ---------- HERO ---------- */
+    .hero {
+      background: linear-gradient(135deg, var(--accent-soft), var(--surface));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px 30px;
+      margin-bottom: 32px;
+    }
+
+    .hero h1 {
+      font-size: 1.7rem;
+      margin-bottom: 8px;
+      letter-spacing: -.02em;
+    }
+
+    .hero p { color: var(--text-muted); max-width: 760px; }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .tag {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: .75rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    /* ---------- SECTION ---------- */
+    section {
+      margin-bottom: 48px;
+      scroll-margin-top: 80px;
+    }
+
+    section > h2 {
+      font-size: 1.35rem;
+      margin-bottom: 6px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-num {
+      background: var(--accent);
+      color: #fff;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .8rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .section-intro {
+      color: var(--text-muted);
+      margin: 10px 0 20px;
+      font-size: .92rem;
+      max-width: 820px;
+    }
+
+    /* ---------- Q&A CARD ---------- */
+    .qa-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 14px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: border-color .2s;
+    }
+
+    .qa-card:hover { border-color: var(--accent); }
+
+    .qa-question {
+      padding: 16px 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      user-select: none;
+      background: var(--surface);
+      transition: background .15s;
+    }
+
+    .qa-question:hover { background: var(--surface-2); }
+
+    .qa-toggle {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      border-radius: 6px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .75rem;
+      font-weight: 700;
+      margin-top: 2px;
+      transition: transform .2s;
+    }
+
+    .qa-card.open .qa-toggle { transform: rotate(90deg); }
+
+    .qa-question-text {
+      font-weight: 600;
+      font-size: .92rem;
+      line-height: 1.45;
+    }
+
+    .qa-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .pill {
+      font-size: .68rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+    }
+
+    .pill.rag { background: var(--accent-soft); color: var(--accent); }
+    .pill.fastapi { background: var(--green-soft); color: var(--green); }
+    .pill.ood { background: var(--orange-soft); color: var(--orange); }
+    .pill.system { background: var(--accent-soft); color: var(--accent); }
+    .pill.python { background: var(--green-soft); color: var(--green); }
+    .pill.prod { background: var(--red-soft); color: var(--red); }
+    .pill.behavioral { background: var(--surface-2); color: var(--text-muted); }
+
+    .qa-answer {
+      display: none;
+      padding: 0 20px 20px 54px;
+      font-size: .9rem;
+      line-height: 1.7;
+      color: var(--text);
+    }
+
+    .qa-card.open .qa-answer { display: block; }
+
+    .qa-answer p { margin-bottom: 10px; }
+
+    .qa-answer ul, .qa-answer ol {
+      margin: 8px 0 12px 20px;
+    }
+
+    .qa-answer li { margin-bottom: 5px; }
+
+    .qa-answer strong { color: var(--text); }
+
+    .interviewer-note {
+      background: var(--accent-soft);
+      border-left: 3px solid var(--accent);
+      padding: 10px 14px;
+      border-radius: 0 6px 6px 0;
+      font-size: .85rem;
+      margin: 12px 0;
+    }
+
+    .interviewer-note::before {
+      content: "🎯 What interviewers look for · ";
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .how-to {
+      background: var(--green-soft);
+      border-left: 3px solid var(--green);
+      padding: 10px 14px;
+      border-radius: 0 6px 6px 0;
+      font-size: .85rem;
+      margin: 12px 0;
+    }
+
+    .how-to::before {
+      content: "⚙️ How to execute / solve · ";
+      font-weight: 700;
+      color: var(--green);
+    }
+
+    .warning {
+      background: var(--red-soft);
+      border-left: 3px solid var(--red);
+      padding: 10px 14px;
+      border-radius: 0 6px 6px 0;
+      font-size: .85rem;
+      margin: 12px 0;
+    }
+
+    .warning::before {
+      content: "⚠️ Production pitfall · ";
+      font-weight: 700;
+      color: var(--red);
+    }
+
+    /* ---------- CODE ---------- */
+    pre {
+      background: var(--code-bg);
+      color: var(--code-text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      overflow-x: auto;
+      font-family: var(--mono);
+      font-size: .8rem;
+      line-height: 1.55;
+      margin: 10px 0 14px;
+      tab-size: 4;
+    }
+
+    code.inline {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-family: var(--mono);
+      font-size: .82em;
+      color: var(--text);
+    }
+
+    .code-label {
+      display: inline-block;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-bottom: none;
+      padding: 3px 10px;
+      border-radius: 6px 6px 0 0;
+      font-size: .72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: -1px;
+      font-family: var(--mono);
+    }
+
+    /* ---------- DIAGRAM ---------- */
+    .diagram {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px;
+      margin: 12px 0 16px;
+      font-family: var(--mono);
+      font-size: .78rem;
+      line-height: 1.45;
+      overflow-x: auto;
+      white-space: pre;
+      color: var(--text-muted);
+    }
+
+    .diagram-title {
+      font-size: .75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      font-family: var(--font);
+    }
+
+    /* ---------- TABLE ---------- */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 16px;
+      font-size: .85rem;
+    }
+
+    th, td {
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      text-align: left;
+    }
+
+    th {
+      background: var(--surface-2);
+      font-weight: 600;
+      font-size: .8rem;
+    }
+
+    tr:nth-child(even) td { background: var(--surface-2); }
+
+    /* ---------- CALLOUT ---------- */
+    .callout {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 14px 0;
+      background: var(--surface-2);
+      font-size: .88rem;
+    }
+
+    .callout h4 { margin-bottom: 6px; font-size: .92rem; }
+
+    /* ---------- SEARCH HIDDEN ---------- */
+    .qa-card.hidden { display: none; }
+
+    .no-results {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+      display: none;
+    }
+
+    /* ---------- FOOTER ---------- */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 40px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: .8rem;
+      margin-top: 40px;
+    }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 900px) {
+      nav.sidebar { display: none; }
+      main { padding: 24px 18px 80px; }
+      header { padding: 10px 14px; gap: 10px; }
+      .search-wrap { max-width: none; }
+      .logo span:not(.logo-badge) { display: none; }
+    }
+
+    /* ---------- SCROLLBAR ---------- */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+  </style>
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<header>
+  <div class="logo">
+    <span class="logo-badge">AI</span>
+    <span>System Engineering Interview Notebook</span>
+  </div>
+  <div class="search-wrap">
+    <input type="text" id="searchInput" placeholder="Search questions, topics, code…" autocomplete="off">
+  </div>
+  <div class="header-actions">
+    <button class="expand-all-btn" id="expandAllBtn">Expand all</button>
+    <button class="theme-toggle" id="themeToggle">
+      <span id="themeIcon">🌙</span><span id="themeLabel">Dark</span>
+    </button>
+  </div>
+</header>
+
+<!-- ==================== LAYOUT ==================== -->
+<div class="layout">
+
+  <!-- ---------- SIDEBAR ---------- -->
+  <nav class="sidebar" id="sidebar">
+    <h4>Foundations</h4>
+    <a href="#intro" class="active">Introduction</a>
+
+    <h4>RAG System Design</h4>
+    <a href="#rag-arch">Production RAG architecture</a>
+    <a href="#rag-chunking">Chunking & embeddings</a>
+    <a href="#rag-vector">Vector DB & HNSW</a>
+    <a href="#rag-hybrid">Hybrid search & reranking</a>
+    <a href="#rag-eval">RAG evaluation (RAGAS)</a>
+    <a href="#rag-failures">Production failure modes</a>
+
+    <h4>FastAPI for AI</h4>
+    <a href="#fastapi-async">Async vs sync & the event loop</a>
+    <a href="#fastapi-stream">Streaming SSE endpoint</a>
+    <a href="#fastapi-pydantic">Pydantic & validation</a>
+    <a href="#fastapi-resilience">Rate limiting & circuit breaker</a>
+    <a href="#fastapi-docker">Docker multi-stage build</a>
+
+    <h4>Out-of-Distribution</h4>
+    <a href="#ood-why">Why OOD matters</a>
+    <a href="#ood-methods">Detection methods</a>
+    <a href="#ood-code">Mahalanobis code</a>
+    <a href="#ood-integration">Monitoring integration</a>
+
+    <h4>System Engineering</h4>
+    <a href="#sys-gateway">LLM gateway design</a>
+    <a href="#sys-cost">Cost & latency budgets</a>
+    <a href="#sys-cache">Semantic caching</a>
+    <a href="#sys-tiering">Model tiering</a>
+
+    <h4>Python Concurrency</h4>
+    <a href="#py-async">Async/await for LLM calls</a>
+    <a href="#py-batch">Batch embedding with semaphores</a>
+    <a href="#py-errors">Partial failures & retries</a>
+
+    <h4>Evaluation & Ops</h4>
+    <a href="#ops-ragas">RAGAS metrics</a>
+    <a href="#ops-drift">Data drift monitoring</a>
+    <a href="#ops-observability">Observability checklist</a>
+
+    <h4>Behavioral</h4>
+    <a href="#beh-debug">Production debugging</a>
+    <a href="#beh-incident">Incident response</a>
+  </nav>
+
+  <!-- ---------- MAIN ---------- -->
+  <main>
+
+    <!-- ========== HERO ========== -->
+    <div class="hero" id="intro">
+      <h1>AI System Engineering Interview Notebook</h1>
+      <p>
+        The 2026 AI Engineer / Data Scientist interview loop has shifted heavily toward
+        <strong>system engineering</strong>. You are expected to design production RAG pipelines,
+        write async FastAPI services, reason about OOD inputs, control LLM cost and latency,
+        and debug distributed inference failures — often in the same round.
+        This notebook collects the exact patterns interviewers probe, with runnable code,
+        architecture diagrams, and explicit “how to solve” guidance.
+      </p>
+      <div class="hero-tags">
+        <span class="tag">Production RAG</span>
+        <span class="tag">FastAPI + SSE</span>
+        <span class="tag">Async concurrency</span>
+        <span class="tag">OOD detection</span>
+        <span class="tag">LLM gateway</span>
+        <span class="tag">Cost & latency budgets</span>
+        <span class="tag">RAGAS evaluation</span>
+        <span class="tag">Circuit breakers</span>
+        <span class="tag">Semantic cache</span>
+        <span class="tag">Model tiering</span>
+      </div>
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 1: RAG SYSTEM DESIGN                                     -->
+    <!-- ================================================================ -->
+    <section id="rag-arch">
+      <h2><span class="section-num">1</span> RAG System Design — Production Architecture</h2>
+      <p class="section-intro">
+        Interviewers no longer ask “what is RAG?” They ask you to design a RAG system that
+        survives real traffic, bad retrievals, and LLM provider outages. Start with the
+        end‑to‑end flow, then defend every component.
+      </p>
+
+      <div class="qa-card">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">Walk me through the architecture of a production RAG system.</div>
+            <div class="qa-meta">
+              <span class="pill rag">RAG</span>
+              <span class="pill system">System Design</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <p>
+            A production RAG system has two planes: the <strong>offline ingestion plane</strong>
+            and the <strong>online serving plane</strong>. Most candidates only describe the
+            happy path; strong candidates describe the boundaries and failure modes.
+          </p>
+
+          <div class="diagram">
+<span class="diagram-title">Production RAG — end-to-end data flow</span>
+┌──────────────────────────────────────────────────────────────────────────────┐
+│  OFFLINE INGESTION                                                           │
+│                                                                              │
+│  Source docs ──► Parser ──► Chunker ──► Embedding model ──► Vector DB       │
+│  (PDF/HTML/DB)   (layout,    (semantic,   (batch, async)     (HNSW / IVF)    │
+│                   tables)    parent-child)                                   │
+│                                      │                                       │
+│                                      └──► Metadata store (Postgres)         │
+│                                           (source, version, ACLs)            │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│  ONLINE SERVING                                                              │
+│                                                                              │
+│  User query ──► API gateway ──► Query rewrite ──► Retrieval                  │
+│                 (FastAPI)       (HyDE / multi-query)                         │
+│                                      │                                       │
+│                    ┌─────────────────┴─────────────────┐                     │
+│                    ▼                                   ▼                     │
+│              Dense search                        Sparse BM25                 │
+│              (vector DB)                         (keyword index)             │
+│                    └─────────────┬───────────────────┘                       │
+│                                  ▼                                           │
+│                            Fusion (RRF)                                      │
+│                                  ▼                                           │
+│                         Cross-encoder reranker                               │
+│                                  ▼                                           │
+│                    Top-k chunks + citations                                  │
+│                                  ▼                                           │
+│                    Prompt assembly (context window budget)                   │
+│                                  ▼                                           │
+│                    LLM provider (streaming SSE)                              │
+│                                  ▼                                           │
+│                    Response + source attribution                             │
+└──────────────────────────────────────────────────────────────────────────────┘</pre>
+          </div>
+
+          <div class="interviewer-note">
+            They want to see that you separate ingestion from serving, that you can name the
+            retrieval stages, and that you know where latency and cost are introduced.
+          </div>
+
+          <p><strong>Key components to defend:</strong></p>
+          <ul>
+            <li><strong>Chunking strategy</strong> — fixed-size vs semantic vs parent-child. Parent-child retrieval preserves context: embed small chunks for search, return the larger parent chunk to the LLM.</li>
+            <li><strong>Embedding model</strong> — dimension, max sequence length, domain fit. Production embedding calls are batched and async.</li>
+            <li><strong>Vector index</strong> — HNSW for low-latency recall, IVF-PQ when memory is constrained. Know the recall–latency–memory trade-off.</li>
+            <li><strong>Hybrid retrieval</strong> — dense vectors miss exact keyword matches; BM25 misses paraphrases. Fuse with Reciprocal Rank Fusion (RRF).</li>
+            <li><strong>Reranker</strong> — a cross-encoder re-scores the top 20–50 candidates and usually gives the single largest precision gain.</li>
+            <li><strong>Prompt assembly</strong> — enforce a token budget; put the most relevant chunks first and last (“lost in the middle” mitigation).</li>
+          </ul>
+
+          <div class="how-to">
+            Whiteboard the two planes separately. Draw ingestion left-to-right, serving top-to-bottom.
+            Explicitly call out where you would add caching, rate limiting, and observability.
+            Mention the metadata store — ACL filtering is a production requirement, not an afterthought.
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card" id="rag-chunking">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">How do you choose a chunking strategy? What breaks if you get it wrong?</div>
+            <div class="qa-meta">
+              <span class="pill rag">RAG</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <p>
+            Chunking is the highest-leverage decision in RAG because retrieval can only return
+            what exists in a chunk. Three dominant strategies:
+          </p>
+          <table>
+            <thead>
+              <tr><th>Strategy</th><th>How it works</th><th>Best for</th><th>Failure mode</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Fixed-size</strong></td>
+                <td>Split every N tokens with overlap.</td>
+                <td>Homogeneous text, quick baseline.</td>
+                <td>Cuts sentences/tables mid-thought; retrieval returns incomplete context.</td>
+              </tr>
+              <tr>
+                <td><strong>Semantic</strong></td>
+                <td>Split on topic boundaries using embedding similarity.</td>
+                <td>Long documents with clear sections.</td>
+                <td>Variable chunk sizes; small chunks may lack context.</td>
+              </tr>
+              <tr>
+                <td><strong>Parent-child</strong></td>
+                <td>Embed small child chunks; return the larger parent chunk to the LLM.</td>
+                <td>Q&A over manuals, policies, code docs.</td>
+                <td>Requires a two-level store; parent retrieval can blow the token budget.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="warning">
+            If chunks are too small, the LLM receives fragments and hallucinates to fill gaps.
+            If chunks are too large, retrieval precision drops and you waste context tokens.
+            Always evaluate chunk size empirically — do not guess.
+          </div>
+
+          <pre><span class="code-label">python · semantic chunking sketch</span>
+from langchain_experimental.text_splitter import SemanticChunker
+from langchain_openai import OpenAIEmbeddings
+
+splitter = SemanticChunker(
+    OpenAIEmbeddings(model="text-embedding-3-small"),
+    breakpoint_threshold_type="percentile",
+    breakpoint_threshold_amount=95,
+)
+chunks = splitter.split_text(document)
+# Each chunk is a semantically coherent unit, not an arbitrary token window.
+</pre>
+
+          <div class="how-to">
+            Say: “I start with 400–600 token chunks with 10–15% overlap, measure retrieval
+            recall@k and answer faithfulness, then try semantic or parent-child if the
+            baseline fails.” That shows empirical discipline.
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card" id="rag-vector">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">Compare HNSW vs IVF for a production RAG vector index. When would you not use HNSW?</div>
+            <div class="qa-meta">
+              <span class="pill rag">RAG</span>
+              <span class="pill system">System Design</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <p>
+            HNSW (Hierarchical Navigable Small World) is the default for low-latency RAG because
+            it delivers high recall with sub-millisecond query times. But it is <strong>memory-hungry</strong>:
+            the graph structure and full-precision vectors must fit in RAM for best performance.
+          </p>
+          <table>
+            <thead>
+              <tr><th>Index</th><th>Recall</th><th>Latency</th><th>Memory</th><th>Write cost</th><th>Use when</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>HNSW</td><td>Very high (95–99%)</td><td>Very low</td><td>High</td><td>Moderate</td>
+                <td>Low-latency RAG, memory budget available, read-heavy.</td>
+              </tr>
+              <tr>
+                <td>IVF-PQ</td><td>Good (85–95%)</td><td>Low–moderate</td><td>Low</td><td>Low</td>
+                <td>Billion-scale, memory constrained, filter-heavy retrieval.</td>
+              </tr>
+              <tr>
+                <td>Flat (exact)</td><td>100%</td><td>High at scale</td><td>High</td><td>Low</td>
+                <td>Small corpora, evaluation baselines, correctness audits.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="interviewer-note">
+            Saying “HNSW is always best” is a red flag. They want to hear you reason about the
+            recall–memory–latency triangle and name a scenario where HNSW is wrong.
+          </div>
+
+          <pre><span class="code-label">python · HNSW tuning knobs (conceptual)</span>
+# M: number of bidirectional links per node.
+#   Higher M → better recall, more memory.
+# ef_construction: candidate list size during build.
+#   Higher → better graph quality, slower indexing.
+# ef_search: candidate list size at query time.
+#   Higher → better recall, higher latency.
+
+index_params = {
+    "M": 16,                # production default; 32–64 for high-recall
+    "ef_construction": 200, # build-time quality
+    "ef_search": 100,       # query-time recall/latency trade-off
+}
+</pre>
+
+          <div class="how-to">
+            Frame it as an empirical decision: “I benchmark recall@10 and p99 latency on a
+            representative sample before locking the index. If memory exceeds budget, I move
+            cold tenants to IVF-PQ or a disk-backed index.”
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card" id="rag-hybrid">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">Implement hybrid search combining dense vectors and BM25. How do you fuse the scores?</div>
+            <div class="qa-meta">
+              <span class="pill rag">RAG</span>
+              <span class="pill python">Python</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <p>
+            Dense retrieval captures semantic similarity; BM25 captures exact term overlap.
+            In production, you run both, then <strong>fuse the ranked lists</strong>.
+            Reciprocal Rank Fusion (RRF) is the standard because it is score-scale invariant.
+          </p>
+
+          <pre><span class="code-label">python · hybrid retrieval with RRF and cross-encoder rerank</span>
+from typing import List, Dict
+import numpy as np
+
+def reciprocal_rank_fusion(
+    ranked_lists: List[List[str]],
+    k: int = 60,
+) -> List[tuple[str, float]]:
+    """
+    RRF: score(d) = Σ 1 / (k + rank_i(d))
+    k dampens the influence of high ranks; 60 is the common default.
+    """
+    scores: Dict[str, float] = {}
+    for ranked in ranked_lists:
+        for rank, doc_id in enumerate(ranked):
+            scores[doc_id] = scores.get(doc_id, 0.0) + 1.0 / (k + rank + 1)
+    return sorted(scores.items(), key=lambda x: x[1], reverse=True)
+
+
+def hybrid_retrieve(query: str, top_k: int = 50) -> List[str]:
+    dense_ids = vector_store.search(query_embedding(query), top_k=top_k)
+    sparse_ids = bm25_index.search(query, top_k=top_k)
+
+    fused = reciprocal_rank_fusion([dense_ids, sparse_ids])
+    candidate_ids = [doc_id for doc_id, _ in fused[:top_k]]
+
+    # Cross-encoder rerank: expensive but highest precision gain
+    pairs = [(query, doc_store[d].text) for d in candidate_ids]
+    rerank_scores = cross_encoder.predict(pairs)
+    reranked = sorted(
+        zip(candidate_ids, rerank_scores),
+        key=lambda x: x[1],
+        reverse=True,
+    )
+    return [doc_id for doc_id, _ in reranked[:10]]
+</pre>
+
+          <div class="interviewer-note">
+            They want to see that you know RRF is scale-free and that reranking is a separate,
+            more expensive stage. Mentioning “hybrid + rerank” without explaining the fusion
+            function is a partial answer.
+          </div>
+
+          <div class="how-to">
+            In the interview, draw the two parallel retrieval branches, the fusion box, and the
+            reranker. Say: “BM25 handles product codes and names; dense handles paraphrases.
+            RRF combines them without normalizing incompatible score distributions.”
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card" id="rag-eval">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">How do you evaluate a RAG system? Explain faithfulness vs answer relevance.</div>
+            <div class="qa-meta">
+              <span class="pill rag">RAG</span>
+              <span class="pill prod">Evaluation</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <p>
+            RAG evaluation must cover <strong>retrieval quality</strong> and <strong>generation quality</strong>
+            separately. The RAGAS framework is the common vocabulary.
+          </p>
+          <table>
+            <thead>
+              <tr><th>Metric</th><th>Question it answers</th><th>What failure it catches</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Context precision</strong></td>
+                <td>Are the retrieved chunks actually relevant?</td>
+                <td>Noisy retrieval; vector index drift.</td>
+              </tr>
+              <tr>
+                <td><strong>Context recall</strong></td>
+                <td>Did we retrieve all the evidence needed?</td>
+                <td>Missing evidence → hallucination.</td>
+              </tr>
+              <tr>
+                <td><strong>Faithfulness</strong></td>
+                <td>Is every claim in the answer supported by the retrieved context?</td>
+                <td>Hallucination, unsupported extrapolation.</td>
+              </tr>
+              <tr>
+                <td><strong>Answer relevance</strong></td>
+                <td>Does the answer actually address the question?</td>
+                <td>Evasive, off-topic, or overly generic answers.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <pre><span class="code-label">python · RAGAS evaluation skeleton</span>
+from ragas import evaluate
+from ragas.metrics import (
+    faithfulness,
+    answer_relevancy,
+    context_precision,
+    context_recall,
+)
+from datasets import Dataset
+
+eval_dataset = Dataset.from_dict({
+    "question": questions,
+    "answer": generated_answers,
+    "contexts": retrieved_contexts,   # list[list[str]]
+    "ground_truth": reference_answers,
+})
+
+result = evaluate(
+    eval_dataset,
+    metrics=[
+        faithfulness,
+        answer_relevancy,
+        context_precision,
+        context_recall,
+    ],
+)
+print(result)
+# Target: faithfulness > 0.90, answer_relevancy > 0.85,
+# context_precision > 0.80, context_recall > 0.75
+</pre>
+
+          <div class="interviewer-note">
+            Strong candidates distinguish “the answer is wrong” from “the retrieval was wrong.”
+            If context recall is low, no prompt engineering will fix the answer.
+          </div>
+
+          <div class="how-to">
+            Say: “I maintain a golden set of 100–300 question–answer–context triples.
+            I run RAGAS on every retrieval or prompt change and block deploys if faithfulness
+            drops more than 3 points.”
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card" id="rag-failures">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">What are the most common production RAG failure modes and how do you detect them?</div>
+            <div class="qa-meta">
+              <span class="pill rag">RAG</span>
+              <span class="pill prod">Production</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <ul>
+            <li><strong>Lost in the middle</strong> — the LLM ignores chunks in the middle of a long context. Detect by placing the gold chunk at different positions and measuring answer accuracy. Mitigate by reordering: most relevant first and last.</li>
+            <li><strong>Retrieval drift</strong> — embeddings or index parameters change silently. Detect with context precision and recall on a fixed golden set after every deploy.</li>
+            <li><strong>Chunk boundary truncation</strong> — the answer spans two chunks but neither is retrieved. Detect with context recall; mitigate with parent-child retrieval or larger overlap.</li>
+            <li><strong>Prompt injection via retrieved content</strong> — malicious documents instruct the LLM to ignore system prompts. Detect with input sanitization and output policy checks; never trust retrieved text as instructions.</li>
+            <li><strong>Stale index</strong> — documents updated but embeddings not re-indexed. Detect with source-version metadata and freshness audits.</li>
+          </ul>
+
+          <div class="warning">
+            A RAG system can fail silently: the answer looks fluent but is unsupported.
+            Log every retrieval’s document IDs and scores, and sample production traces for
+            human review weekly.
+          </div>
+
+          <div class="how-to">
+            In the interview, say: “I instrument retrieval separately from generation. When a
+            bad answer appears, I first check whether the correct chunk was retrieved (context
+            recall). If it was, the problem is generation; if not, the problem is retrieval.”
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 2: FASTAPI FOR AI                                        -->
+    <!-- ================================================================ -->
+    <section id="fastapi-async">
+      <h2><span class="section-num">2</span> FastAPI for AI Backends — Async, Streaming, and Resilience</h2>
+      <p class="section-intro">
+        FastAPI is the default AI backend because it is async-first, has native streaming, and
+        integrates Pydantic validation. Interviewers probe the <em>internals</em>: the event loop,
+        blocking calls, and what happens when an LLM provider stalls.
+      </p>
+
+      <div class="qa-card">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">Why is FastAPI the modern default for AI backends? Explain async vs sync with concrete numbers.</div>
+            <div class="qa-meta">
+              <span class="pill fastapi">FastAPI</span>
+              <span class="pill python">Python</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <p>
+            LLM calls are <strong>I/O-bound</strong>: the CPU is idle while waiting for the network.
+            A synchronous worker is blocked for the entire 3–10 second LLM call. An async
+            worker can serve hundreds of concurrent requests while waiting.
+          </p>
+
+          <div class="diagram">
+<span class="diagram-title">Sync vs async concurrency under 5-second LLM latency</span>
+SYNC (Flask, 4 workers):
+  Request 1 ──████████████████████ 5s
+  Request 2 ── queued ───────────── 10s
+  Request 3 ── queued ───────────── 15s
+  Request 4 ── queued ───────────── 20s
+  Throughput: 4 requests per 5s → 0.8 req/s
+
+ASYNC (FastAPI, 4 workers, all awaiting):
+  Request 1 ──████████████████████ 5s
+  Request 2 ──████████████████████ 5s
+  Request 3 ──████████████████████ 5s
+  Request 4 ──████████████████████ 5s
+  Throughput: 4 requests per 5s, but the event loop can interleave
+  hundreds of pending coroutines → effectively 400+ concurrent in-flight.
+</pre>
+          </div>
+
+          <p><strong>Four reasons FastAPI wins for AI:</strong></p>
+          <ol>
+            <li><strong>Async-first design</strong> — <code class="inline">async def</code> endpoints let one worker handle many in-flight LLM calls. Flask/Django are synchronous by default; each request blocks a worker.</li>
+            <li><strong>Native streaming</strong> — <code class="inline">StreamingResponse</code> and SSE support token-by-token LLM output out of the box. Flask requires manual chunked encoding.</li>
+            <li><strong>Pydantic integration</strong> — request/response schemas are validated before your code runs. Critical when passing structured prompts and tool calls.</li>
+            <li><strong>Type hints as contracts</strong> — the function signature is the API schema. Refactoring is safe and auto-generated OpenAPI docs stay accurate.</li>
+          </ol>
+
+          <div class="warning">
+            Async is not automatically faster. If you call a synchronous database driver or a
+            blocking library inside an <code class="inline">async def</code> endpoint, you block the
+            event loop and destroy concurrency. Use <code class="inline">asyncpg</code>,
+            <code class="inline">httpx.AsyncClient</code>, and async SDKs.
+          </div>
+
+          <div class="interviewer-note">
+            The killer follow-up: “You used FastAPI with sync SQLAlchemy. What happens?”
+            Answer: the sync call blocks the event loop, so the app behaves like a synchronous
+            service — worse than Flask because you paid the async complexity cost for nothing.
+          </div>
+
+          <div class="how-to">
+            Say: “I treat <code class="inline">async def</code> as a promise that every downstream
+            I/O is non-blocking. For CPU-bound work — local embedding, reranking — I offload to
+            a thread pool or a separate worker, never the event loop.”
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card" id="fastapi-stream">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">Implement a streaming RAG endpoint with Server-Sent Events (SSE).</div>
+            <div class="qa-meta">
+              <span class="pill fastapi">FastAPI</span>
+              <span class="pill rag">RAG</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <p>
+            Streaming is non-negotiable for user-facing LLM products: time-to-first-token
+            dominates perceived latency. The endpoint retrieves context, assembles the prompt,
+            then streams the LLM output token by token as SSE events.
+          </p>
+
+          <pre><span class="code-label">python · FastAPI SSE streaming RAG endpoint</span>
+from fastapi import FastAPI
+from fastapi.responses import StreamingResponse
+from pydantic import BaseModel
+import asyncio, json
+
+app = FastAPI()
+
+class RAGRequest(BaseModel):
+    question: str
+    top_k: int = 5
+    tenant_id: str
+
+async def rag_stream(req: RAGRequest):
+    # 1. Retrieval (async)
+    chunks = await retriever.retrieve(req.question, top_k=req.top_k)
+    context = "\n\n".join(c.text for c in chunks)
+
+    # 2. Prompt assembly with explicit token budget
+    prompt = build_prompt(
+        system="Answer only from the context. Cite chunk IDs.",
+        context=context,
+        question=req.question,
+    )
+
+    # 3. Stream LLM tokens
+    async for token in llm.stream(prompt, tenant_id=req.tenant_id):
+        yield f"data: {json.dumps({'token': token})}\n\n"
+
+    # 4. Emit citations as a final event
+    citations = [{"id": c.id, "source": c.source} for c in chunks]
+    yield f"data: {json.dumps({'citations': citations})}\n\n"
+    yield "data: [DONE]\n\n"
+
+@app.post("/v1/rag/stream")
+async def rag_endpoint(req: RAGRequest):
+    return StreamingResponse(
+        rag_stream(req),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",  # disable nginx buffering
+        },
+    )
+</pre>
+
+          <div class="interviewer-note">
+            They want to see: async generator, SSE framing (<code class="inline">data: …\n\n</code>),
+            disabling proxy buffering, and a final citations event. Mentioning
+            <code class="inline">X-Accel-Buffering: no</code> signals real deployment experience.
+          </div>
+
+          <div class="how-to">
+            If asked to extend: add a heartbeat comment (<code class="inline">: ping\n\n</code>)
+            every 15 seconds to keep proxies from closing idle connections.
+            Add backpressure: if the client disconnects, cancel the upstream LLM stream.
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card" id="fastapi-pydantic">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">How does Pydantic protect an AI backend? Give a production example.</div>
+            <div class="qa-meta">
+              <span class="pill fastapi">FastAPI</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <p>
+            Pydantic validates and coerces request data <em>before</em> your handler runs.
+            In AI systems this prevents malformed prompts, oversized payloads, and invalid
+            tool-call schemas from reaching expensive downstream services.
+          </p>
+
+          <pre><span class="code-label">python · Pydantic model with production constraints</span>
+from pydantic import BaseModel, Field, field_validator
+
+class RAGQuery(BaseModel):
+    question: str = Field(..., min_length=3, max_length=2000)
+    top_k: int = Field(default=5, ge=1, le=20)
+    temperature: float = Field(default=0.0, ge=0.0, le=1.0)
+    tenant_id: str = Field(..., pattern=r"^[a-z0-9-]{3,32}$")
+
+    @field_validator("question")
+    @classmethod
+    def reject_prompt_injection_markers(cls, v: str) -> str:
+        forbidden = ["ignore previous instructions", "system prompt"]
+        lower = v.lower()
+        if any(marker in lower for marker in forbidden):
+            raise ValueError("Potential prompt injection detected")
+        return v.strip()
+
+# FastAPI automatically returns 422 with a detailed error body
+# before your retrieval or LLM code executes.
+</pre>
+
+          <div class="interviewer-note">
+            They want to hear that validation is a cost control and a safety layer, not just
+            developer convenience. A rejected request costs 0 tokens; a malformed request that
+            reaches the LLM costs money and may leak data.
+          </div>
+
+          <div class="how-to">
+            Say: “I put hard limits on <code class="inline">top_k</code>, question length, and
+            temperature at the schema layer. I also validate tenant IDs against an allow-list
+            before any retrieval to prevent cross-tenant data leakage.”
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card" id="fastapi-resilience">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">Design rate limiting and a circuit breaker for an LLM-backed FastAPI service.</div>
+            <div class="qa-meta">
+              <span class="pill fastapi">FastAPI</span>
+              <span class="pill prod">Resilience</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <p>
+            LLM calls are slow, expensive, and can fail in bursts. You need two protections:
+            <strong>rate limiting</strong> to control cost and fairness, and a
+            <strong>circuit breaker</strong> to stop hammering a failing provider.
+          </p>
+
+          <div class="diagram">
+<span class="diagram-title">Circuit breaker state machine</span>
+           ┌─────────────┐
+           │   CLOSED    │  normal operation; requests pass through
+           │  (healthy)  │
+           └──────┬──────┘
+                  │ failure threshold exceeded
+                  ▼
+           ┌─────────────┐
+           │    OPEN     │  fail fast; requests return cached/fallback
+           │  (tripped)  │
+           └──────┬──────┘
+                  │ recovery timeout elapses
+                  ▼
+           ┌─────────────┐
+           │  HALF-OPEN  │  allow a probe request
+           │  (testing)  │
+           └──────┬──────┘
+             │            │
+        success        failure
+             │            │
+             ▼            ▼
+         CLOSED        OPEN
+</pre>
+          </div>
+
+          <pre><span class="code-label">python · simple async circuit breaker</span>
+import asyncio, time
+from enum import Enum
+
+class State(Enum):
+    CLOSED = "closed"
+    OPEN = "open"
+    HALF_OPEN = "half_open"
+
+class CircuitBreaker:
+    def __init__(self, failure_threshold=5, recovery_timeout=30.0):
+        self.state = State.CLOSED
+        self.failures = 0
+        self.failure_threshold = failure_threshold
+        self.recovery_timeout = recovery_timeout
+        self.last_failure_time = 0.0
+        self._lock = asyncio.Lock()
+
+    async def call(self, fn, *args, **kwargs):
+        async with self._lock:
+            if self.state == State.OPEN:
+                if time.time() - self.last_failure_time > self.recovery_timeout:
+                    self.state = State.HALF_OPEN
+                else:
+                    raise RuntimeError("Circuit open: failing fast")
+        try:
+            result = await fn(*args, **kwargs)
+            async with self._lock:
+                if self.state == State.HALF_OPEN:
+                    self.state = State.CLOSED
+                self.failures = 0
+            return result
+        except Exception:
+            async with self._lock:
+                self.failures += 1
+                self.last_failure_time = time.time()
+                if self.failures >= self.failure_threshold:
+                    self.state = State.OPEN
+            raise
+</pre>
+
+          <div class="warning">
+            Rate limiting per IP is insufficient for LLM services. Limit per
+            <strong>tenant</strong> and per <strong>model</strong>, and make the limit
+            <strong>cost-aware</strong>: a request for a 4k-token completion costs far more
+            than a 100-token classification.
+          </div>
+
+          <div class="how-to">
+            In the interview, layer the protections:
+            <ol>
+              <li>API key authentication → tenant identity.</li>
+              <li>Sliding-window or token-bucket rate limiter per tenant.</li>
+              <li>Circuit breaker around each LLM provider adapter.</li>
+              <li>Fallback chain: primary → secondary provider → cached response → graceful error.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card" id="fastapi-docker">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">Write a production Dockerfile for a FastAPI AI service. Why multi-stage?</div>
+            <div class="qa-meta">
+              <span class="pill fastapi">FastAPI</span>
+              <span class="pill prod">Deployment</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <p>
+            Multi-stage builds separate the build toolchain from the runtime image. The result
+            is a smaller, faster-to-pull, lower-CVE image — critical for autoscaling and cold
+            starts.
+          </p>
+
+          <pre><span class="code-label">dockerfile · production multi-stage FastAPI image</span>
+# ---------- Stage 1: builder ----------
+FROM python:3.11-slim AS builder
+WORKDIR /build
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential && rm -rf /var/lib/apt/lists/*
+COPY requirements.txt .
+RUN pip install --user --no-cache-dir -r requirements.txt
+
+# ---------- Stage 2: runtime ----------
+FROM python:3.11-slim AS runtime
+RUN useradd -m -u 1000 appuser
+WORKDIR /app
+COPY --from=builder /root/.local /home/appuser/.local
+COPY --chown=appuser:appuser app/ ./app/
+USER appuser
+ENV PATH=/home/appuser/.local/bin:$PATH
+EXPOSE 8000
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s \
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" || exit 1
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
+</pre>
+
+          <div class="interviewer-note">
+            Size matters: a naive single-stage image is ~1.2 GB; the multi-stage version is
+            ~200 MB. That difference is 5-second vs 30-second cold starts — a real SLO issue.
+          </div>
+
+          <div class="how-to">
+            Mention: non-root user, pinned base image digest, health check, and no build tools
+            in the final image. That is the enterprise checklist.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 3: OUT-OF-DISTRIBUTION                                   -->
+    <!-- ================================================================ -->
+    <section id="ood-why">
+      <h2><span class="section-num">3</span> Out-of-Distribution (OOD) Detection for Production ML</h2>
+      <p class="section-intro">
+        OOD questions test whether you understand that a model is only valid on the distribution
+        it was trained on. In production, inputs drift, adversaries probe, and user behaviour
+        changes. You need to detect this before the model confidently outputs nonsense.
+      </p>
+
+      <div class="qa-card">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">What is OOD detection and why does it matter for an AI Engineer?</div>
+            <div class="qa-meta">
+              <span class="pill ood">OOD</span>
+              <span class="pill prod">Production</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <p>
+            OOD detection is the process of flagging inputs that fall outside the training
+            distribution. A classifier trained on cat/dog images may confidently label a
+            medical X-ray as “dog” because it has never seen an X-ray and has no concept of
+            “unknown.”
+          </p>
+          <p>
+            For AI Engineers, OOD matters in three places:
+          </p>
+          <ul>
+            <li><strong>Safety</strong> — reject inputs the model cannot handle instead of returning a hallucinated answer.</li>
+            <li><strong>Monitoring</strong> — track OOD rate as an early warning of data drift or distribution shift.</li>
+            <li><strong>Routing</strong> — route OOD inputs to a human review queue or a fallback model instead of the primary model.</li>
+          </ul>
+
+          <div class="interviewer-note">
+            They want to hear that OOD detection is not just a research metric — it is a
+            production control that gates model predictions.
+          </div>
+
+          <div class="how-to">
+            Frame OOD as part of the inference contract: “If the input is OOD, the model must
+            abstain, not guess. Abstention is a feature.”
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card" id="ood-methods">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">Compare OOD detection methods: statistical range checks, Mahalanobis distance, and energy-based scores.</div>
+            <div class="qa-meta">
+              <span class="pill ood">OOD</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <table>
+            <thead>
+              <tr><th>Method</th><th>How it works</th><th>Pros</th><th>Cons</th><th>Use when</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Range / statistical</strong></td>
+                <td>Flag if a feature exceeds training min/max plus a margin.</td>
+                <td>Trivial, interpretable, zero training cost.</td>
+                <td>Misses multivariate OOD; ignores correlations.</td>
+                <td>Tabular features with clear bounds; first-line guardrail.</td>
+              </tr>
+              <tr>
+                <td><strong>Mahalanobis distance</strong></td>
+                <td>Distance to the training mean in covariance-normalized feature space.</td>
+                <td>Captures correlations; works on embeddings.</td>
+                <td>Assumes Gaussian-ish distribution; covariance inversion is costly at high dim.</td>
+                <td>Embedding-space OOD; penultimate-layer features.</td>
+              </tr>
+              <tr>
+                <td><strong>Energy-based</strong></td>
+                <td>Use the model’s logits: <code class="inline">-T·logsumexp(logits/T)</code>.</td>
+                <td>No extra training; theoretically grounded.</td>
+                <td>Requires logits; threshold is model-specific.</td>
+                <td>Neural classifiers where logits are available.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="warning">
+            Range checks are necessary but not sufficient. A tabular input can be within each
+            individual feature’s range but still be an impossible combination (e.g., age=5 and
+            income=$500k). Mahalanobis catches this; univariate range checks do not.
+          </div>
+
+          <div class="how-to">
+            In the interview, propose a two-tier system: cheap range checks at the API boundary,
+            then Mahalanobis or energy-based scoring on the model’s internal representation
+            before the prediction is returned.
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card" id="ood-code">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">Implement Mahalanobis-distance OOD detection for embeddings.</div>
+            <div class="qa-meta">
+              <span class="pill ood">OOD</span>
+              <span class="pill python">Python</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <p>
+            Mahalanobis distance measures how many standard deviations an embedding is from the
+            training distribution, accounting for feature correlations. Calibrate the mean and
+            covariance on in-distribution reference data, then set a threshold at a high
+            percentile (e.g., 99th).
+          </p>
+
+          <pre><span class="code-label">python · Mahalanobis OOD detector</span>
+import numpy as np
+
+class MahalanobisOOD:
+    def __init__(self, reg: float = 1e-5):
+        self.mean = None
+        self.inv_cov = None
+        self.threshold = None
+        self.reg = reg  # regularization for numerical stability
+
+    def fit(self, embeddings: np.ndarray, percentile: float = 99.0):
+        """embeddings: (n_samples, n_features) in-distribution reference."""
+        self.mean = embeddings.mean(axis=0)
+        cov = np.cov(embeddings, rowvar=False)
+        cov += self.reg * np.eye(cov.shape[0])
+        self.inv_cov = np.linalg.inv(cov)
+
+        distances = self.score(embeddings)
+        self.threshold = np.percentile(distances, percentile)
+        return self
+
+    def score(self, embeddings: np.ndarray) -> np.ndarray:
+        diff = embeddings - self.mean
+        # (x - μ)ᵀ Σ⁻¹ (x - μ)
+        left = diff @ self.inv_cov
+        return np.sqrt(np.sum(left * diff, axis=1))
+
+    def is_ood(self, embedding: np.ndarray) -> bool:
+        return float(self.score(embedding.reshape(1, -1))[0]) > self.threshold
+
+# Calibration
+detector = MahalanobisOOD().fit(train_embeddings, percentile=99.0)
+
+# Inference gate
+if detector.is_ood(new_embedding):
+    return {"status": "abstain", "reason": "out_of_distribution"}
+return model.predict(new_embedding)
+</pre>
+
+          <div class="interviewer-note">
+            Mention that you calibrate the threshold on a held-out in-distribution set and
+            validate it on a known OOD set. Without a threshold calibration story, the code
+            is incomplete.
+          </div>
+
+          <div class="how-to">
+            If the interviewer asks “what about high-dimensional embeddings?” — say you
+            optionally apply PCA or use a shrinkage covariance estimator, because the full
+            covariance matrix becomes unstable when dimensions exceed samples.
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card" id="ood-integration">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">How do you integrate OOD detection into a FastAPI inference service without adding unacceptable latency?</div>
+            <div class="qa-meta">
+              <span class="pill ood">OOD</span>
+              <span class="pill fastapi">FastAPI</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <p>
+            OOD detection must be cheap enough to run on every request. The pattern is:
+            <strong>cheap range checks first</strong>, then <strong>Mahalanobis on a
+            low-dimensional projection</strong>, then the model.
+          </p>
+
+          <pre><span class="code-label">python · FastAPI inference gate with OOD checks</span>
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+import numpy as np
+
+app = FastAPI()
+range_monitor = DataDriftMonitor(margin=0.1)
+range_monitor.fit(training_feature_ranges)
+mahalanobis = MahalanobisOOD().fit(train_embeddings, percentile=99.0)
+
+class PredictRequest(BaseModel):
+    features: dict[str, float]
+    text: str
+
+@app.post("/predict")
+async def predict(req: PredictRequest):
+    # Tier 1: univariate range check (microseconds)
+    drift = range_monitor.check(req.features)
+    if not drift["in_distribution"]:
+        raise HTTPException(
+            status_code=422,
+            detail={"error": "ood_input", "warnings": drift["warnings"]},
+        )
+
+    # Tier 2: embedding-space Mahalanobis check
+    embedding = embedder.encode(req.text)
+    if mahalanobis.is_ood(embedding):
+        return {"prediction": None, "status": "abstain", "reason": "ood_embedding"}
+
+    # Tier 3: model prediction
+    return {"prediction": model.predict(req.features, embedding)}
+</pre>
+
+          <div class="interviewer-note">
+            The two-tier design shows latency awareness: the cheap check catches obvious
+            garbage before you pay for embedding and covariance math.
+          </div>
+
+          <div class="how-to">
+            Say: “I run the range check before embedding, and the Mahalanobis check on a
+            16–64 dimensional PCA projection. That keeps the OOD gate under 5 ms on CPU.”
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 4: SYSTEM ENGINEERING — GATEWAY, COST, LATENCY           -->
+    <!-- ================================================================ -->
+    <section id="sys-gateway">
+      <h2><span class="section-num">4</span> System Engineering — LLM Gateway, Cost, Latency, and Caching</h2>
+      <p class="section-intro">
+        The highest-weight round in 2026 AI Engineer loops is the production system design round.
+        You must design the infrastructure <em>around</em> the model: routing, fallback, cost
+        tracking, caching, and multi-tenant fairness.
+      </p>
+
+      <div class="qa-card">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">Design an LLM Gateway that sits between your apps and multiple providers.</div>
+            <div class="qa-meta">
+              <span class="pill system">System Design</span>
+              <span class="pill prod">Production</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <p>
+            An LLM Gateway centralizes authentication, routing, rate limiting, caching, fallback,
+            and observability. It prevents every team from re-implementing provider-specific
+            retry logic and cost tracking.
+          </p>
+
+          <div class="diagram">
+<span class="diagram-title">LLM Gateway architecture</span>
+Client Apps
+    │
+    ▼
+┌─────────────────────────────────────────────────────────────┐
+│  LLM Gateway (stateless API layer)                          │
+│                                                             │
+│  ┌──────────┐   ┌────────────────┐   ┌──────────────────┐  │
+│  │ Auth +   │──▶│ Rate Limiter   │──▶│ Request Router   │  │
+│  │ Tenant   │   │ (per-tenant,   │   │ - complexity     │  │
+│  │ Identity │   │  per-model)    │   │ - budget-aware   │  │
+│  └──────────┘   └────────────────┘   └────────┬─────────┘  │
+│                                                │            │
+│                                       ┌────────▼─────────┐  │
+│                                       │ Semantic Cache   │  │
+│                                       │ (Redis + vector) │  │
+│                                       └───┬──────────┬───┘  │
+│                                      HIT│          │MISS   │
+│                                         ▼          ▼        │
+│                                  Return cached   Provider   │
+│                                  response        Adapter    │
+│                                                  Layer      │
+│                                                ┌───┬───┬───┐│
+│                                                ▼   ▼   ▼   ││
+│                                              OpenAI Anthro ││
+│                                                     Local   ││
+└─────────────────────────────────────────────────────────────┘
+    │
+    ▼
+Observability: tokens, cost, latency, cache hit rate, errors
+</pre>
+          </div>
+
+          <p><strong>Key design decisions:</strong></p>
+          <ul>
+            <li><strong>Request Router</strong> — classify query complexity; route simple requests to a cheap/fast model and complex ones to a frontier model. Respect per-tenant budgets.</li>
+            <li><strong>Semantic Cache</strong> — exact hash match first (Redis O(1)), then vector similarity. Include model, temperature, and system-prompt hash in the cache key.</li>
+            <li><strong>Provider Adapter Layer</strong> — normalize provider APIs, retries with exponential backoff, failover chain (OpenAI → Anthropic → local vLLM).</li>
+            <li><strong>Observability</strong> — log input/output tokens, model, latency, cost, tenant, cache hit/miss for every request.</li>
+          </ul>
+
+          <div class="interviewer-note">
+            The gateway is stateless, so it scales horizontally. Cache and rate-limit counters
+            are shared (Redis cluster). Streaming responses bypass the cache but are still
+            logged for analytics.
+          </div>
+
+          <div class="how-to">
+            Whiteboard the gateway as a layered box. Then deep-dive into one layer the
+            interviewer chooses — usually routing or caching. Have numbers ready: “20–40% cache
+            hit rate is typical for factual Q&A.”
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card" id="sys-cost">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">Estimate the LLM cost of a multi-step agent session. What dominates and how do you reduce it?</div>
+            <div class="qa-meta">
+              <span class="pill system">System Design</span>
+              <span class="pill prod">Cost</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <p>
+            In a multi-step agent, every step re-sends the full conversation history plus tool
+            schemas. Input token cost compounds with each step; output tokens are usually
+            smaller but priced higher.
+          </p>
+
+          <pre><span class="code-label">text · cost formula</span>
+cost_per_session = Σ over steps [
+    (system_prompt_tokens
+     + history_tokens_at_step_i
+     + tool_schema_tokens
+     + new_input_tokens) × input_price
+    + output_tokens_at_step_i × output_price
+]
+</pre>
+
+          <p>
+            Example: a 4-step support agent with a mid-tier model at $1/M input and $3/M output
+            costs roughly <strong>$0.01 per session</strong>. At 100k sessions/day that is
+            <strong>$1,000/day ≈ $30k/month</strong> just in LLM API costs.
+          </p>
+
+          <div class="interviewer-note">
+            Senior interviewers expect back-of-the-envelope arithmetic. Practise saying the
+            formula out loud and plugging in numbers.
+          </div>
+
+          <p><strong>Cost reduction levers:</strong></p>
+          <ul>
+            <li><strong>Truncate or summarize history</strong> — long sessions cost disproportionately more because input tokens compound.</li>
+            <li><strong>Model tiering</strong> — route 40% of traffic to a model that is 1/10 the cost → ~36% total cost reduction.</li>
+            <li><strong>Semantic cache</strong> — 20–40% hit rate directly removes LLM calls.</li>
+            <li><strong>Shorter prompts</strong> — every 1k tokens of system prompt removed saves money on every request.</li>
+            <li><strong>Batch API where available</strong> — asynchronous batch inference is often 50% cheaper for non-latency-sensitive work.</li>
+          </ul>
+
+          <div class="how-to">
+            If asked “how would you cut cost by 40%?” — say: “I would first instrument cost per
+            tenant and per route. Then tier models, add semantic caching for repeated queries,
+            and truncate history with a rolling summary. I would A/B test quality after each
+            change.”
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card" id="sys-cache">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">Design a semantic cache for LLM responses. What goes into the cache key?</div>
+            <div class="qa-meta">
+              <span class="pill system">System Design</span>
+              <span class="pill prod">Caching</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <p>
+            A semantic cache returns a previously generated answer when a new query is
+            <em>semantically similar</em> to an old one, not just textually identical. It has
+            two tiers: exact hash match and vector similarity.
+          </p>
+
+          <pre><span class="code-label">python · Redis + vector semantic cache sketch</span>
+import hashlib
+from redisvl.extensions.cache.llm import SemanticCache
+from redisvl.utils.vectorize import OpenAITextVectorizer
+
+cache = SemanticCache(
+    name="llm_cache",
+    redis_url="redis://localhost:6379",
+    vectorizer=OpenAITextVectorizer(model="text-embedding-3-small"),
+    distance_threshold=0.15,  # similarity threshold
+    ttl=3600,                 # 1 hour for factual Q&A
+)
+
+def make_cache_key(tenant_id: str, model: str, temperature: float, system_prompt: str):
+    system_hash = hashlib.sha256(system_prompt.encode()).hexdigest()[:16]
+    return f"{tenant_id}:{model}:{temperature}:{system_hash}"
+
+async def cached_completion(tenant_id, model, temperature, system_prompt, query):
+    key = make_cache_key(tenant_id, model, temperature, system_prompt)
+    cached = cache.check(prompt=query, cache_key=key)
+    if cached:
+        return cached[0]["response"]  # cache HIT
+
+    response = await llm.complete(
+        model=model,
+        temperature=temperature,
+        system=system_prompt,
+        prompt=query,
+    )
+    cache.store(prompt=query, response=response, cache_key=key)
+    return response
+</pre>
+
+          <div class="warning">
+            Do not cache across tenants unless the data is provably non-sensitive. Cache keys
+            must include tenant identity. Caching a response generated with one tenant’s
+            retrieved context for another tenant is a data leak.
+          </div>
+
+          <div class="interviewer-note">
+            They want to hear: two-tier cache, model/temperature/system-prompt in the key,
+            TTL by query type, and tenant isolation.
+          </div>
+
+          <div class="how-to">
+            Say: “Exact match first because it is O(1) and free. Then vector similarity with a
+            tight threshold — 0.12–0.18 cosine distance for factual Q&A. Creative tasks get
+            a much tighter or disabled semantic cache.”
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card" id="sys-tiering">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">When does model tiering make economic sense? When is it a mistake?</div>
+            <div class="qa-meta">
+              <span class="pill system">System Design</span>
+              <span class="pill prod">Cost</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <p>
+            Model tiering matches model capability to task complexity. A small model classifies
+            intent; a mid-tier model handles standard Q&A; a frontier model handles multi-step
+            reasoning or code generation.
+          </p>
+          <table>
+            <thead>
+              <tr><th>Tier</th><th>Use case</th><th>Cost vs frontier</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Routing / classification</td><td>Intent detection, tool selection</td><td>1–5%</td></tr>
+              <tr><td>General reasoning</td><td>Standard Q&A, summarization</td><td>10–30%</td></tr>
+              <tr><td>Complex reasoning</td><td>Multi-step planning, code generation</td><td>100%</td></tr>
+            </tbody>
+          </table>
+
+          <p><strong>It makes sense when:</strong></p>
+          <ul>
+            <li>A significant fraction (&gt;30%) of queries can be handled by cheaper models.</li>
+            <li>The routing decision itself is cheap and reliable.</li>
+            <li>The cost difference between tiers is large (&gt;5×).</li>
+          </ul>
+          <p><strong>It is a mistake when:</strong></p>
+          <ul>
+            <li>Nearly all queries require the frontier model — routing overhead is wasted.</li>
+            <li>Routing errors are costly: sending a complex query to a weak model erodes trust more than the cost saved.</li>
+            <li>The codebase complexity of managing multiple models outweighs the savings for a small deployment.</li>
+          </ul>
+
+          <div class="interviewer-note">
+            They want nuance, not dogma. Say “I would A/B test quality on the actual query
+            distribution before committing to tiering.”
+          </div>
+
+          <div class="how-to">
+            Mention a concrete strategy: “A small model classifies intent in 50 ms. Billing
+            queries go to a mid-tier model; technical queries with complexity score &gt;0.8 go
+            to the frontier model. I measure quality degradation against the frontier baseline.”
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 5: PYTHON CONCURRENCY                                    -->
+    <!-- ================================================================ -->
+    <section id="py-async">
+      <h2><span class="section-num">5</span> Python Concurrency for AI — Async, Semaphores, and Partial Failures</h2>
+      <p class="section-intro">
+        AI engineering interviews drill specific Python patterns: concurrent LLM calls, batch
+        embedding with rate limits, and graceful handling of partial failures. This is not
+        general Python trivia — it is production concurrency.
+      </p>
+
+      <div class="qa-card">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">Why use async instead of threading for concurrent LLM API calls?</div>
+            <div class="qa-meta">
+              <span class="pill python">Python</span>
+              <span class="pill system">Concurrency</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <p>
+            Both can handle I/O-bound work, but async is the modern default for AI services
+            because it scales to thousands of concurrent connections with one process and
+            makes concurrency points explicit.
+          </p>
+          <table>
+            <thead>
+              <tr><th>Dimension</th><th>Async (asyncio)</th><th>Threading</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Memory per concurrent unit</td><td>~KB (coroutine)</td><td>~8 MB (thread stack)</td></tr>
+              <tr><td>Concurrency ceiling</td><td>Thousands–tens of thousands</td><td>Hundreds</td></tr>
+              <tr><td>Scheduling overhead</td><td>Event loop, cooperative</td><td>OS thread scheduler, preemptive</td></tr>
+              <tr><td>Readability</td><td>Explicit <code class="inline">await</code> at I/O points</td><td>Implicit context switching</td></tr>
+              <tr><td>Ecosystem fit</td><td>FastAPI, httpx, asyncpg</td><td>Legacy sync libraries</td></tr>
+            </tbody>
+          </table>
+
+          <pre><span class="code-label">python · concurrent LLM calls with asyncio.gather</span>
+import asyncio
+
+async def call_llm(prompt: str) -> str:
+    async with httpx.AsyncClient(timeout=30) as client:
+        r = await client.post(LLM_URL, json={"prompt": prompt})
+        return r.json()["text"]
+
+async def handle_many(prompts: list[str]) -> list[str]:
+    tasks = [call_llm(p) for p in prompts]
+    # return_exceptions=False: fail fast on first error
+    # return_exceptions=True: collect exceptions as results
+    return await asyncio.gather(*tasks)
+
+# 100 prompts × 3s each → ~3s total, not 300s.
+</pre>
+
+          <div class="interviewer-note">
+            They want to hear the memory math: 100 threads × 8 MB = 800 MB of stack alone.
+            Async coroutines are kilobytes each. That is why GenAI platforms prefer asyncio.
+          </div>
+
+          <div class="how-to">
+            Say: “I use async for network I/O — LLM calls, embedding calls, vector DB queries.
+            For CPU-bound work like local reranking, I offload to a thread pool or a separate
+            process, never the event loop.”
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card" id="py-batch">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">Batch-embed 10,000 documents while respecting provider rate limits.</div>
+            <div class="qa-meta">
+              <span class="pill python">Python</span>
+              <span class="pill prod">Production</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <p>
+            Naive <code class="inline">asyncio.gather</code> on 10,000 calls will hammer the
+            provider and trigger 429s. Use a <strong>semaphore</strong> to cap concurrency and
+            a retry policy with exponential backoff.
+          </p>
+
+          <pre><span class="code-label">python · rate-limited batch embedding</span>
+import asyncio
+from tenacity import retry, stop_after_attempt, wait_exponential
+
+async def embed_batch_with_limit(docs: list[str], max_concurrent: int = 20):
+    sem = asyncio.Semaphore(max_concurrent)
+
+    @retry(
+        stop=stop_after_attempt(5),
+        wait=wait_exponential(multiplier=1, min=1, max=30),
+    )
+    async def embed_one(doc: str):
+        async with sem:
+            async with httpx.AsyncClient() as client:
+                r = await client.post(EMBED_URL, json={"input": doc})
+                if r.status_code == 429:
+                    raise RuntimeError("rate limited")
+                r.raise_for_status()
+                return r.json()["embedding"]
+
+    tasks = [embed_one(d) for d in docs]
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+
+    successes = [r for r in results if not isinstance(r, Exception)]
+    failures = [r for r in results if isinstance(r, Exception)]
+    print(f"embedded={len(successes)} failed={len(failures)}")
+    return successes, failures
+</pre>
+
+          <div class="warning">
+            A semaphore without retries is still fragile. Provider rate limits are bursty;
+            exponential backoff with jitter is mandatory. Without jitter, all retries fire
+            at the same instant and re-trigger the limit.
+          </div>
+
+          <div class="interviewer-note">
+            They want: semaphore, exponential backoff, jitter, and a distinction between
+            retryable (429, 5xx) and non-retryable (400) errors.
+          </div>
+
+          <div class="how-to">
+            Say: “I size the semaphore to the provider’s concurrency limit — often 10–50 for
+            embedding APIs. I add jitter to the backoff and track the failure rate; if it
+            exceeds 1%, I reduce concurrency automatically.”
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card" id="py-errors">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">How do you handle partial failures in a batch of async LLM calls?</div>
+            <div class="qa-meta">
+              <span class="pill python">Python</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <p>
+            <code class="inline">asyncio.gather(..., return_exceptions=True)</code> lets you
+            collect both successes and failures instead of aborting the entire batch. Then you
+            decide the recovery strategy per failure type.
+          </p>
+
+          <pre><span class="code-label">python · partial failure handling</span>
+results = await asyncio.gather(*tasks, return_exceptions=True)
+
+successes, retryable, fatal = [], [], []
+for prompt, result in zip(prompts, results):
+    if isinstance(result, Exception):
+        if isinstance(result, (httpx.TimeoutException, RateLimitError)):
+            retryable.append(prompt)
+        else:
+            fatal.append((prompt, result))
+    else:
+        successes.append(result)
+
+# Retry only the transient failures, with a smaller concurrency cap
+if retryable:
+    retried, failed = await embed_batch_with_limit(retryable, max_concurrent=5)
+    successes.extend(retried)
+
+# Fatal failures go to a dead-letter queue for human review
+await dead_letter_queue.publish(fatal)
+</pre>
+
+          <div class="interviewer-note">
+            The key insight: not all errors are equal. A timeout is retryable; a malformed
+            request is not. Treating them the same wastes money and delays the response.
+          </div>
+
+          <div class="how-to">
+            Say: “I classify errors into retryable and fatal. Retryable failures go back through
+            a backoff-limited queue; fatal failures go to a dead-letter queue with the original
+            prompt and error for triage. The user gets a partial result with a clear failure
+            count, not a silent truncation.”
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 6: EVALUATION & OPS                                      -->
+    <!-- ================================================================ -->
+    <section id="ops-ragas">
+      <h2><span class="section-num">6</span> Evaluation & Operations — Metrics, Drift, Observability</h2>
+      <p class="section-intro">
+        Production AI is not “deploy and forget.” You need offline evaluation, online monitoring,
+        and a feedback loop that catches regressions before users do.
+      </p>
+
+      <div class="qa-card">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">How do you monitor a RAG system in production beyond RAGAS?</div>
+            <div class="qa-meta">
+              <span class="pill prod">Monitoring</span>
+              <span class="pill rag">RAG</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <p>
+            Offline RAGAS tells you whether a deploy regressed on a golden set. Production
+            monitoring tells you what is happening right now. You need both.
+          </p>
+          <ul>
+            <li><strong>Retrieval metrics</strong> — top-k hit rate, mean retrieval score, empty-result rate. Alert if hit rate drops more than 5% week-over-week.</li>
+            <li><strong>Generation metrics</strong> — token usage, refusal rate, citation coverage, p50/p95 latency.</li>
+            <li><strong>Cache metrics</strong> — hit rate by tier, stale-hit rate (cache entries older than TTL still being served).</li>
+            <li><strong>Cost metrics</strong> — cost per tenant per day, cost per successful answer.</li>
+            <li><strong>OOD/drift metrics</strong> — OOD rate, feature distribution PSI/KS statistics.</li>
+          </ul>
+
+          <div class="interviewer-note">
+            They want to hear that you distinguish offline evaluation (golden set) from online
+            monitoring (live traffic). Saying only “we use RAGAS” is incomplete.
+          </div>
+
+          <div class="how-to">
+            Propose a dashboard with four rows: retrieval health, generation health, cost,
+            and safety/OOD. Say: “I alert on rate-of-change, not absolute thresholds, because
+            absolute thresholds drift with traffic mix.”
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card" id="ops-drift">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">Implement lightweight data drift monitoring for a tabular model.</div>
+            <div class="qa-meta">
+              <span class="pill prod">Monitoring</span>
+              <span class="pill ood">OOD</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <p>
+            Drift monitoring compares incoming feature distributions against training statistics.
+            The simplest production-quality implementation tracks min/max ranges with a margin
+            and computes the OOD rate.
+          </p>
+
+          <pre><span class="code-label">python · lightweight drift monitor</span>
+import logging
+from typing import Optional
+
+logger = logging.getLogger(__name__)
+
+class DataDriftMonitor:
+    def __init__(self, margin: float = 0.1):
+        self.margin = margin
+        self.feature_mins: Optional[dict[str, float]] = None
+        self.feature_maxs: Optional[dict[str, float]] = None
+        self.prediction_count = 0
+        self.ood_count = 0
+
+    def fit(self, feature_ranges: dict[str, tuple[float, float]]):
+        self.feature_mins = {k: v[0] for k, v in feature_ranges.items()}
+        self.feature_maxs = {k: v[1] for k, v in feature_ranges.items()}
+
+    def check(self, features: dict[str, float]) -> dict:
+        if self.feature_mins is None:
+            return {"in_distribution": True, "warnings": [], "ood_rate": 0.0}
+
+        self.prediction_count += 1
+        warnings = []
+        for name, value in features.items():
+            if name not in self.feature_mins:
+                continue
+            lo = self.feature_mins[name]
+            hi = self.feature_maxs[name]
+            range_size = hi - lo if hi > lo else 1.0
+            margin = self.margin * range_size
+            if value < lo - margin:
+                pct = abs(value - lo) / range_size * 100
+                warnings.append(f"{name}={value:.4g} is {pct:.1f}% below training min ({lo:.4g})")
+            elif value > hi + margin:
+                pct = abs(value - hi) / range_size * 100
+                warnings.append(f"{name}={value:.4g} is {pct:.1f}% above training max ({hi:.4g})")
+
+        is_ood = len(warnings) > 0
+        if is_ood:
+            self.ood_count += 1
+            logger.warning("OOD input detected: %s", warnings)
+
+        return {
+            "in_distribution": not is_ood,
+            "warnings": warnings,
+            "ood_rate": self.ood_count / self.prediction_count,
+        }
+</pre>
+
+          <div class="warning">
+            Range checks are univariate. They catch obvious outliers but miss correlated
+            anomalies. Pair this with a multivariate method (Mahalanobis, isolation forest)
+            for high-stakes models.
+          </div>
+
+          <div class="how-to">
+            Say: “I fit the monitor on the training set, persist the min/max ranges with the
+            model artifact, and load them at inference time. The OOD rate is emitted as a
+            metric and alerted if it exceeds 2% of traffic.”
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card" id="ops-observability">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">What does an observability checklist for an LLM service look like?</div>
+            <div class="qa-meta">
+              <span class="pill prod">Observability</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <p>
+            An LLM service has unique observability requirements: token-level costs, provider
+            latency, retrieval quality, and safety signals. A generic APM is not enough.
+          </p>
+          <table>
+            <thead>
+              <tr><th>Layer</th><th>What to log / measure</th><th>Alert</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Request</td>
+                <td>tenant_id, route, model, prompt_tokens, completion_tokens, latency_ms</td>
+                <td>p99 latency &gt; SLO; error rate &gt; 5%</td>
+              </tr>
+              <tr>
+                <td>Retrieval</td>
+                <td>top_k, scores, empty_result flag, reranker latency</td>
+                <td>empty_result rate &gt; 1%</td>
+              </tr>
+              <tr>
+                <td>Generation</td>
+                <td>finish_reason, refusal flag, citation_count</td>
+                <td>refusal rate spike; citation coverage drop</td>
+              </tr>
+              <tr>
+                <td>Cost</td>
+                <td>cost_usd per request, daily spend per tenant</td>
+                <td>daily spend &gt; budget × 1.2</td>
+              </tr>
+              <tr>
+                <td>Safety / OOD</td>
+                <td>OOD rate, prompt-injection flags, PII redaction count</td>
+                <td>OOD rate &gt; 2%; injection flag spike</td>
+              </tr>
+              <tr>
+                <td>Cache</td>
+                <td>hit/miss, tier, eviction rate</td>
+                <td>hit rate drop &gt; 10% week-over-week</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="interviewer-note">
+            Mention distributed tracing: every request should carry a trace ID that links the
+            API gateway, retrieval, reranker, and LLM provider call. Without it, debugging a
+            slow response is guesswork.
+          </div>
+
+          <div class="how-to">
+            Say: “I emit structured JSON logs with a trace ID and a tenant ID. I use OpenTelemetry
+            spans for retrieval and LLM calls so I can see where the p95 latency is coming from.”
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================ -->
+    <!-- SECTION 7: BEHAVIORAL / SCENARIO                                 -->
+    <!-- ================================================================ -->
+    <section id="beh-debug">
+      <h2><span class="section-num">7</span> Behavioral & Scenario Questions</h2>
+      <p class="section-intro">
+        Senior loops include scenario rounds that test debugging judgment and incident response.
+        These are not trivia questions — they are tests of how you think under production pressure.
+      </p>
+
+      <div class="qa-card">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">A RAG endpoint’s p99 latency jumped from 4s to 30s overnight. How do you debug it?</div>
+            <div class="qa-meta">
+              <span class="pill behavioral">Scenario</span>
+              <span class="pill prod">Debugging</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <p>
+            Start by isolating the layer. The latency could be in the API gateway, retrieval,
+            reranking, prompt assembly, or the LLM provider. A trace ID is your best friend.
+          </p>
+          <ol>
+            <li><strong>Check provider status</strong> — is the LLM API having an incident? Compare p99 across providers.</li>
+            <li><strong>Check retrieval latency</strong> — vector DB query time, index size, and whether a recent re-index changed the graph structure.</li>
+            <li><strong>Check reranker</strong> — cross-encoders are expensive; a batch size or model change can double latency.</li>
+            <li><strong>Check connection pooling</strong> — exhausted HTTP connection pools to the LLM provider cause queueing that looks like provider latency.</li>
+            <li><strong>Check traffic mix</strong> — a shift toward longer prompts or more complex queries increases token counts and latency.</li>
+          </ol>
+
+          <div class="interviewer-note">
+            They want a structured, layer-by-layer approach — not “I would restart the service.”
+            Mentioning trace IDs and connection pools signals real production experience.
+          </div>
+
+          <div class="how-to">
+            Say: “I would first compare the latency breakdown before and after the change.
+            If retrieval is flat and generation latency tripled, I look at provider status and
+            connection pool saturation. If retrieval latency tripled, I check whether a
+            re-index changed the HNSW parameters.”
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card" id="beh-incident">
+        <div class="qa-question">
+          <div class="qa-toggle">▶</div>
+          <div>
+            <div class="qa-question-text">Your LLM provider goes down completely. Walk me through your incident response.</div>
+            <div class="qa-meta">
+              <span class="pill behavioral">Incident</span>
+              <span class="pill prod">Resilience</span>
+            </div>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <p>
+            A provider outage is a foreseeable failure, not an emergency. The response should
+            be automated and pre-planned.
+          </p>
+          <ol>
+            <li><strong>Circuit breaker opens</strong> — the gateway stops sending requests to the failed provider after N consecutive failures.</li>
+            <li><strong>Failover chain activates</strong> — traffic shifts to the secondary provider (e.g., OpenAI → Anthropic → local vLLM).</li>
+            <li><strong>Cache-first mode</strong> — serve cached responses where possible; for cache misses, return a degraded but honest answer (“I’m having trouble reaching the model; here are relevant sources”).</li>
+            <li><strong>Rate limiting tightens</strong> — protect the secondary provider from the full traffic load; shed low-priority requests.</li>
+            <li><strong>Alert and communicate</strong> — page the on-call, update the status page, and set a review for root cause after recovery.</li>
+          </ol>
+
+          <div class="warning">
+            If you have no secondary provider and no cache, a single provider outage takes down
+            your product. Multi-provider failover is a production requirement, not a nice-to-have.
+          </div>
+
+          <div class="how-to">
+            Frame it as a runbook: “We have a documented failover chain and a circuit breaker
+            that opens automatically. On-call gets paged, and the status page updates within
+            5 minutes. After recovery, we run a blameless postmortem.”
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer>
+      AI System Engineering Interview Notebook · Built for the 2026 loop · Light/dark mode · Search · Expand all
+    </footer>
+
+  </main>
+</div>
+
+<!-- ==================== JAVASCRIPT ==================== -->
+<script>
+(function() {
+  "use strict";
+
+  // ---------- THEME ----------
+  const root = document.documentElement;
+  const toggle = document.getElementById("themeToggle");
+  const icon = document.getElementById("themeIcon");
+  const label = document.getElementById("themeLabel");
+
+  const saved = localStorage.getItem("ai-notebook-theme");
+  if (saved === "dark" || (!saved && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+    root.setAttribute("data-theme", "dark");
+    icon.textContent = "☀️";
+    label.textContent = "Light";
+  }
+
+  toggle.addEventListener("click", function() {
+    const isDark = root.getAttribute("data-theme") === "dark";
+    if (isDark) {
+      root.setAttribute("data-theme", "light");
+      icon.textContent = "🌙";
+      label.textContent = "Dark";
+      localStorage.setItem("ai-notebook-theme", "light");
+    } else {
+      root.setAttribute("data-theme", "dark");
+      icon.textContent = "☀️";
+      label.textContent = "Light";
+      localStorage.setItem("ai-notebook-theme", "dark");
+    }
+  });
+
+  // ---------- EXPAND / COLLAPSE ----------
+  const cards = document.querySelectorAll(".qa-card");
+
+  cards.forEach(function(card) {
+    const question = card.querySelector(".qa-question");
+    question.addEventListener("click", function() {
+      card.classList.toggle("open");
+    });
+  });
+
+  const expandAllBtn = document.getElementById("expandAllBtn");
+  let allOpen = false;
+
+  expandAllBtn.addEventListener("click", function() {
+    allOpen = !allOpen;
+    cards.forEach(function(card) {
+      if (allOpen) card.classList.add("open");
+      else card.classList.remove("open");
+    });
+    expandAllBtn.textContent = allOpen ? "Collapse all" : "Expand all";
+  });
+
+  // ---------- SEARCH ----------
+  const searchInput = document.getElementById("searchInput");
+  const noResults = document.createElement("div");
+  noResults.className = "no-results";
+  noResults.textContent = "No matching questions. Try a broader search term.";
+  document.querySelector("main").appendChild(noResults);
+
+  searchInput.addEventListener("input", function() {
+    const query = searchInput.value.trim().toLowerCase();
+    let visibleCount = 0;
+
+    cards.forEach(function(card) {
+      const text = card.textContent.toLowerCase();
+      if (!query || text.includes(query)) {
+        card.classList.remove("hidden");
+        visibleCount++;
+        if (query) card.classList.add("open"); // auto-open matches
+      } else {
+        card.classList.add("hidden");
+        if (query) card.classList.remove("open");
+      }
+    });
+
+    noResults.style.display = visibleCount === 0 ? "block" : "none";
+  });
+
+  // ---------- SIDEBAR ACTIVE STATE ----------
+  const sidebarLinks = document.querySelectorAll("nav.sidebar a");
+  const sections = document.querySelectorAll("section[id], .hero[id]");
+
+  function updateActiveLink() {
+    let currentId = "";
+    sections.forEach(function(section) {
+      const top = section.getBoundingClientRect().top;
+      if (top <= 120) currentId = section.id;
+    });
+
+    sidebarLinks.forEach(function(link) {
+      link.classList.remove("active");
+      if (link.getAttribute("href") === "#" + currentId) {
+        link.classList.add("active");
+      }
+    });
+  }
+
+  window.addEventListener("scroll", updateActiveLink, { passive: true });
+  updateActiveLink();
+
+  // ---------- KEYBOARD SHORTCUT ----------
+  document.addEventListener("keydown", function(e) {
+    if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+      e.preventDefault();
+      searchInput.focus();
+      searchInput.select();
+    }
+    if (e.key === "Escape" && document.activeElement === searchInput) {
+      searchInput.value = "";
+      searchInput.dispatchEvent(new Event("input"));
+      searchInput.blur();
+    }
+  });
+
+})();
+</script>
+
+</body>
+</html>
