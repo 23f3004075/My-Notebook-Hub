@@ -1,0 +1,3884 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deep Learning Notebook — Interview Preparation</title>
+
+<!-- Apply saved theme before first paint to avoid a flash -->
+<script>
+  try {
+    var savedTheme = localStorage.getItem('dlnb-theme');
+    if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+  } catch (e) {}
+</script>
+
+<style>
+/* ============================================================
+   1. THEME VARIABLES
+   ============================================================ */
+:root {
+  --bg: #f4f6fb;
+  --surface: #ffffff;
+  --surface-2: #eef1f8;
+  --text: #161a22;
+  --text-dim: #5b6472;
+  --border: #dde3ee;
+  --accent: #4f46e5;
+  --accent-2: #7c3aed;
+  --accent-soft: rgba(79, 70, 229, .10);
+  --code-bg: #f0f2f9;
+  --shadow: 0 2px 10px rgba(20, 25, 40, .07);
+  --ok: #0f9d58;
+  --header-h: 62px;
+}
+
+[data-theme="dark"] {
+  --bg: #0f1116;
+  --surface: #171a22;
+  --surface-2: #1f2430;
+  --text: #e7ebf3;
+  --text-dim: #9aa4b6;
+  --border: #2a3040;
+  --accent: #818cf8;
+  --accent-2: #a78bfa;
+  --accent-soft: rgba(129, 140, 248, .14);
+  --code-bg: #11141b;
+  --shadow: 0 2px 14px rgba(0, 0, 0, .45);
+  --ok: #34d399;
+}
+
+[data-theme="midnight"] {
+  --bg: #070d1b;
+  --surface: #0d1729;
+  --surface-2: #132039;
+  --text: #dbe7ff;
+  --text-dim: #8fa5c9;
+  --border: #1d2c48;
+  --accent: #38bdf8;
+  --accent-2: #22d3ee;
+  --accent-soft: rgba(56, 189, 248, .13);
+  --code-bg: #08101f;
+  --shadow: 0 2px 16px rgba(0, 0, 0, .6);
+  --ok: #4ade80;
+}
+
+[data-theme="sepia"] {
+  --bg: #f3e9d6;
+  --surface: #fdf6e8;
+  --surface-2: #f0e3cc;
+  --text: #3b2f28;
+  --text-dim: #7a6552;
+  --border: #e0cfb2;
+  --accent: #b45309;
+  --accent-2: #92400e;
+  --accent-soft: rgba(180, 83, 9, .11);
+  --code-bg: #f5ecd9;
+  --shadow: 0 2px 10px rgba(120, 90, 50, .12);
+  --ok: #15803d;
+}
+
+/* ============================================================
+   2. BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-h) + 16px);
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  font-size: 15.5px;
+  line-height: 1.65;
+  background: var(--bg);
+  color: var(--text);
+  transition: background .25s ease, color .25s ease;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); }
+
+code {
+  background: var(--code-bg);
+  padding: 2px 6px;
+  border-radius: 5px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: .88em;
+  border: 1px solid var(--border);
+}
+
+pre {
+  background: var(--code-bg);
+  padding: 13px 16px;
+  border-radius: 9px;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  margin: 12px 0;
+  line-height: 1.5;
+}
+
+pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 13.5px;
+}
+
+/* ============================================================
+   3. HEADER
+   ============================================================ */
+header.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  transition: background .25s ease, border-color .25s ease;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 800;
+  font-size: 15.5px;
+  letter-spacing: -.2px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.brand .logo {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #fff;
+  font-size: 16px;
+  box-shadow: 0 2px 8px var(--accent-soft);
+}
+
+.brand small {
+  display: block;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text-dim);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.search-wrap {
+  flex: 1;
+  max-width: 460px;
+  position: relative;
+  margin: 0 auto;
+}
+
+.search-wrap input {
+  width: 100%;
+  padding: 9px 34px 9px 34px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+  font-size: 14px;
+  outline: none;
+  transition: border-color .18s, box-shadow .18s, background .25s;
+}
+
+.search-wrap input::placeholder { color: var(--text-dim); }
+
+.search-wrap input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.search-icon {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: var(--text-dim);
+  pointer-events: none;
+}
+
+.search-clear {
+  position: absolute;
+  right: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: none;
+  color: var(--text-dim);
+  font-size: 17px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+  display: none;
+  line-height: 1;
+}
+
+.search-clear:hover { background: var(--border); color: var(--text); }
+.search-clear.visible { display: block; }
+
+.theme-switch {
+  display: flex;
+  gap: 3px;
+  padding: 3px;
+  border-radius: 11px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.theme-switch button {
+  border: none;
+  background: transparent;
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 5px 9px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .18s, color .18s;
+  white-space: nowrap;
+}
+
+.theme-switch button:hover { color: var(--text); }
+
+.theme-switch button.active {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 1px 6px var(--accent-soft);
+}
+
+.menu-btn {
+  display: none;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text);
+  font-size: 17px;
+  padding: 6px 10px;
+  border-radius: 9px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+/* ============================================================
+   4. LAYOUT
+   ============================================================ */
+.layout {
+  display: grid;
+  grid-template-columns: 286px minmax(0, 1fr);
+  align-items: start;
+}
+
+/* ---------- Sidebar ---------- */
+aside {
+  position: sticky;
+  top: var(--header-h);
+  height: calc(100vh - var(--header-h));
+  overflow-y: auto;
+  padding: 18px 12px 60px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  transition: background .25s, border-color .25s;
+  scrollbar-width: thin;
+}
+
+aside::-webkit-scrollbar { width: 8px; }
+aside::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 8px;
+}
+
+.side-title {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 0 10px 8px;
+}
+
+#toc { display: flex; flex-direction: column; gap: 2px; }
+
+#toc a {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border-radius: 9px;
+  text-decoration: none;
+  color: var(--text-dim);
+  font-size: 13.5px;
+  font-weight: 500;
+  border-left: 3px solid transparent;
+  transition: background .15s, color .15s, border-color .15s;
+}
+
+#toc a:hover { background: var(--surface-2); color: var(--text); }
+
+#toc a.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+  border-left-color: var(--accent);
+}
+
+#toc a .ico { font-size: 14px; flex-shrink: 0; }
+#toc a .lbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.progress-box {
+  margin: 18px 10px 0;
+  padding: 12px;
+  border-radius: 11px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+
+.progress-box .row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 8px;
+}
+
+.progress-track {
+  height: 7px;
+  border-radius: 99px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  transition: width .35s ease;
+}
+
+.side-actions {
+  display: flex;
+  gap: 6px;
+  margin: 12px 10px 0;
+}
+
+.side-actions button {
+  flex: 1;
+  padding: 7px 6px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-dim);
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+
+.side-actions button:hover { background: var(--accent-soft); color: var(--accent); }
+
+/* ---------- Main ---------- */
+main {
+  padding: 26px 30px 140px;
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+  min-width: 0;
+}
+
+.hero {
+  background: linear-gradient(135deg, var(--accent-soft), transparent 70%);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px 26px;
+  margin-bottom: 34px;
+  box-shadow: var(--shadow);
+}
+
+.hero h1 {
+  margin: 0 0 10px;
+  font-size: 27px;
+  letter-spacing: -.6px;
+  line-height: 1.25;
+}
+
+.hero h1 span {
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+  margin: 0 0 14px;
+  color: var(--text-dim);
+  font-size: 14.5px;
+  max-width: 70ch;
+}
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.chip {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 11px;
+  border-radius: 99px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+
+.chip b { color: var(--accent); }
+
+/* ---------- Sections ---------- */
+.section {
+  margin-bottom: 46px;
+  scroll-margin-top: calc(var(--header-h) + 16px);
+}
+
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding-bottom: 9px;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.section-head h2 {
+  font-size: 21px;
+  margin: 0;
+  letter-spacing: -.4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sec-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  font-size: 17px;
+  flex-shrink: 0;
+}
+
+.done-toggle {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-dim);
+  cursor: pointer;
+  user-select: none;
+  padding: 6px 11px;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  transition: background .15s, color .15s, border-color .15s;
+}
+
+.done-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
+.done-toggle input {
+  accent-color: var(--accent);
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  margin: 0;
+}
+
+.done-toggle.checked {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ---------- Concept cards ---------- */
+.concept {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 11px;
+  padding: 15px 18px;
+  margin: 14px 0;
+  box-shadow: var(--shadow);
+  transition: background .25s, border-color .25s;
+}
+
+.concept h4 {
+  margin: 0 0 9px;
+  font-size: 12.5px;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.concept p { margin: 0 0 9px; }
+.concept p:last-child { margin-bottom: 0; }
+.concept ul, .concept ol { margin: 8px 0; padding-left: 22px; }
+.concept li { margin: 4px 0; }
+
+.flow {
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 13px;
+  text-align: center;
+  padding: 11px;
+  border-radius: 8px;
+  background: var(--code-bg);
+  border: 1px dashed var(--border);
+  margin: 10px 0 0;
+  color: var(--accent);
+  font-weight: 700;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+/* ---------- Tables ---------- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 11px 0;
+  font-size: 13.8px;
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+th, td {
+  border: 1px solid var(--border);
+  padding: 8px 11px;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background: var(--surface-2);
+  font-weight: 700;
+  font-size: 12.5px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--text-dim);
+}
+
+tbody tr:nth-child(even) { background: var(--surface-2); }
+
+/* ---------- Note callouts ---------- */
+.note, .tip, .warn {
+  border-radius: 9px;
+  padding: 11px 15px;
+  margin: 12px 0;
+  font-size: 14px;
+  border-left: 4px solid;
+}
+
+.note { background: var(--accent-soft); border-color: var(--accent); }
+.tip  { background: rgba(15, 157, 88, .10); border-color: var(--ok); }
+.warn { background: rgba(224, 168, 0, .13); border-color: #e0a800; }
+
+.note b, .tip b, .warn b { display: block; margin-bottom: 3px; font-size: 12px;
+  text-transform: uppercase; letter-spacing: .06em; }
+
+/* ---------- Q&A accordion ---------- */
+.qa-list { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+
+.qa {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  overflow: hidden;
+  transition: border-color .18s, box-shadow .18s, background .25s;
+}
+
+.qa:hover { border-color: var(--accent); }
+
+.qa.open {
+  border-color: var(--accent);
+  box-shadow: 0 3px 16px var(--accent-soft);
+}
+
+.qa .q {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 13px 17px;
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 650;
+  font-size: 14.6px;
+  text-align: left;
+  cursor: pointer;
+  line-height: 1.5;
+}
+
+.qa .q:hover { background: var(--surface-2); }
+
+.qa.open .q { color: var(--accent); background: var(--accent-soft); }
+
+.chev {
+  flex-shrink: 0;
+  width: 21px;
+  height: 21px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  background: var(--surface-2);
+  color: var(--text-dim);
+  font-weight: 800;
+  font-size: 15px;
+  line-height: 1;
+  margin-top: 1px;
+  transition: transform .22s, background .18s, color .18s;
+}
+
+.qa.open .chev {
+  transform: rotate(180deg);
+  background: var(--accent);
+  color: #fff;
+}
+
+/* Smooth height animation using grid rows */
+.a {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows .28s ease;
+}
+
+.a-inner {
+  overflow: hidden;
+  padding: 0 17px;
+  font-size: 14.6px;
+  color: var(--text);
+}
+
+.qa.open .a { grid-template-rows: 1fr; }
+.qa.open .a-inner { padding-bottom: 15px; }
+
+.a-inner p { margin: 0 0 9px; }
+.a-inner p:last-child { margin-bottom: 0; }
+.a-inner ul, .a-inner ol { margin: 8px 0; padding-left: 22px; }
+.a-inner li { margin: 4px 0; }
+.a-inner h5 {
+  margin: 12px 0 6px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--accent);
+}
+.a-inner h5:first-child { margin-top: 0; }
+
+/* ---------- Misc ---------- */
+.no-results {
+  display: none;
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-dim);
+  font-size: 15px;
+}
+
+.no-results.show { display: block; }
+.no-results .big { font-size: 44px; margin-bottom: 10px; }
+
+#toTop {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--accent);
+  font-size: 19px;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(12px);
+  transition: opacity .25s, transform .25s, background .2s;
+  z-index: 70;
+}
+
+#toTop.show { opacity: 1; pointer-events: auto; transform: none; }
+#toTop:hover { background: var(--accent); color: #fff; }
+
+.backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .45);
+  z-index: 90;
+  opacity: 0;
+  transition: opacity .25s;
+}
+
+.backdrop.show { display: block; opacity: 1; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1000px) {
+  .layout { grid-template-columns: 1fr; }
+
+  aside {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 292px;
+    height: 100vh;
+    z-index: 100;
+    transform: translateX(-102%);
+    transition: transform .28s ease;
+    box-shadow: 0 0 40px rgba(0, 0, 0, .3);
+  }
+
+  aside.open { transform: none; }
+  .menu-btn { display: block; }
+  main { padding: 20px 18px 120px; }
+}
+
+@media (max-width: 720px) {
+  :root { --header-h: 58px; }
+  .brand small { display: none; }
+  .brand span.txt { display: none; }
+  .theme-switch button span.lbl { display: none; }
+  .theme-switch button { padding: 6px 8px; font-size: 14px; }
+  .hero h1 { font-size: 22px; }
+  .hero { padding: 19px 18px; }
+  .section-head h2 { font-size: 18px; }
+  table { font-size: 13px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ===================== HEADER ===================== -->
+<header class="topbar">
+  <button class="menu-btn" id="menuBtn" aria-label="Toggle navigation">☰</button>
+
+  <div class="brand">
+    <div class="logo">🧠</div>
+    <div>
+      <span class="txt">Deep Learning Notebook</span>
+      <small>Interview Prep</small>
+    </div>
+  </div>
+
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="search" placeholder="Search questions & concepts…  (press /)" autocomplete="off">
+    <button class="search-clear" id="searchClear" aria-label="Clear search">✕</button>
+  </div>
+
+  <div class="theme-switch" id="themeSwitch">
+    <button data-theme="light"    title="Light mode">☀️ <span class="lbl">Light</span></button>
+    <button data-theme="dark"     title="Dark mode">🌙 <span class="lbl">Dark</span></button>
+    <button data-theme="midnight" title="Midnight mode">🌌 <span class="lbl">Midnight</span></button>
+    <button data-theme="sepia"    title="Sepia mode">📜 <span class="lbl">Sepia</span></button>
+  </div>
+</header>
+
+<div class="backdrop" id="backdrop"></div>
+
+<!-- ===================== LAYOUT ===================== -->
+<div class="layout">
+
+  <!-- ---------- SIDEBAR ---------- -->
+  <aside id="sidebar">
+    <div class="side-title">Contents</div>
+    <nav id="toc"></nav>
+
+    <div class="progress-box">
+      <div class="row">
+        <span>Progress</span>
+        <span id="progressText">0 / 0</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <div class="side-actions">
+      <button id="expandAll">Expand all</button>
+      <button id="collapseAll">Collapse all</button>
+    </div>
+  </aside>
+
+  <!-- ---------- MAIN ---------- -->
+  <main>
+    <div class="hero">
+      <h1>Deep Learning <span>Interview Notebook</span></h1>
+      <p>
+        A complete, from-scratch revision notebook: starting at “what is a neuron?”
+        and finishing at transformers, diffusion models and model deployment.
+        Every card is a potential interview question. Tap a question to reveal the answer,
+        tick <b>Done</b> on a section when you’ve revised it, and use the search box to jump
+        to any topic instantly.
+      </p>
+      <div class="chips">
+        <div class="chip"><b id="statSections">0</b> sections</div>
+        <div class="chip"><b id="statQuestions">0</b> Q&amp;A</div>
+        <div class="chip"><b>4</b> themes</div>
+        <div class="chip"><b>17</b> topic areas</div>
+      </div>
+    </div>
+
+    <div id="content"></div>
+
+    <div class="no-results" id="noResults">
+      <div class="big">🔍</div>
+      <div>No questions or concepts matched your search.</div>
+    </div>
+  </main>
+</div>
+
+<button id="toTop" title="Back to top">↑</button>
+
+<script>
+/* ============================================================
+   DATA — all notebook content lives here
+   Each section: { id, icon, title, concepts: HTML string, qa: [{q, a}] }
+   ============================================================ */
+const DATA = [
+
+/* ------------------------------------------------------------------
+   1. FOUNDATIONS
+------------------------------------------------------------------ */
+{
+  id: "foundations",
+  icon: "🧠",
+  title: "1. Foundations of Deep Learning",
+  concepts: `
+    <div class="concept">
+      <h4>The AI family tree</h4>
+      <p><b>Artificial Intelligence (AI)</b> is the broad goal of building machines that behave intelligently.
+      <b>Machine Learning (ML)</b> is the subset of AI where behaviour is <i>learned from data</i> rather than hand-coded.
+      <b>Deep Learning (DL)</b> is the subset of ML that uses neural networks with many stacked layers to learn
+      hierarchical representations directly from raw inputs.</p>
+      <div class="flow">AI  ⊃  ML  ⊃  DL  ⊃  (CNNs, RNNs, Transformers, Diffusion…)</div>
+    </div>
+
+    <div class="concept">
+      <h4>The perceptron</h4>
+      <p>The perceptron is the simplest neural unit:</p>
+      <p><code>y = step(w · x + b)</code></p>
+      <p>It is a linear threshold classifier: it can only separate data that is <b>linearly separable</b>
+      (AND, OR work; XOR does not). Stacking perceptrons with a non-linearity between them produces a
+      Multi-Layer Perceptron (MLP), which can represent non-linear decision boundaries.</p>
+    </div>
+
+    <div class="concept">
+      <h4>Activation functions — cheat sheet</h4>
+      <table>
+        <thead>
+          <tr><th>Name</th><th>Formula</th><th>Range</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Sigmoid</td><td>1 / (1 + e<sup>−x</sup>)</td><td>(0, 1)</td><td>Saturates, not zero-centred → vanishing gradients. Good for binary output.</td></tr>
+          <tr><td>Tanh</td><td>(e<sup>x</sup> − e<sup>−x</sup>) / (e<sup>x</sup> + e<sup>−x</sup>)</td><td>(−1, 1)</td><td>Zero-centred, still saturates.</td></tr>
+          <tr><td>ReLU</td><td>max(0, x)</td><td>[0, ∞)</td><td>Cheap, non-saturating for x &gt; 0. Can "die".</td></tr>
+          <tr><td>Leaky ReLU</td><td>max(0.01x, x)</td><td>(−∞, ∞)</td><td>Fixes dying ReLU with a small negative slope.</td></tr>
+          <tr><td>ELU</td><td>x if x &gt; 0 else α(e<sup>x</sup> − 1)</td><td>(−α, ∞)</td><td>Smooth, pushes mean activations toward zero.</td></tr>
+          <tr><td>GELU</td><td>x · Φ(x)</td><td>≈(−0.17, ∞)</td><td>Smooth, standard in Transformers (BERT, GPT).</td></tr>
+          <tr><td>SiLU / Swish</td><td>x · σ(x)</td><td>≈(−0.28, ∞)</td><td>Self-gated, used in EfficientNet, LLMs.</td></tr>
+          <tr><td>Softmax</td><td>e<sup>z<sub>i</sub></sup> / Σ e<sup>z<sub>j</sub></sup></td><td>(0,1), sums to 1</td><td>Multi-class output → probability distribution.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="concept">
+      <h4>Key vocabulary you must define fluently</h4>
+      <ul>
+        <li><b>Parameter</b> — a value learned by the model (weights, biases).</li>
+        <li><b>Hyperparameter</b> — a value you choose (learning rate, batch size, #layers, dropout rate).</li>
+        <li><b>Embedding</b> — a learned dense vector representation of a discrete token/category.</li>
+        <li><b>Logit</b> — the raw, pre-softmax score produced by the final layer.</li>
+        <li><b>End-to-end learning</b> — a single model maps raw input → final output, all trained jointly.</li>
+      </ul>
+    </div>
+  `,
+  qa: [
+    {
+      q: "What is Deep Learning?",
+      a: `<p>Deep Learning is a subfield of machine learning that uses artificial neural networks with many stacked
+      layers to learn <b>hierarchical representations</b> of data directly from raw inputs (pixels, text, audio),
+      instead of relying on hand-engineered features.</p>
+      <p>Each layer transforms its input into a slightly more abstract representation: edges → textures → parts → objects
+      in images, or characters → words → syntax → semantics in text. It shines when the data is high-dimensional,
+      unstructured and abundant.</p>`
+    },
+    {
+      q: "How is Deep Learning different from classical Machine Learning?",
+      a: `<table>
+        <thead><tr><th>Aspect</th><th>Classical ML</th><th>Deep Learning</th></tr></thead>
+        <tbody>
+          <tr><td>Features</td><td>Hand-engineered by humans</td><td>Learned automatically</td></tr>
+          <tr><td>Data requirement</td><td>Works with small/medium data</td><td>Needs large data to outperform</td></tr>
+          <tr><td>Compute</td><td>CPU is usually enough</td><td>GPUs/TPUs are essential</td></tr>
+          <tr><td>Interpretability</td><td>Usually high (trees, linear models)</td><td>Usually low (black box)</td></tr>
+          <tr><td>Training time</td><td>Minutes</td><td>Hours to weeks</td></tr>
+          <tr><td>Best at</td><td>Tabular, structured data</td><td>Images, audio, text, video</td></tr>
+        </tbody>
+      </table>`
+    },
+    {
+      q: "Why did deep learning only become practical in the last ~15 years?",
+      a: `<p>Four things converged:</p>
+      <ul>
+        <li><b>Data</b> — ImageNet, web-scale text, and cheap storage made large labelled datasets available.</li>
+        <li><b>Compute</b> — GPUs (and later TPUs) made matrix multiplication fast and parallel.</li>
+        <li><b>Algorithms</b> — ReLU (2011), Dropout (2012), Batch Normalization (2015), better weight
+        initialization (Xavier/He), Adam (2014), and residual connections (2015) made deep networks trainable.</li>
+        <li><b>Tooling</b> — open-source frameworks (Theano, Caffe, TensorFlow, PyTorch) with automatic differentiation.</li>
+      </ul>`
+    },
+    {
+      q: "What is a perceptron and what are its limitations?",
+      a: `<p>A perceptron is a single artificial neuron that computes a weighted sum of inputs plus a bias, then
+      applies a step function: <code>y = step(w·x + b)</code>.</p>
+      <p><b>Limitations:</b> it can only learn <b>linearly separable</b> functions; it has no notion of probability;
+      the step function is non-differentiable so it cannot be trained with gradient descent; and a single unit
+      cannot model non-linear interactions between features.</p>`
+    },
+    {
+      q: "Why can't a single perceptron solve XOR?",
+      a: `<p>XOR is not linearly separable. There is no single straight line (in 2-D) that puts
+      (0,0) and (1,1) on one side and (0,1) and (1,0) on the other. A perceptron draws exactly one
+      linear decision boundary, so it cannot represent XOR.</p>`
+    },
+    {
+      q: "How does adding a hidden layer solve XOR?",
+      a: `<p>The hidden layer learns a <b>new feature space</b>. With two hidden units, the network can map the
+      four inputs into a space where XOR <i>is</i> linearly separable. For example, one hidden unit can compute OR
+      and another can compute AND; the output unit then computes <code>OR AND NOT AND</code>, which is exactly XOR.</p>
+      <p>The general lesson: hidden layers perform a learned, non-linear change of basis that makes the final
+      (linear) output layer's job easy.</p>`
+    },
+    {
+      q: "State the Universal Approximation Theorem and its practical caveats.",
+      a: `<p><b>Theorem:</b> a feed-forward network with a single hidden layer containing enough neurons (and a
+      non-linear activation) can approximate any continuous function on a compact domain to arbitrary accuracy.</p>
+      <p><b>Caveats — the parts interviewers care about:</b></p>
+      <ul>
+        <li>It says nothing about how many neurons are needed — the required width can be astronomically large.</li>
+        <li>It says nothing about whether gradient descent will find those weights.</li>
+        <li>It says nothing about generalization (fitting the training function ≠ generalizing).</li>
+        <li>In practice, <b>depth</b> gives exponentially better parameter efficiency than width for many functions.</li>
+      </ul>`
+    },
+    {
+      q: "Why do we need non-linear activation functions?",
+      a: `<p>Because a composition of linear functions is still linear: <code>W₂(W₁x + b₁) + b₂ = (W₂W₁)x + (W₂b₁ + b₂)</code>,
+      which collapses to a single linear layer no matter how deep the network is. Without a non-linearity the
+      entire network is just one big linear model and can only learn linearly separable problems.</p>`
+    },
+    {
+      q: "Compare sigmoid, tanh and ReLU.",
+      a: `<ul>
+        <li><b>Sigmoid</b> — output in (0,1), interpretable as probability, but not zero-centred and saturates
+        for large |x| → gradients near zero → vanishing gradients in deep stacks. Still fine for the final binary
+        output unit.</li>
+        <li><b>Tanh</b> — output in (−1,1), zero-centred (better conditioned than sigmoid) but still saturates.</li>
+        <li><b>ReLU</b> — <code>max(0,x)</code>, extremely cheap, gradient is exactly 1 for positive inputs so it
+        does not saturate, and it produces sparse activations. Drawback: "dying ReLU".</li>
+      </ul>
+      <p>Rule of thumb: ReLU (or a variant) in hidden layers; sigmoid for binary output; softmax for multi-class output;
+      linear for regression output.</p>`
+    },
+    {
+      q: "What is the dying ReLU problem and how do you fix it?",
+      a: `<p>If a ReLU unit receives only negative inputs, its output and gradient are both zero forever — the
+      weights never update again and the unit is effectively "dead". This can happen with a large learning rate
+      (a big update pushes the bias very negative) or unlucky initialization.</p>
+      <p><b>Fixes:</b> Leaky ReLU / ELU / GELU / SiLU (non-zero negative slope), lower learning rate, better
+      initialization (He), batch normalization, or replacing ReLU with a smooth activation.</p>`
+    },
+    {
+      q: "What is softmax and why is it used with cross-entropy?",
+      a: `<p>Softmax converts a vector of raw scores (logits) into a probability distribution:</p>
+      <p><code>softmax(z)ᵢ = e^(zᵢ) / Σⱼ e^(zⱼ)</code></p>
+      <p>Paired with cross-entropy loss, the gradient with respect to the logits simplifies beautifully to
+      <code>p − y</code>. That means the gradient magnitude is proportional to the error — no vanishing
+      gradient from the activation's derivative, and faster, more stable learning.</p>`
+    },
+    {
+      q: "What is a logit?",
+      a: `<p>A logit is the raw, unnormalized score produced by the final layer of a network <i>before</i> the
+      softmax/sigmoid. The logit is the value you would feed into a logistic function. Keeping losses
+      (e.g. <code>cross_entropy_with_logits</code>) operating on logits is numerically more stable than applying
+      softmax and then taking a log.</p>`
+    },
+    {
+      q: "What does 'deep' buy us over 'wide'?",
+      a: `<p>Depth lets the network build a <b>hierarchy</b> of features and reuse lower-level features in many
+      higher-level combinations. Theoretically, some functions are exponentially more parameter-efficient to
+      represent with depth than with a single wide layer. Empirically, deep networks generalize better on
+      structured data (images, text, audio) with the same number of parameters.</p>`
+    },
+    {
+      q: "What is the difference between a parameter and a hyperparameter?",
+      a: `<p><b>Parameters</b> (weights, biases, embedding tables) are learned by the optimizer from data.</p>
+      <p><b>Hyperparameters</b> are set by the practitioner before training: learning rate, batch size, number of
+      layers, number of units per layer, dropout rate, weight decay, activation choice, optimizer betas, etc.
+      They are usually tuned with grid search, random search, Bayesian optimization, or Hyperband.</p>`
+    },
+    {
+      q: "What is an embedding?",
+      a: `<p>An embedding is a learned mapping from a discrete, high-dimensional, sparse space (like a vocabulary
+      of 50,000 words) to a dense, low-dimensional continuous vector space (e.g. 300 dimensions). Semantically
+      similar items end up close together. In practice an embedding is just a lookup table — a matrix of shape
+      <code>(vocab_size, dim)</code> — and it is trained with the rest of the network.</p>`
+    },
+    {
+      q: "What is end-to-end learning?",
+      a: `<p>End-to-end learning means training a single model that maps raw input directly to the final output,
+      letting gradients flow through the entire pipeline, instead of training separate hand-crafted stages
+      (e.g. separate feature extractor, then classifier).</p>
+      <p><b>Advantage:</b> the features are optimized for the final objective.
+      <b>Disadvantage:</b> needs more data and compute, and is harder to debug/interpret.</p>`
+    }
+  ]
+},
+
+/* ------------------------------------------------------------------
+   2. NETWORK ANATOMY & FORWARD PROPAGATION
+------------------------------------------------------------------ */
+{
+  id: "anatomy",
+  icon: "🧩",
+  title: "2. Network Anatomy & Forward Propagation",
+  concepts: `
+    <div class="concept">
+      <h4>Anatomy of a network</h4>
+      <ul>
+        <li><b>Input layer</b> — holds the raw features (shape depends on data type).</li>
+        <li><b>Hidden layers</b> — linear transform followed by a non-linearity: <code>h = σ(Wx + b)</code>.</li>
+        <li><b>Output layer</b> — produces predictions in the required format (logits, probabilities, or real values).</li>
+      </ul>
+    </div>
+
+    <div class="concept">
+      <h4>Forward pass with shapes (batch of N samples)</h4>
+      <pre><code>X:      (N, D_in)          input batch
+W1:     (D_in, H1)         first layer weights
+b1:     (H1,)              first layer bias
+Z1 = X @ W1 + b1            -> (N, H1)
+A1 = relu(Z1)               -> (N, H1)
+Z2 = A1 @ W2 + b2           -> (N, H2)
+A2 = relu(Z2)               -> (N, H2)
+logits = A2 @ W3 + b3       -> (N, C)
+probs  = softmax(logits)    -> (N, C)</code></pre>
+      <p>Every layer is just: <b>affine transform → non-linearity</b>. Batches add a leading dimension; everything
+      else is matrix algebra.</p>
+    </div>
+
+    <div class="concept">
+      <h4>Parameter counting</h4>
+      <p>A dense layer with <code>n_in</code> inputs and <code>n_out</code> outputs has
+      <code>(n_in × n_out) + n_out = (n_in + 1) × n_out</code> parameters (weights + biases).</p>
+      <p>A conv layer with <code>C_in</code> input channels, <code>C_out</code> output channels, and kernel
+      <code>k × k</code> has <code>(k × k × C_in + 1) × C_out</code> parameters — <b>independent of image size</b>.</p>
+    </div>
+  `,
+  qa: [
+    {
+      q: "Walk me through the forward pass of a 3-layer MLP, including tensor shapes.",
+      a: `<p>Assume a batch of 32 images flattened to 784 features, hidden sizes 256 and 128, and 10 classes:</p>
+      <pre><code>X      (32, 784)
+Z1 = X  @ W1 + b1      W1: (784, 256)  ->  Z1 (32, 256)
+A1 = relu(Z1)                          ->  A1 (32, 256)
+Z2 = A1 @ W2 + b2      W2: (256, 128)  ->  Z2 (32, 128)
+A2 = relu(Z2)                          ->  A2 (32, 128)
+Z3 = A2 @ W3 + b3      W3: (128, 10)   ->  Z3 (32, 10)   <-- logits
+P  = softmax(Z3)                       ->  P  (32, 10)
+loss = cross_entropy(P, y)             ->  scalar</code></pre>
+      <p>The batch dimension is never mixed across samples — that is what makes the computation parallelizable on a GPU.</p>`
+    },
+    {
+      q: "What is a computational graph and why is it useful?",
+      a: `<p>A computational graph is a directed acyclic graph where nodes are operations (matmul, add, relu) and
+      edges are tensors flowing between them. It records the forward computation and, because every operation knows
+      its local derivative, it allows <b>automatic differentiation</b> to compute gradients of the loss with respect
+      to every parameter by walking the graph backwards (reverse-mode AD / backpropagation).</p>
+      <p><b>Static graphs</b> (TensorFlow 1.x) are defined once and executed; <b>dynamic graphs</b> (PyTorch) are
+      built on the fly, which makes debugging and control flow far easier.</p>`
+    },
+    {
+      q: "What is a dense (fully-connected) layer and how many parameters does it have?",
+      a: `<p>A dense layer computes <code>y = Wx + b</code>, connecting every input unit to every output unit.
+      Parameter count is <code>(n_in × n_out) + n_out</code>.</p>
+      <p>For example, a 512→512 layer has <code>512×512 + 512 = 262,656</code> parameters. Dense layers are
+      parameter-hungry, which is why CNNs use weight sharing instead.</p>`
+    },
+    {
+      q: "What is the purpose of the bias term?",
+      a: `<p>The bias shifts the activation function, allowing the neuron to fire even when all inputs are zero.
+      Without a bias, every decision boundary would be forced to pass through the origin, which severely restricts
+      the functions the network can represent.</p>`
+    },
+    {
+      q: "What are epoch, batch and iteration?",
+      a: `<ul>
+        <li><b>Batch</b> — a subset of the training data processed in one forward/backward pass.</li>
+        <li><b>Iteration / step</b> — one weight update, i.e. processing one batch.</li>
+        <li><b>Epoch</b> — one complete pass over the entire training dataset.</li>
+      </ul>
+      <p>With 50,000 samples and a batch size of 100, one epoch = 500 iterations.</p>`
+    },
+    {
+      q: "Why use mini-batches instead of full-batch gradient descent?",
+      a: `<ul>
+        <li><b>Memory</b> — the full dataset may not fit in GPU memory.</li>
+        <li><b>Speed</b> — many small matrix multiplications are far better vectorized on a GPU than one huge one,
+        and you get many more weight updates per epoch.</li>
+        <li><b>Noise</b> — the gradient estimate is noisy, which acts as a regularizer and helps escape sharp
+        minima and saddle points.</li>
+      </ul>`
+    },
+    {
+      q: "How does batch size affect training?",
+      a: `<ul>
+        <li><b>Small batches</b> — noisier gradients, often better generalization, slower per epoch, less GPU
+        utilization.</li>
+        <li><b>Large batches</b> — smoother gradients, better hardware utilization, but often generalize slightly
+        worse ("generalization gap") unless you scale the learning rate and train longer.</li>
+        <li><b>Linear scaling rule</b> — when you multiply batch size by k, multiply the learning rate by ~k
+        (with warmup) to keep the effective step size similar.</li>
+      </ul>`
+    },
+    {
+      q: "What activation functions do you use at the output layer?",
+      a: `<ul>
+        <li><b>Binary classification</b> — one unit with sigmoid + binary cross-entropy.</li>
+        <li><b>Multi-class, single label</b> — C units with softmax + categorical cross-entropy.</li>
+        <li><b>Multi-label</b> — C units with sigmoid + binary cross-entropy applied per class.</li>
+        <li><b>Regression</b> — linear (identity) output + MSE/MAE; use <code>exp()</code> or softplus if the target
+        must be positive.</li>
+      </ul>`
+    },
+    {
+      q: "What is weight sharing?",
+      a: `<p>Weight sharing means the same set of weights is reused at multiple positions in the network. In a CNN,
+      the same kernel slides over every spatial location; in an RNN, the same cell is applied at every time step.</p>
+      <p><b>Benefits:</b> drastically fewer parameters, translation/time invariance built in, and better
+      generalization from less data.</p>`
+    },
+    {
+      q: "What is a residual (skip) connection and why does it help?",
+      a: `<p>A residual connection computes <code>y = x + F(x)</code> instead of <code>y = F(x)</code>. The
+      network only has to learn the <b>residual</b> <code>F(x) = y − x</code>, which is easier when the identity
+      is close to optimal.</p>
+      <p><b>Why it helps:</b></p>
+      <ul>
+        <li>Gradients flow directly through the identity path: <code>∂L/∂x = ∂L/∂y · (1 + ∂F/∂x)</code>, so the
+        "+1" prevents vanishing gradients even in very deep networks.</li>
+        <li>It solves the <b>degradation problem</b> — deeper plain networks got <i>worse</i> training error, which
+        is not classical overfitting.</li>
+      </ul>`
+    },
+    {
+      q: "What is a bottleneck layer?",
+      a: `<p>A bottleneck layer temporarily reduces dimensionality (e.g. 256 → 64 → 256) to force the network to
+      compress information into a compact representation. In ResNet it is a 1×1 conv that reduces channels before
+      a 3×3 conv and expands after, cutting FLOPs dramatically. In autoencoders, the bottleneck is the latent
+      representation.</p>`
+    },
+    {
+      q: "How do you compute the total number of parameters in a network?",
+      a: `<p>Sum the parameters of every layer. For each dense layer <code>(n_in + 1) × n_out</code>; for each conv
+      layer <code>(k·k·C_in + 1) × C_out</code>; for each batch-norm layer <code>2 × C</code> (scale + shift);
+      for each embedding <code>vocab × dim</code>. Exclude activations, pooling and dropout — they have none.</p>`
+    },
+    {
+      q: "What is the difference between a feed-forward and a recurrent network?",
+      a: `<p>A feed-forward network processes each input independently with no memory — information flows in one
+      direction only. A recurrent network maintains a hidden state that is passed from one time step to the next,
+      so its output depends on the entire history of inputs. Transformers are technically feed-forward but use
+      attention to look at all positions at once, giving them sequence awareness without recurrence.</p>`
+    }
+  ]
+},
+
+/* ------------------------------------------------------------------
+   3. LOSS FUNCTIONS & OPTIMIZATION BASICS
+------------------------------------------------------------------ */
+{
+  id: "losses",
+  icon: "🎯",
+  title: "3. Loss Functions & Optimization Basics",
+  concepts: `
+    <div class="concept">
+      <h4>The loss landscape</h4>
+      <p>The loss function defines a surface over the parameter space. Training = finding a point on this surface
+      with low loss. In deep networks the surface is <b>non-convex</b>, high-dimensional, and full of saddle points
+      and flat regions — yet SGD works remarkably well, largely because in high dimensions true bad local minima
+      are rare and most "minima" are connected.</p>
+    </div>
+
+    <div class="concept">
+      <h4>Common losses</h4>
+      <table>
+        <thead><tr><th>Loss</th><th>Formula</th><th>Use case</th></tr></thead>
+        <tbody>
+          <tr><td>MSE / L2</td><td>(1/n) Σ (ŷ − y)²</td><td>Regression, Gaussian noise assumption</td></tr>
+          <tr><td>MAE / L1</td><td>(1/n) Σ |ŷ − y|</td><td>Regression, robust to outliers</td></tr>
+          <tr><td>Huber</td><td>Quadratic for small errors, linear for large</td><td>Regression with outliers</td></tr>
+          <tr><td>Binary cross-entropy</td><td>−[y log p + (1−y) log(1−p)]</td><td>Binary / multi-label</td></tr>
+          <tr><td>Categorical cross-entropy</td><td>−Σ yᵢ log pᵢ</td><td>Multi-class</td></tr>
+          <tr><td>KL divergence</td><td>Σ p log(p/q)</td><td>Distributions, VAEs</td></tr>
+          <tr><td>Hinge</td><td>max(0, 1 − y·f(x))</td><td>SVM-style margin</td></tr>
+          <tr><td>Focal loss</td><td>−α(1−p<sub>t</sub>)<sup>γ</sup> log p<sub>t</sub></td><td>Extreme class imbalance</td></tr>
+          <tr><td>Triplet / contrastive</td><td>Distance-based margins</td><td>Metric learning, embeddings</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="concept">
+      <h4>Learning-rate schedules</h4>
+      <ul>
+        <li><b>Step decay</b> — multiply LR by 0.1 every N epochs.</li>
+        <li><b>Cosine annealing</b> — smooth decay following a cosine curve; very popular.</li>
+        <li><b>Warmup</b> — linearly increase LR from ~0 over the first few hundred/thousand steps.</li>
+        <li><b>ReduceLROnPlateau</b> — drop LR when validation loss stops improving.</li>
+        <li><b>One-cycle</b> — warm up then decay; fast training with good final accuracy.</li>
+      </ul>
+    </div>
+  `,
+  qa: [
+    {
+      q: "What is a loss function, and how is it different from a metric?",
+      a: `<p>A <b>loss function</b> is the differentiable objective the optimizer minimizes; gradients flow through
+      it. A <b>metric</b> is what humans care about (accuracy, F1, mAP, BLEU) and is often non-differentiable or
+      discontinuous.</p>
+      <p>You often cannot optimize the metric directly — e.g. accuracy is piecewise constant, so its gradient is
+      zero almost everywhere. Hence you optimize a smooth surrogate (cross-entropy) and monitor the real metric.</p>`
+    },
+    {
+      q: "When would you use MSE, and what are its properties?",
+      a: `<p>MSE = <code>(1/n) Σ (ŷ − y)²</code>. It is used for regression, is smooth and convex in the prediction,
+      and corresponds to maximum likelihood under a Gaussian noise assumption.</p>
+      <p><b>Downside:</b> squaring amplifies large errors, so it is very sensitive to outliers. If the target has
+      heavy-tailed noise, use MAE or Huber loss instead.</p>`
+    },
+    {
+      q: "Explain cross-entropy intuitively.",
+      a: `<p>Cross-entropy measures how many bits (nats) are needed to encode the true distribution using the
+      predicted distribution:</p>
+      <p><code>H(y, p) = −Σ yᵢ log pᵢ</code></p>
+      <p>For one-hot labels it simplifies to <code>−log p(correct class)</code>. The loss is 0 when the model is
+      perfectly confident and correct, and grows without bound as the correct class probability approaches 0.
+      Minimizing it is equivalent to maximizing the log-likelihood of the training data.</p>`
+    },
+    {
+      q: "Why not use MSE with a softmax output?",
+      a: `<p>With softmax + MSE, the gradient with respect to the logits is scaled by the softmax Jacobian, which
+      contains terms like <code>p(1−p)</code>. When the model is confidently wrong, <code>p</code> is near 0 or 1,
+      so the gradient <b>vanishes exactly when the error is largest</b> — learning stalls.</p>
+      <p>With softmax + cross-entropy the gradient is simply <code>p − y</code>, which is proportional to the error
+      and never saturates. Cross-entropy also has the correct probabilistic interpretation (MLE).</p>`
+    },
+    {
+      q: "Binary vs categorical cross-entropy — when do you use each?",
+      a: `<ul>
+        <li><b>Binary cross-entropy</b> — with a sigmoid output, for binary classification or multi-label
+        problems (each class is independently present/absent).</li>
+        <li><b>Categorical cross-entropy</b> — with a softmax output, for multi-class problems where exactly one
+        class is correct (mutually exclusive).</li>
+      </ul>
+      <p>For integer-encoded labels, frameworks provide a "sparse" variant that avoids one-hot encoding.</p>`
+    },
+    {
+      q: "What is KL divergence and how does it relate to cross-entropy?",
+      a: `<p>KL divergence measures how much one probability distribution differs from another:</p>
+      <p><code>KL(p ‖ q) = Σ p log(p/q) = H(p, q) − H(p)</code></p>
+      <p>Cross-entropy equals KL divergence plus the entropy of the true distribution. Since <code>H(p)</code> is
+      constant with respect to the model parameters, <b>minimizing cross-entropy is identical to minimizing
+      KL divergence</b>. KL is asymmetric: <code>KL(p‖q) ≠ KL(q‖p)</code>.</p>`
+    },
+    {
+      q: "What is gradient descent? Write the update rule.",
+      a: `<p>Gradient descent iteratively moves parameters in the direction of steepest descent:</p>
+      <pre><code>θ ← θ − η · ∇θ L(θ)</code></pre>
+      <p>where <code>η</code> is the learning rate and <code>∇θ L</code> is the gradient of the loss with respect
+      to all parameters. With mini-batches, the gradient is estimated from a sample, making it stochastic gradient
+      descent (SGD).</p>`
+    },
+    {
+      q: "What happens if the learning rate is too high or too low?",
+      a: `<p><b>Too high:</b> the loss oscillates or diverges — updates overshoot the minimum, and you may see
+      <code>NaN</code> losses. Weights can explode.</p>
+      <p><b>Too low:</b> training is extremely slow, gets stuck in flat regions or saddle points, and may never
+      escape a poor basin within the compute budget.</p>
+      <p><b>Diagnosis:</b> plot the loss curve — a diverging/spiky curve means LR too high; a flat, barely
+      decreasing curve means LR too low.</p>`
+    },
+    {
+      q: "Name common learning-rate schedules and explain when to use them.",
+      a: `<ul>
+        <li><b>Step decay</b> — simple, works well for CNNs; drop by 10× at milestones.</li>
+        <li><b>Cosine annealing</b> — smooth, no hyperparameter milestones, very strong default.</li>
+        <li><b>Linear warmup</b> — essential for transformers and very large batches; prevents early divergence
+        when Adam's second-moment estimate is still unreliable.</li>
+        <li><b>ReduceLROnPlateau</b> — adaptive; useful when you don't know the schedule in advance.</li>
+        <li><b>One-cycle / cosine with restarts</b> — fast convergence, often better final accuracy.</li>
+      </ul>`
+    },
+    {
+      q: "Why is learning-rate warmup needed?",
+      a: `<p>At the start of training the weights are random and the gradients are large and noisy; Adam's
+      second-moment estimate <code>v</code> is computed from very few samples and is unreliable, so its
+      per-parameter scaling can produce huge early updates.</p>
+      <p>Warmup ramps the LR up slowly, letting the moment estimates stabilize. It is critical for transformers
+      (which are very sensitive to early instability) and for large-batch training.</p>`
+    },
+    {
+      q: "What are local minima, saddle points and plateaus? Why are saddle points more common in high dimensions?",
+      a: `<ul>
+        <li><b>Local minimum</b> — all nearby points have higher loss.</li>
+        <li><b>Saddle point</b> — a point where the gradient is zero but some directions go up and others go down.</li>
+        <li><b>Plateau</b> — a large flat region where the gradient is near zero, so progress is very slow.</li>
+      </ul>
+      <p>In a network with N parameters, a critical point is a local minimum only if all N eigenvalues of the
+      Hessian are positive. For random high-dimensional surfaces this is extremely unlikely — most critical points
+      have a mix of positive and negative curvature, i.e. they are <b>saddle points</b>. That is why "getting stuck
+      in a bad local minimum" is rarely the real problem; plateaus and ill-conditioning are.</p>`
+    },
+    {
+      q: "What is a loss landscape and why does it matter?",
+      a: `<p>The loss landscape is the function <code>L(θ)</code> viewed as a surface over parameter space. Its
+      shape — sharp vs flat minima, saddle points, plateaus — determines how easy optimization is and how well the
+      model generalizes.</p>
+      <p>Empirically, <b>flat minima</b> tend to generalize better than sharp ones, which motivates techniques like
+      large-batch training with LR scaling, Sharpness-Aware Minimization (SAM), and stochastic weight averaging
+      (SWA).</p>`
+    },
+    {
+      q: "How do you choose a loss function for an imbalanced classification problem?",
+      a: `<ul>
+        <li><b>Weighted cross-entropy</b> — give the rare class a larger weight (<code>class_weight='balanced'</code>).</li>
+        <li><b>Focal loss</b> — down-weights easy, well-classified examples so the model focuses on hard ones.</li>
+        <li><b>Resampling</b> — oversample the minority class or undersample the majority.</li>
+        <li><b>Change the decision threshold</b> — optimize the threshold on validation data for the metric you care
+        about (e.g. recall at a fixed precision).</li>
+        <li><b>Use PR-AUC / F1 instead of accuracy</b> as the evaluation metric.</li>
+      </ul>`
+    },
+    {
+      q: "What is the difference between convex and non-convex optimization?",
+      a: `<p>In a <b>convex</b> problem any local minimum is the global minimum, so gradient descent is guaranteed
+      to converge to the optimum (given a suitable learning rate). In a <b>non-convex</b> problem there can be many
+      local minima and saddle points, so there are no global guarantees — but in deep learning, good enough local
+      minima are plentiful and SGD finds them reliably in practice.</p>`
+    }
+  ]
+},
+
+/* ------------------------------------------------------------------
+   4. BACKPROPAGATION & GRADIENT FLOW
+------------------------------------------------------------------ */
+{
+  id: "backprop",
+  icon: "🔁",
+  title: "4. Backpropagation & Gradient Flow",
+  concepts: `
+    <div class="concept">
+      <h4>Backpropagation in one sentence</h4>
+      <p>Backpropagation is the <b>chain rule applied systematically</b> over the computational graph, computing
+      the gradient of the loss with respect to every parameter in a single backward sweep — at roughly the same
+      cost as one forward pass.</p>
+    </div>
+
+    <div class="concept">
+      <h4>The chain rule, concretely</h4>
+      <p>For <code>L = f(g(h(x)))</code>:</p>
+      <div class="flow">dL/dx = (dL/df) · (df/dg) · (dg/dh) · (dh/dx)</div>
+      <p>Each layer only needs to know how to compute two things: its forward output, and the product of the
+      incoming gradient with its local Jacobian. That locality is why frameworks can compose arbitrary layers.</p>
+    </div>
+
+    <div class="concept">
+      <h4>Forward mode vs reverse mode autodiff</h4>
+      <table>
+        <thead><tr><th></th><th>Forward mode</th><th>Reverse mode</th></tr></thead>
+        <tbody>
+          <tr><td>Direction</td><td>Input → output</td><td>Output → input</td></tr>
+          <tr><td>Cost</td><td>O(#inputs) passes</td><td>O(#outputs) passes</td></tr>
+          <tr><td>Great when</td><td>Few inputs, many outputs</td><td>Many inputs, few outputs (neural nets!)</td></tr>
+        </tbody>
+      </table>
+      <p>Neural networks have millions of inputs (parameters) and one output (loss), so reverse mode is the
+      obvious choice — that's exactly what backprop is.</p>
+    </div>
+  `,
+  qa: [
+    {
+      q: "Explain backpropagation in plain English.",
+      a: `<p>Backpropagation works in two phases:</p>
+      <ol>
+        <li><b>Forward pass</b> — feed the input through the network, storing every intermediate activation,
+        and compute the loss.</li>
+        <li><b>Backward pass</b> — starting from the loss, propagate the gradient backwards through each layer
+        using the chain rule. Each layer receives the gradient of the loss with respect to its output, multiplies
+        it by its local derivative to get the gradient with respect to its input, and also computes the gradient
+        with respect to its own weights.</li>
+      </ol>
+      <p>After the sweep, every parameter has a gradient and the optimizer can perform one update step.</p>`
+    },
+    {
+      q: "Why is backpropagation computationally efficient?",
+      a: `<p>Because reverse-mode automatic differentiation computes the gradient of a scalar loss with respect to
+      <b>all</b> parameters in a single backward pass costing roughly 2–3× the forward pass. A naive approach
+      (numerical differentiation) would require two forward passes <i>per parameter</i> — for a model with 100M
+      parameters that is 200M forward passes instead of one.</p>`
+    },
+    {
+      q: "What is the difference between forward-mode and reverse-mode automatic differentiation?",
+      a: `<p>Forward mode propagates derivatives from inputs to outputs alongside the values — one pass per input
+      dimension. Reverse mode propagates derivatives from the output back to the inputs — one pass per output
+      dimension.</p>
+      <p>Since training a network has many inputs (parameters) but one scalar output (the loss), reverse mode is
+      vastly cheaper. This is precisely backpropagation.</p>`
+    },
+    {
+      q: "What is the vanishing gradient problem?",
+      a: `<p>In deep networks, the gradient of the loss with respect to early layers is a product of many Jacobians.
+      If each factor has magnitude less than 1 — for example the derivative of sigmoid (max 0.25) or tanh (max 1.0)
+      — the product shrinks exponentially with depth, so early layers receive almost no gradient signal and stop
+      learning.</p>
+      <p><b>Causes:</b> saturating activations, too many layers, poor initialization (too-small weights),
+      unnormalized inputs, and long recurrent unrolls.</p>
+      <p><b>Fixes:</b> ReLU-family activations, He/Xavier initialization, batch/layer normalization, residual
+      connections, gating (LSTM/GRU), gradient clipping (for the opposite problem), and careful architecture design.</p>`
+    },
+    {
+      q: "What is the exploding gradient problem and how do you fix it?",
+      a: `<p>The mirror image: if the Jacobians have magnitude greater than 1, the product grows exponentially with
+      depth or sequence length. Weights blow up, the loss becomes <code>NaN</code>, and training diverges. It is
+      especially common in RNNs.</p>
+      <p><b>Fixes:</b> gradient clipping (by value or by global norm), weight normalization, layer normalization,
+      gated architectures (LSTM/GRU), smaller learning rate, and residual connections.</p>`
+    },
+    {
+      q: "How does gradient clipping work?",
+      a: `<p>Gradient clipping caps the gradient before the optimizer step:</p>
+      <ul>
+        <li><b>Clip by value</b> — each element is clamped to <code>[−c, c]</code>. Simple but changes the gradient
+        direction.</li>
+        <li><b>Clip by global norm</b> — if the L2 norm of the whole gradient vector exceeds <code>c</code>, scale
+        the entire vector down by <code>c / ‖g‖</code>. This <b>preserves direction</b> and is the standard choice.</li>
+      </ul>
+      <p>Typical values are 1.0 or 5.0. It is essentially a safety net against rare huge gradients, especially in
+      RNNs and transformers.</p>`
+    },
+    {
+      q: "What is gradient checking?",
+      a: `<p>Gradient checking verifies an analytical gradient against a numerical approximation using finite
+      differences:</p>
+      <pre><code>dL/dθ ≈ (L(θ + ε) − L(θ − ε)) / (2ε)</code></pre>
+      <p>The relative difference between the two should be around 1e-7 for a correct implementation. It is used
+      when writing custom layers or loss functions. It is far too slow to use during training, and it must be
+      disabled when using dropout or batchnorm (their behaviour is stochastic).</p>`
+    },
+    {
+      q: "Do you ever need to implement backprop manually?",
+      a: `<p>Almost never — PyTorch, TensorFlow and JAX provide autograd. You only need to implement a custom
+      backward pass when you write a custom operation that is not composed of differentiable primitives, or when
+      you want a numerically more stable or faster implementation (e.g. a fused kernel). In interviews, the useful
+      skill is being able to <i>derive</i> the gradient of a simple layer by hand (e.g. softmax + cross-entropy).</p>`
+    },
+    {
+      q: "What is the Jacobian and why is it expensive in deep learning?",
+      a: `<p>The Jacobian is the matrix of all first-order partial derivatives of a vector-valued function:
+      <code>J[i][j] = ∂fᵢ/∂xⱼ</code>. For a layer mapping n inputs to m outputs it is m×n.</p>
+      <p>It is expensive because for a layer with, say, 1024 units the full Jacobian is 1024×1024 ≈ 1M entries.
+      Backprop never materializes the full Jacobian — it computes <b>vector-Jacobian products</b> (VJP), which
+      costs the same as one forward pass.</p>`
+    },
+    {
+      q: "Why are residual connections good for gradient flow?",
+      a: `<p>With <code>y = x + F(x)</code>, the gradient is <code>∂L/∂x = ∂L/∂y · (1 + ∂F/∂x)</code>. The additive
+      identity term means gradients can flow backwards through the network <b>undiminished</b> — even if
+      <code>∂F/∂x</code> is tiny, the "+1" guarantees a path with gradient magnitude 1. This is why ResNets with
+      100+ layers train at all.</p>`
+    },
+    {
+      q: "Walk through the chain rule for a 2-layer network.",
+      a: `<p>Let <code>z₁ = W₁x + b₁</code>, <code>a₁ = σ(z₁)</code>, <code>z₂ = W₂a₁ + b₂</code>,
+      <code>L = loss(z₂, y)</code>.</p>
+      <pre><code>dL/dz₂ = (p − y)                     # softmax + CE gradient
+dL/dW₂ = dL/dz₂ · a₁ᵀ
+dL/db₂ = dL/dz₂
+dL/da₁ = W₂ᵀ · dL/dz₂
+dL/dz₁ = dL/da₁ ⊙ σ'(z₁)             # elementwise
+dL/dW₁ = dL/dz₁ · xᵀ
+dL/db₁ = dL/dz₁</code></pre>
+      <p>Notice the pattern: each layer receives <code>dL/doutput</code>, multiplies by its local derivative, and
+      produces <code>dL/dinput</code> plus its own parameter gradients.</p>`
+    },
+    {
+      q: "What is a dead neuron?",
+      a: `<p>A dead neuron is one whose output is always zero (for ReLU) and whose gradient is therefore always
+      zero — it never recovers. It happens when the neuron's weights and bias are pushed so far that every input
+      in the dataset produces a negative pre-activation. Large learning rates and bad initialization make this
+      more likely.</p>
+      <p><b>Fixes:</b> Leaky ReLU/ELU/GELU, lower learning rate, He initialization, batch normalization.</p>`
+    },
+    {
+      q: "What does 'detaching' a tensor from the computational graph mean?",
+      a: `<p>Detaching (e.g. <code>x.detach()</code> in PyTorch) creates a tensor that shares the same data but is
+      no longer part of the autograd graph — no gradients flow through it. It is used to freeze a target network in
+      reinforcement learning, stop gradients through a fixed feature extractor, or accumulate metrics without
+      tracking history. Forgetting to detach when logging loss tensors is a classic cause of memory leaks.</p>`
+    }
+  ]
+},
+
+/* ------------------------------------------------------------------
+   5. REGULARIZATION & GENERALIZATION
+------------------------------------------------------------------ */
+{
+  id: "regularization",
+  icon: "🛡️",
+  title: "5. Regularization & Generalization",
+  concepts: `
+    <div class="concept">
+      <h4>Bias–variance decomposition</h4>
+      <div class="flow">Total Error = Bias² + Variance + Irreducible Noise</div>
+      <ul>
+        <li><b>Bias</b> — error from overly simple assumptions (underfitting).</li>
+        <li><b>Variance</b> — error from sensitivity to the particular training sample (overfitting).</li>
+        <li><b>Noise</b> — irreducible error in the data itself.</li>
+      </ul>
+      <p>More model capacity → lower bias, higher variance. Regularization trades a little bias for a lot less
+      variance.</p>
+    </div>
+
+    <div class="concept">
+      <h4>Diagnosing from learning curves</h4>
+      <table>
+        <thead><tr><th>Pattern</th><th>Train loss</th><th>Val loss</th><th>Diagnosis</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>Underfitting</td><td>High</td><td>High</td><td>Model too weak</td><td>Bigger model, more features, longer training, less regularization</td></tr>
+          <tr><td>Overfitting</td><td>Low</td><td>High / rising</td><td>Memorizing</td><td>More data, augmentation, dropout, weight decay, early stopping</td></tr>
+          <tr><td>Good fit</td><td>Low</td><td>Low</td><td>Done</td><td>Ship it</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="concept">
+      <h4>The regularization toolbox</h4>
+      <ul>
+        <li><b>L1 / L2 weight decay</b> — penalize large weights.</li>
+        <li><b>Dropout</b> — randomly zero activations during training.</li>
+        <li><b>Early stopping</b> — stop when validation loss stops improving.</li>
+        <li><b>Data augmentation</b> — generate plausible variations of the input.</li>
+        <li><b>Batch / Layer normalization</b> — stabilize and mildly regularize.</li>
+        <li><b>Label smoothing</b> — soften hard targets.</li>
+        <li><b>Mixup / CutMix</b> — train on convex combinations of samples.</li>
+        <li><b>Noise injection</b> — add noise to inputs, weights or gradients.</li>
+        <li><b>Ensembling</b> — average multiple models.</li>
+      </ul>
+    </div>
+  `,
+  qa: [
+    {
+      q: "What is overfitting and how do you detect it?",
+      a: `<p>Overfitting is when the model learns the training data (including its noise) so well that it fails to
+      generalize to unseen data.</p>
+      <p><b>Detection:</b> training loss keeps decreasing while validation loss flattens and then rises — the
+      classic "U-shape" in the validation curve. A large gap between train and validation metrics is the signature.</p>
+      <p><b>Remedies:</b> more data, data augmentation, dropout, weight decay, early stopping, a smaller model,
+      and reducing the number of features.</p>`
+    },
+    {
+      q: "Explain the bias–variance tradeoff.",
+      a: `<p>Expected test error decomposes into <code>Bias² + Variance + irreducible noise</code>.</p>
+      <ul>
+        <li>A <b>high-bias</b> model is too simple — it underfits both train and test.</li>
+        <li>A <b>high-variance</b> model is too flexible — it fits the training set perfectly but changes wildly
+        with a different sample.</li>
+      </ul>
+      <p>Increasing capacity lowers bias but raises variance. Regularization and ensembling reduce variance with
+      little added bias. (Note: modern "double descent" shows the classic U-curve is not the whole story — see
+      below.)</p>`
+    },
+    {
+      q: "What is the difference between L1 and L2 regularization?",
+      a: `<ul>
+        <li><b>L2 (ridge)</b> — adds <code>λ Σ w²</code> to the loss. It shrinks weights smoothly toward zero but
+        rarely exactly to zero. It has a smooth gradient and encourages small, spread-out weights.</li>
+        <li><b>L1 (lasso)</b> — adds <code>λ Σ |w|</code>. Its gradient is constant in magnitude, so it pushes small
+        weights all the way to exactly zero, producing <b>sparse</b> solutions useful for feature selection.</li>
+      </ul>
+      <p><b>Geometric intuition:</b> the L1 constraint region is a diamond with corners on the axes, so the loss
+      contour tends to touch it at a corner where some weights are exactly zero. The L2 region is a circle, so the
+      contact point is generally off-axis.</p>`
+    },
+    {
+      q: "How does dropout work and why does it regularize?",
+      a: `<p>During training, dropout randomly sets each neuron's activation to zero with probability <code>p</code>
+      (typically 0.1–0.5), independently per sample, and scales the surviving activations by <code>1/(1−p)</code>
+      so the expected activation is unchanged (this is "inverted dropout").</p>
+      <p><b>At inference</b> dropout is disabled — it is an identity operation, and no scaling is needed because
+      inverted dropout already handled it.</p>
+      <p><b>Why it regularizes:</b></p>
+      <ul>
+        <li>It prevents neurons from co-adapting — no neuron can rely on a specific partner always being present.</li>
+        <li>It is an implicit ensemble of exponentially many thinned sub-networks, averaged at test time.</li>
+        <li>It injects noise, which smooths the loss landscape.</li>
+      </ul>`
+    },
+    {
+      q: "Why is inverted dropout preferred over the original formulation?",
+      a: `<p>In the original dropout, activations are scaled by <code>(1−p)</code> <i>at test time</i>. That means
+      inference depends on a training hyperparameter, and you must remember to scale.</p>
+      <p>With <b>inverted dropout</b>, the scaling by <code>1/(1−p)</code> happens at training time instead, so
+      inference is just a normal forward pass with dropout switched off. This is what all modern frameworks
+      implement.</p>`
+    },
+    {
+      q: "How does batch normalization work?",
+      a: `<p>For each mini-batch and each channel/feature, batch norm computes the mean and variance, normalizes
+      the activations, then applies learnable scale <code>γ</code> and shift <code>β</code>:</p>
+      <pre><code>μ  = mean(x, axis=batch)
+σ² = var(x, axis=batch)
+x̂  = (x − μ) / sqrt(σ² + ε)
+y  = γ · x̂ + β</code></pre>
+      <p><b>At training time</b> the batch statistics are used and running estimates of mean/variance are updated
+      with momentum. <b>At inference</b> the stored running statistics are used, so the output is deterministic and
+      independent of batch composition.</p>
+      <p><b>Benefits:</b> allows higher learning rates, reduces sensitivity to initialization, and smooths the
+      optimization landscape. The original "internal covariate shift" explanation is now disputed — the smoothing
+      effect is the more accepted reason.</p>`
+    },
+    {
+      q: "Batch norm vs layer norm — what's the difference and when do you use each?",
+      a: `<table>
+        <thead><tr><th></th><th>Batch Norm</th><th>Layer Norm</th></tr></thead>
+        <tbody>
+          <tr><td>Normalizes over</td><td>The batch dimension (per feature)</td><td>The feature dimension (per sample)</td></tr>
+          <tr><td>Depends on batch</td><td>Yes</td><td>No</td></tr>
+          <tr><td>Works with small batches</td><td>Poorly</td><td>Yes</td></tr>
+          <tr><td>Works with variable sequence length</td><td>Awkward</td><td>Yes</td></tr>
+          <tr><td>Typical use</td><td>CNNs (images)</td><td>Transformers, RNNs</td></tr>
+        </tbody>
+      </table>
+      <p>The key reason transformers use LayerNorm: sequence lengths vary, batches can be small, and the model must
+      behave identically at inference regardless of batch composition.</p>`
+    },
+    {
+      q: "What are Group Norm and Instance Norm?",
+      a: `<p>They interpolate between batch and layer norm by choosing what to average over:</p>
+      <ul>
+        <li><b>Instance Norm</b> — normalize each sample and each channel independently over spatial dimensions.
+        Popular in style transfer.</li>
+        <li><b>Group Norm</b> — split channels into groups and normalize within each group per sample. It works
+        well with small batch sizes (e.g. detection/segmentation with batch size 1–2) and is a common
+        BatchNorm replacement.</li>
+      </ul>`
+    },
+    {
+      q: "What is early stopping?",
+      a: `<p>Train while monitoring validation loss, keep a copy of the best-performing weights, and stop when the
+      validation loss has not improved for <code>patience</code> epochs. It is a free, effective regularizer that
+      implicitly limits model capacity. Always restore the best checkpoint rather than the last one.</p>`
+    },
+    {
+      q: "What is data augmentation and why is it so effective?",
+      a: `<p>Data augmentation synthetically expands the training set by applying label-preserving transformations:
+      flips, crops, rotations, colour jitter, cutout, mixup for images; back-translation, token deletion, synonym
+      replacement for text; time-shifting, spectrogram masking for audio.</p>
+      <p><b>Why it works:</b> it encodes prior knowledge about invariances into the data pipeline, which is often
+      cheaper and more effective than architectural changes. It also reduces variance without adding parameters.</p>`
+    },
+    {
+      q: "What is label smoothing and why use it?",
+      a: `<p>Instead of hard targets (1 for the correct class, 0 elsewhere), label smoothing uses
+      <code>1 − ε + ε/K</code> for the correct class and <code>ε/K</code> for the rest, with <code>ε</code> around
+      0.1.</p>
+      <p><b>Why:</b> it prevents the model from becoming overconfident, improves calibration, and acts as a
+      regularizer. It is standard in ImageNet training and in transformer language models. It also discourages the
+      logits from growing unboundedly.</p>`
+    },
+    {
+      q: "What are Mixup and CutMix?",
+      a: `<ul>
+        <li><b>Mixup</b> — creates virtual training samples by linear interpolation:
+        <code>x = λx₁ + (1−λ)x₂</code>, <code>y = λy₁ + (1−λ)y₂</code>. It encourages linear behaviour between
+        samples and improves robustness.</li>
+        <li><b>CutMix</b> — cuts a patch from one image and pastes it into another, mixing labels proportionally
+        to the patch area. It retains locality information that pure mixup destroys.</li>
+      </ul>
+      <p>Both are strong regularizers for vision models and also help with label noise.</p>`
+    },
+    {
+      q: "Is weight decay the same as L2 regularization?",
+      a: `<p>For plain SGD they are mathematically equivalent. But with <b>Adam</b> they are <i>not</i>: standard
+      L2 adds the penalty to the gradient, which then gets scaled by Adam's adaptive per-parameter learning rate,
+      so parameters with large gradient history get regularized less. This is inconsistent.</p>
+      <p><b>AdamW</b> fixes this with <b>decoupled weight decay</b> — it applies
+      <code>θ ← θ − η·λ·θ</code> directly to the weights, outside the adaptive gradient update. AdamW is the
+      default optimizer for transformers.</p>`
+    },
+    {
+      q: "What is double descent?",
+      a: `<p>Classical theory says test error follows a U-curve as model capacity increases. Double descent shows
+      that when capacity is pushed past the point where the model can perfectly fit the training data (the
+      interpolation threshold), test error <b>decreases again</b>, producing a second descent.</p>
+      <p>This explains why huge over-parameterized networks generalize well despite having more parameters than
+      training samples. It also shows that the "bias-variance tradeoff" is not the complete picture for modern
+      deep learning.</p>`
+    },
+    {
+      q: "What is the 'no free lunch' theorem?",
+      a: `<p>No single learning algorithm is best on all possible problems. Averaged over all possible data
+      distributions, every algorithm performs equally well. This means every model choice embeds assumptions
+      (inductive biases) — CNNs assume locality and translation equivariance, transformers assume permutation
+      equivariance plus positional information, RNNs assume sequential structure. Choosing an architecture is
+      choosing the right inductive bias for your data.</p>`
+    },
+    {
+      q: "What is the difference between regularization and normalization?",
+      a: `<p><b>Regularization</b> is any technique that deliberately limits model capacity to improve
+      generalization (L2, dropout, early stopping, augmentation).</p>
+      <p><b>Normalization</b> usually refers to data/activation scaling (batch norm, layer norm, input
+      standardization) — its primary purpose is optimization stability, though it has a secondary regularizing
+      effect. So they overlap but are conceptually different.</p>`
+    },
+    {
+      q: "How would you handle a very small dataset?",
+      a: `<ul>
+        <li><b>Transfer learning</b> — start from a pretrained model and fine-tune, or just use it as a feature
+        extractor.</li>
+        <li><b>Heavy augmentation</b> — flips, crops, mixup, cutmix.</li>
+        <li><b>Cross-validation</b> instead of a single split.</li>
+        <li><b>Smaller models</b> with strong regularization (dropout, weight decay).</li>
+        <li><b>Semi-supervised / self-supervised</b> pretraining on unlabelled data.</li>
+        <li><b>Ensembling</b> to reduce variance.</li>
+      </ul>`
+    }
+  ]
+},
+
+/* ------------------------------------------------------------------
+   6. WEIGHT INITIALIZATION
+------------------------------------------------------------------ */
+{
+  id: "init",
+  icon: "🎲",
+  title: "6. Weight Initialization",
+  concepts: `
+    <div class="concept">
+      <h4>Why initialization matters</h4>
+      <p>If the initial weights are too small, activations and gradients shrink layer by layer and vanish.
+      If they are too large, activations explode and saturate. The goal is to keep the <b>variance of activations
+      and gradients roughly constant</b> across layers.</p>
+      <div class="flow">Var(a<sup>l</sup>) ≈ Var(a<sup>l−1</sup>)  for every layer l</div>
+    </div>
+
+    <div class="concept">
+      <h4>Initialization schemes</h4>
+      <table>
+        <thead><tr><th>Name</th><th>Variance</th><th>Designed for</th></tr></thead>
+        <tbody>
+          <tr><td>Xavier / Glorot (uniform or normal)</td><td>2 / (fan_in + fan_out)</td><td>tanh, sigmoid, linear</td></tr>
+          <tr><td>He / Kaiming</td><td>2 / fan_in</td><td>ReLU and variants</td></tr>
+          <tr><td>LeCun</td><td>1 / fan_in</td><td>SELU, linear</td></tr>
+          <tr><td>Orthogonal</td><td>Orthogonal matrix</td><td>RNNs / deep stacks</td></tr>
+        </tbody>
+      </table>
+    </div>
+  `,
+  qa: [
+    {
+      q: "Why can't we initialize all weights to zero?",
+      a: `<p>Because of <b>symmetry</b>. If every neuron in a layer has identical weights, they all produce
+      identical outputs and receive identical gradients, so they update identically forever. The network effectively
+      has one neuron per layer and can never break the symmetry — it cannot learn distinct features.</p>
+      <p>Biases, however, <i>can</i> be initialized to zero — that does not cause a symmetry problem because the
+      incoming weights differ.</p>`
+    },
+    {
+      q: "Why not initialize with very large or very small random values?",
+      a: `<p><b>Too small:</b> the variance of activations shrinks with each layer, so signals and gradients
+      vanish exponentially — deep layers barely learn.</p>
+      <p><b>Too large:</b> activations explode, saturating activations (sigmoid/tanh) whose gradients then become
+      near-zero, and causing numerical overflow. Both extremes make training slow or impossible.</p>`
+    },
+    {
+      q: "Explain Xavier (Glorot) initialization.",
+      a: `<p>Xavier initialization sets the weight variance to <code>2 / (fan_in + fan_out)</code> (or
+      <code>1 / fan_in</code> for the uniform variant), where <code>fan_in</code> and <code>fan_out</code> are the
+      number of input and output connections.</p>
+      <p>It is derived by requiring that the variance of the forward activations <i>and</i> the backward gradients
+      be preserved across layers. It assumes the activation is roughly linear near zero, which holds for
+      <b>tanh</b> and sigmoid but not for ReLU (ReLU zeroes out half the variance).</p>`
+    },
+    {
+      q: "Explain He (Kaiming) initialization and why it differs from Xavier.",
+      a: `<p>He initialization sets the variance to <code>2 / fan_in</code>. The factor of 2 compensates for ReLU
+      halving the variance: if half the units are zero, the variance of the output is roughly half the input
+      variance, so you need twice the initial variance to preserve signal magnitude.</p>
+      <p>Using Xavier with ReLU leads to a gradual shrinkage of activation variance with depth; He initialization
+      fixes this and is the standard for ReLU-family networks.</p>`
+    },
+    {
+      q: "Why is orthogonal initialization used for RNNs?",
+      a: `<p>An orthogonal matrix preserves norms exactly: <code>‖Wx‖ = ‖x‖</code>. When the same recurrent weight
+      matrix is multiplied many times across time steps, an orthogonal matrix keeps the gradient norm from
+      exploding or vanishing — the product of orthogonal matrices is orthogonal.</p>
+      <p>This makes it possible to learn long-range dependencies in plain RNNs for longer than would otherwise be
+      possible. It is also used for very deep linear-ish stacks.</p>`
+    },
+    {
+      q: "Does initialization still matter if you use batch normalization?",
+      a: `<p>It matters much less — batch norm makes training far more robust to the initialization scale because
+      it re-normalizes activations at every layer. However, initialization still affects the early phase of
+      training and can matter for convergence speed and final accuracy, and some pathologies (like dead ReLUs at
+      initialization) can still occur. Best practice: use the correct init for your activation <i>and</i> use
+      normalization.</p>`
+    }
+  ]
+},
+
+/* ------------------------------------------------------------------
+   7. OPTIMIZERS
+------------------------------------------------------------------ */
+{
+  id: "optimizers",
+  icon: "⚙️",
+  title: "7. Optimizers",
+  concepts: `
+    <div class="concept">
+      <h4>From SGD to Adam in one diagram</h4>
+      <div class="flow">SGD → +Momentum → +Nesterov | AdaGrad → RMSProp → Adam → AdamW</div>
+      <p>Two independent ideas get combined: <b>momentum</b> (smooth the gradient direction using history) and
+      <b>adaptive learning rates</b> (scale each parameter's step by its gradient history). Adam = both, plus bias
+      correction.</p>
+    </div>
+
+    <div class="concept">
+      <h4>Update rules</h4>
+      <pre><code>SGD:        θ ← θ − η·g
+Momentum:   v ← β·v + g ;        θ ← θ − η·v
+AdaGrad:    s ← s + g² ;         θ ← θ − η·g / (√s + ε)
+RMSProp:    s ← β·s + (1−β)·g² ; θ ← θ − η·g / (√s + ε)
+Adam:       m ← β₁m + (1−β₁)g
+            v ← β₂v + (1−β₂)g²
+            m̂ = m / (1−β₁ᵗ) ;  v̂ = v / (1−β₂ᵗ)
+            θ ← θ − η·m̂ / (√v̂ + ε)</code></pre>
+    </div>
+
+    <div class="concept">
+      <h4>Defaults worth memorizing</h4>
+      <p>Adam: <code>β₁ = 0.9</code>, <code>β₂ = 0.999</code>, <code>ε = 1e-8</code>, LR <code>1e-3</code>.
+      SGD with momentum: <code>β = 0.9</code>, LR <code>0.1</code> with a schedule (for CNNs).</p>
+    </div>
+  `,
+  qa: [
+    {
+      q: "What is SGD and what is its main weakness?",
+      a: `<p>SGD updates parameters using the gradient estimated from a mini-batch:
+      <code>θ ← θ − η·∇L(θ)</code>.</p>
+      <p><b>Weaknesses:</b> it is highly sensitive to the learning rate and to the conditioning of the problem — in
+      "ravines" (regions where one direction is much steeper than another) it oscillates badly; it also slows down
+      in flat regions and near saddle points, and the noisy gradient can make progress erratic.</p>`
+    },
+    {
+      q: "Explain momentum.",
+      a: `<p>Momentum accumulates an exponentially weighted moving average of past gradients and uses that as the
+      update direction:</p>
+      <p><code>v ← βv + g</code> , <code>θ ← θ − ηv</code></p>
+      <p><b>Effect:</b> consistent gradient directions build up speed (like a ball rolling downhill), while
+      oscillating directions cancel out. This dampens zig-zagging in ravines and helps push through plateaus and
+      small local minima. Typical <code>β = 0.9</code>.</p>`
+    },
+    {
+      q: "What is Nesterov accelerated gradient?",
+      a: `<p>Nesterov momentum computes the gradient at the <b>look-ahead</b> position rather than the current one:</p>
+      <pre><code>v ← βv + ∇L(θ − ηβv)
+θ ← θ − ηv</code></pre>
+      <p>It is like "look before you leap": if the momentum is about to overshoot, the gradient at the look-ahead
+      point already points back, producing a corrective update. It often converges slightly faster than classical
+      momentum.</p>`
+    },
+    {
+      q: "What is AdaGrad and why does it fall short?",
+      a: `<p>AdaGrad divides each parameter's learning rate by the square root of the sum of all its past squared
+      gradients:</p>
+      <p><code>s ← s + g²</code> , <code>θ ← θ − η·g / (√s + ε)</code></p>
+      <p><b>Benefit:</b> parameters with consistently large gradients get smaller effective learning rates, and
+      rarely-updated (sparse) parameters get larger ones — great for sparse features like NLP.</p>
+      <p><b>Problem:</b> the accumulator <code>s</code> only grows, so the effective learning rate decays
+      monotonically to zero and training stops prematurely. RMSProp fixes this.</p>`
+    },
+    {
+      q: "What is RMSProp?",
+      a: `<p>RMSProp replaces AdaGrad's ever-growing sum with an exponentially decaying average of squared
+      gradients:</p>
+      <p><code>s ← βs + (1−β)g²</code> , <code>θ ← θ − η·g / (√s + ε)</code></p>
+      <p>This keeps the effective learning rate from collapsing, so training can continue indefinitely. Typical
+      <code>β = 0.9</code>.</p>`
+    },
+    {
+      q: "Explain Adam in detail.",
+      a: `<p>Adam (Adaptive Moment Estimation) combines momentum and RMSProp, with bias correction:</p>
+      <pre><code>m ← β₁·m + (1−β₁)·g          # 1st moment (mean)
+v ← β₂·v + (1−β₂)·g²         # 2nd moment (uncentred variance)
+m̂ = m / (1 − β₁ᵗ)            # bias correction
+v̂ = v / (1 − β₂ᵗ)            # bias correction
+θ ← θ − η · m̂ / (√v̂ + ε)</code></pre>
+      <p><b>Bias correction matters</b> because <code>m</code> and <code>v</code> are initialized to zero, so early
+      estimates are biased toward zero. Dividing by <code>(1−βᵗ)</code> corrects this — without it the first few
+      steps would be far too small (especially for <code>β₂ = 0.999</code>).</p>
+      <p><b>Strengths:</b> fast convergence, robust to gradient scale, works well out of the box.
+      <b>Weaknesses:</b> can generalize slightly worse than well-tuned SGD+momentum on some vision tasks, and
+      interacts badly with plain L2 (use AdamW).</p>`
+    },
+    {
+      q: "Why does Adam need bias correction?",
+      a: `<p>Both moment estimates start at zero. After one step, <code>m = (1−β₁)·g</code> — with
+      <code>β₁ = 0.9</code> that is only 0.1× the true gradient. For <code>v</code> with
+      <code>β₂ = 0.999</code> it is even worse: <code>v = 0.001·g²</code>, so <code>√v</code> is ~0.032·|g| and the
+      effective step would be ~31× too large.</p>
+      <p>Dividing by <code>(1−βᵗ)</code> exactly undoes this initialization bias, giving unbiased estimates from
+      step 1 onward.</p>`
+    },
+    {
+      q: "What is AdamW and why does it exist?",
+      a: `<p>AdamW decouples weight decay from the gradient-based update. In standard Adam with L2 regularization,
+      the penalty term is added to the gradient and then divided by <code>√v̂</code>, so parameters with large
+      historical gradients are regularized <i>less</i> — which is not what you want.</p>
+      <p>AdamW instead applies <code>θ ← θ − η·λ·θ</code> separately from the adaptive update. This yields better
+      generalization and is the standard optimizer for transformers (BERT, GPT, ViT).</p>`
+    },
+    {
+      q: "When would you prefer SGD with momentum over Adam?",
+      a: `<p>For <b>computer vision</b> tasks (especially image classification with CNNs), well-tuned SGD + momentum
+      with a good LR schedule and weight decay often reaches a slightly <b>better final accuracy</b> and
+      generalizes better than Adam. Adam's adaptive steps can lead to sharper minima.</p>
+      <p>Adam is generally preferred for transformers, NLP, reinforcement learning, sparse gradients, and any
+      situation where you want fast convergence with minimal tuning. Modern practice: AdamW + cosine schedule with
+      warmup as a strong default; SGD + momentum + cosine for vision benchmarks.</p>`
+    },
+    {
+      q: "What are the key hyperparameters of Adam and what do they control?",
+      a: `<ul>
+        <li><b>Learning rate η</b> — the overall step size; the most important one to tune (1e-3 default, but
+        often 1e-4 or 3e-4 is better).</li>
+        <li><b>β₁</b> — decay of the first moment (momentum); 0.9 default.</li>
+        <li><b>β₂</b> — decay of the second moment; 0.999 default. Lower it (0.98, 0.99) for very noisy or
+        sparse gradients.</li>
+        <li><b>ε</b> — tiny constant for numerical stability; 1e-8 default. Increase it if gradients are very
+        small.</li>
+        <li><b>weight_decay</b> — usually 0.01–0.1 with AdamW.</li>
+      </ul>`
+    },
+    {
+      q: "Why do transformers need learning-rate warmup with Adam?",
+      a: `<p>Adam's second-moment estimate <code>v</code> is unreliable in the first few steps (it is based on very
+      few samples), so the normalizing factor <code>1/√v̂</code> can produce enormous updates. Transformers have
+      very deep residual stacks and LayerNorm, and are numerically fragile to early large updates.</p>
+      <p>Warmup ramps the LR from near zero so that <code>v</code> can stabilize before the model takes large
+      steps. It is essentially mandatory for transformer training.</p>`
+    },
+    {
+      q: "What happens if you forget to zero the gradients between steps?",
+      a: `<p>In PyTorch, gradients <b>accumulate</b> by default (<code>.grad += new_grad</code>). If you forget
+      <code>optimizer.zero_grad()</code>, gradients from all previous iterations keep summing, causing enormous
+      updates and divergence.</p>
+      <p>This is actually a feature: gradient accumulation lets you simulate a large batch on limited memory by
+      summing gradients over several micro-batches before stepping.</p>`
+    },
+    {
+      q: "What is gradient accumulation?",
+      a: `<p>Instead of updating after every small micro-batch, you compute gradients over several micro-batches,
+      sum (or average) them, and only then call <code>optimizer.step()</code>. This simulates a larger effective
+      batch size without needing more memory.</p>
+      <p>Example: batch size 8 × 4 accumulation steps = effective batch size 32. Remember to scale the loss by
+      <code>1/accumulation_steps</code> if you average, and to zero gradients only after the step.</p>`
+    }
+  ]
+},
+
+/* ------------------------------------------------------------------
+   8. CNNs
+------------------------------------------------------------------ */
+{
+  id: "cnn",
+  icon: "🖼️",
+  title: "8. Convolutional Neural Networks",
+  concepts: `
+    <div class="concept">
+      <h4>The convolution operation</h4>
+      <p>A kernel (filter) of size <code>k × k</code> slides over the input; at each position it computes the
+      elementwise product with the input patch and sums it into a single number. Multiple kernels produce multiple
+      output <b>feature maps</b>.</p>
+      <p>(Technically deep learning frameworks implement <b>cross-correlation</b>, not true convolution — the kernel
+      is not flipped. Nobody cares in practice.)</p>
+    </div>
+
+    <div class="concept">
+      <h4>Output size formula — memorize this</h4>
+      <div class="flow">O = ⌊(W − K + 2P) / S⌋ + 1</div>
+      <p><code>W</code> = input size, <code>K</code> = kernel size, <code>P</code> = padding, <code>S</code> = stride.</p>
+      <p>Example: 224×224 input, 7×7 kernel, stride 2, padding 3 → ⌊(224 − 7 + 6)/2⌋ + 1 = ⌊223/2⌋ + 1 = 111 + 1 = <b>112</b>.</p>
+      <p><b>Parameter count:</b> <code>(K × K × C_in + 1) × C_out</code> — independent of the image size.</p>
+    </div>
+
+    <div class="concept">
+      <h4>Landmark architectures</h4>
+      <table>
+        <thead><tr><th>Model</th><th>Year</th><th>Key idea</th></tr></thead>
+        <tbody>
+          <tr><td>LeNet-5</td><td>1998</td><td>First practical CNN for digit recognition</td></tr>
+          <tr><td>AlexNet</td><td>2012</td><td>ReLU, dropout, GPU training; won ImageNet by a huge margin</td></tr>
+          <tr><td>VGG-16/19</td><td>2014</td><td>Stacks of 3×3 convs; showed depth matters</td></tr>
+          <tr><td>GoogLeNet / Inception</td><td>2014</td><td>Multi-scale parallel branches, 1×1 bottlenecks</td></tr>
+          <tr><td>ResNet</td><td>2015</td><td>Residual connections; enabled 100+ layer networks</td></tr>
+          <tr><td>DenseNet</td><td>2016</td><td>Every layer connected to every later layer</td></tr>
+          <tr><td>MobileNet</td><td>2017</td><td>Depthwise separable convolutions for mobile</td></tr>
+          <tr><td>EfficientNet</td><td>2019</td><td>Compound scaling of depth/width/resolution</td></tr>
+          <tr><td>ConvNeXt</td><td>2022</td><td>Modernized CNN matching transformer performance</td></tr>
+          <tr><td>ViT</td><td>2020</td><td>Transformer applied to image patches</td></tr>
+        </tbody>
+      </table>
+    </div>
+  `,
+  qa: [
+    {
+      q: "Why use a CNN for images instead of a fully connected network?",
+      a: `<p>Three reasons:</p>
+      <ul>
+        <li><b>Parameter efficiency via weight sharing</b> — a 3×3 kernel has 9 weights regardless of image size.
+        A dense layer on a 224×224×3 image to 1000 units would need 150M parameters <i>for one layer</i>.</li>
+        <li><b>Locality</b> — nearby pixels are correlated; convolutions exploit this inductive bias.</li>
+        <li><b>Translation equivariance</b> — a learned feature (an edge, a wheel) is detected anywhere in the
+        image, so the model does not need to relearn it at every position.</li>
+      </ul>
+      <p>CNNs also build a natural hierarchy: edges → textures → parts → objects.</p>`
+    },
+    {
+      q: "What is a convolution mathematically, and how does it differ from cross-correlation?",
+      a: `<p>True convolution flips the kernel: <code>(f * g)(t) = ∫ f(τ)g(t − τ)dτ</code>. Cross-correlation does
+      not flip: <code>Σ f(i+j) · g(j)</code>.</p>
+      <p>Deep learning libraries implement cross-correlation but call it convolution. Since the kernel weights are
+      <i>learned</i>, the flip is irrelevant — the network simply learns the flipped kernel if needed. The only
+      place it matters is when you reason about mathematical properties or use fixed kernels (e.g. in signal
+      processing).</p>`
+    },
+    {
+      q: "What is the output size formula for a convolution?",
+      a: `<p><code>O = ⌊(W − K + 2P) / S⌋ + 1</code></p>
+      <p>Examples:</p>
+      <ul>
+        <li>32×32 input, 3×3 kernel, no padding, stride 1 → (32 − 3 + 0)/1 + 1 = <b>30</b>.</li>
+        <li>32×32 input, 3×3 kernel, padding 1 ("same"), stride 1 → <b>32</b> (size preserved).</li>
+        <li>32×32 input, 3×3 kernel, padding 1, stride 2 → <b>16</b> (size halved).</li>
+      </ul>
+      <p>For "same" padding with odd <code>K</code> and stride 1: <code>P = (K − 1)/2</code>.</p>`
+    },
+    {
+      q: "What is padding and why do we need it?",
+      a: `<p>Padding adds zeros (usually) around the border of the input before convolution.</p>
+      <ul>
+        <li><b>Preserves spatial size</b> — without padding, each conv shrinks the image, limiting depth.</li>
+        <li><b>Uses border information equally</b> — without padding, edge pixels participate in far fewer
+        convolutions than central pixels.</li>
+        <li><b>"Valid"</b> padding = no padding; <b>"same"</b> padding = output size equals input size.</li>
+      </ul>`
+    },
+    {
+      q: "What does stride control?",
+      a: `<p>Stride is the step size of the kernel. Stride 1 slides one pixel at a time; stride 2 moves two pixels,
+      halving the spatial dimensions. Large strides are a cheap way to downsample and are sometimes used instead of
+      pooling (e.g. in modern ResNets and in the patch-embedding layer of ViT).</p>`
+    },
+    {
+      q: "Pooling — max vs average, and why use it?",
+      a: `<p>Pooling reduces spatial dimensions without learnable parameters.</p>
+      <ul>
+        <li><b>Max pooling</b> — keeps the strongest activation in each window. Retains salient features and is
+        the most common.</li>
+        <li><b>Average pooling</b> — averages the window; smoother, retains overall magnitude.</li>
+        <li><b>Global average pooling</b> — averages the entire feature map to a single number per channel, used
+        at the end of modern CNNs instead of huge dense layers.</li>
+      </ul>
+      <p><b>Benefits:</b> reduces computation, increases the receptive field, and provides a degree of translation
+      invariance. <b>Downside:</b> throws away spatial information — hence some modern architectures use strided
+      convolutions instead (which are learnable).</p>`
+    },
+    {
+      q: "What is a receptive field and how does it grow?",
+      a: `<p>The receptive field is the region of the input image that influences a given neuron's output.</p>
+      <p>For a stack of 3×3 convolutions with stride 1, each layer adds 2 to the receptive field:
+      one 3×3 conv → RF 3; two → RF 5; three → RF 7. Pooling and striding grow it faster.</p>
+      <p><b>Recursive formula:</b> <code>RF_l = RF_{l−1} + (K_l − 1) × Π_{i<l} S_i</code>.</p>
+      <p>Receptive field matters because the network can only reason about relationships within it — this is why
+      dilated convolutions and attention (global receptive field) exist.</p>`
+    },
+    {
+      q: "What is a 1×1 convolution and why is it useful?",
+      a: `<p>A 1×1 convolution looks at a single pixel but across <b>all channels</b>. It is a per-pixel linear
+      combination of channels.</p>
+      <p><b>Uses:</b></p>
+      <ul>
+        <li><b>Channel mixing</b> — introduces cross-channel interaction without spatial mixing.</li>
+        <li><b>Dimensionality reduction</b> — a cheap bottleneck: reduce 256 channels to 64 before a 3×3 conv,
+        then expand back. This is the Inception and ResNet bottleneck trick.</li>
+        <li><b>Adding non-linearity</b> — followed by ReLU, it adds depth cheaply.</li>
+      </ul>
+      <p>Parameter count: <code>(1×1×C_in + 1) × C_out = (C_in + 1) × C_out</code>.</p>`
+    },
+    {
+      q: "What is a depthwise separable convolution?",
+      a: `<p>It splits a standard convolution into two stages:</p>
+      <ol>
+        <li><b>Depthwise conv</b> — one <code>k×k</code> kernel per input channel (no channel mixing).</li>
+        <li><b>Pointwise conv</b> — a 1×1 convolution that mixes channels.</li>
+      </ol>
+      <p><b>Cost comparison:</b> standard = <code>k²·C_in·C_out</code>; separable =
+      <code>k²·C_in + C_in·C_out</code>. The ratio is roughly <code>1/C_out + 1/k²</code> — typically an
+      <b>8–9× reduction</b> for 3×3 kernels. This is the core of MobileNet and is used in many efficient
+      architectures.</p>`
+    },
+    {
+      q: "What are dilated (atrous) convolutions?",
+      a: `<p>Dilated convolution inserts gaps between kernel elements, so a 3×3 kernel with dilation rate 2 covers a
+      5×5 area while still using only 9 weights.</p>
+      <p><b>Why:</b> it exponentially enlarges the receptive field without losing resolution or adding parameters —
+      crucial for semantic segmentation (DeepLab) and audio, where you need a large context but pixel-level output.</p>`
+    },
+    {
+      q: "What is a transposed convolution?",
+      a: `<p>Transposed convolution (often, imprecisely, called "deconvolution") is the gradient of a convolution
+      with respect to its input — it <b>upsamples</b> a feature map. It is used in decoders, segmentation heads and
+      generative models.</p>
+      <p><b>Caveat:</b> naive transposed convolutions produce "checkerboard" artifacts because kernel overlaps are
+      uneven. Using stride 1 followed by interpolation upsampling, or careful kernel sizes divisible by the stride,
+      mitigates this.</p>`
+    },
+    {
+      q: "What is the difference between translation invariance and translation equivariance?",
+      a: `<ul>
+        <li><b>Equivariance</b> — if the input shifts, the output shifts by the same amount:
+        <code>f(shift(x)) = shift(f(x))</code>. Convolution is <i>equivariant</i>.</li>
+        <li><b>Invariance</b> — if the input shifts, the output does not change:
+        <code>f(shift(x)) = f(x)</code>. Global pooling and the final classifier produce <i>invariance</i>.</li>
+      </ul>
+      <p>CNNs are equivariant in their intermediate layers and become approximately invariant at the output — this
+      is exactly what you want for classification ("a cat is a cat wherever it is") but <i>not</i> what you want for
+      detection or segmentation, where position matters.</p>`
+    },
+    {
+      q: "Explain ResNet and the problem it solved.",
+      a: `<p>Before ResNet, researchers observed a <b>degradation problem</b>: adding more layers to a plain network
+      made <i>training</i> error worse, not just test error. This is not overfitting — it is an optimization
+      failure caused by vanishing gradients and difficulty learning the identity mapping.</p>
+      <p><b>ResNet's solution:</b> residual blocks computing <code>y = x + F(x)</code>. If the optimal
+      transformation is close to identity, the network just needs to push <code>F(x)</code> toward zero, which is
+      easy. Gradients flow through the skip connection with magnitude 1, enabling networks of 50, 101, 152+ layers.</p>
+      <p><b>Bottleneck block</b> (used in ResNet-50+): 1×1 (reduce) → 3×3 → 1×1 (expand) to save compute.</p>`
+    },
+    {
+      q: "What did AlexNet contribute?",
+      a: `<p>AlexNet (2012) is the model that launched modern deep learning. Contributions:</p>
+      <ul>
+        <li>Won ImageNet 2012 with a top-5 error of 15.3% vs 26.2% for the runner-up — a massive gap.</li>
+        <li>Popularized <b>ReLU</b> instead of sigmoid/tanh.</li>
+        <li>Used <b>dropout</b> in the classifier head to reduce overfitting.</li>
+        <li>Trained on <b>two GPUs</b>, showing the value of hardware acceleration.</li>
+        <li>Used <b>data augmentation</b> (crops, flips) and local response normalization.</li>
+      </ul>`
+    },
+    {
+      q: "Why does VGG use only 3×3 convolutions?",
+      a: `<p>Two 3×3 convolutions have the same receptive field as one 5×5 convolution, and three 3×3 convs match a
+      7×7, but with fewer parameters and more non-linearities:</p>
+      <ul>
+        <li>3×3 stack: <code>3 · 3² · C² = 27C²</code> parameters for three layers vs <code>7²C² = 49C²</code> for
+        one 7×7 layer.</li>
+        <li>Three ReLUs instead of one → more expressive decision function.</li>
+      </ul>
+      <p>VGG's simplicity and regularity made it a hugely popular backbone for transfer learning.</p>`
+    },
+    {
+      q: "What is the Inception module?",
+      a: `<p>The Inception module applies several convolution sizes (1×1, 3×3, 5×5) and a max-pool <b>in parallel</b>
+      and concatenates their outputs, letting the network choose the right scale at each layer.</p>
+      <p>To control cost, it uses 1×1 convolutions as bottlenecks before the larger kernels. Inception v3 further
+      factorizes <code>n×n</code> convolutions into <code>1×n</code> and <code>n×1</code> (asymmetric
+      factorization).</p>`
+    },
+    {
+      q: "How does EfficientNet's compound scaling work?",
+      a: `<p>Previously people scaled one dimension at a time: depth (ResNet), width (WideResNet), or resolution.
+      EfficientNet showed that scaling all three together with a fixed ratio is far more efficient:</p>
+      <pre><code>depth:      d = α^φ
+width:      w = β^φ
+resolution: r = γ^φ
+subject to: α · β² · γ² ≈ 2</code></pre>
+      <p>Its base architecture came from neural architecture search (MBConv blocks with squeeze-and-excitation).
+      EfficientNet-B0 reaches ResNet-50 accuracy with ~1/5 the FLOPs.</p>`
+    },
+    {
+      q: "How many parameters does a convolutional layer have?",
+      a: `<p><code>(K × K × C_in + 1) × C_out</code></p>
+      <p>Example: a 3×3 conv with 64 input channels and 128 output channels has
+      <code>(3 × 3 × 64 + 1) × 128 = (576 + 1) × 128 = 73,856</code> parameters — independent of the input's
+      spatial dimensions, which is the entire point of weight sharing.</p>`
+    },
+    {
+      q: "What is a feature map?",
+      a: `<p>A feature map is the 2-D (or 3-D) activation output produced by one filter applied across the input.
+      Each filter learns to detect a particular pattern (an edge at a specific orientation, a colour blob, a
+      texture), and its feature map records <i>where</i> in the image that pattern occurs and with what strength.
+      A conv layer with <code>C_out</code> filters produces <code>C_out</code> feature maps, stacked into a tensor
+      of shape <code>(C_out, H, W)</code>.</p>`
+    },
+    {
+      q: "What are the limitations of CNNs?",
+      a: `<ul>
+        <li>Limited receptive field — long-range spatial dependencies require very deep stacks or dilation.</li>
+        <li>Strong built-in locality bias — less flexible than attention for tasks where global context matters.</li>
+        <li>Translation invariance can be a drawback for tasks where absolute position matters (e.g. some
+        regression tasks).</li>
+        <li>Struggle with large rotations/scale changes without augmentation.</li>
+        <li>Vision Transformers now match or beat CNNs at scale, though CNNs remain far more efficient on small
+        data.</li>
+      </ul>`
+    }
+  ]
+},
+
+/* ------------------------------------------------------------------
+   9. RNNs / LSTM / GRU
+------------------------------------------------------------------ */
+{
+  id: "rnn",
+  icon: "🔗",
+  title: "9. Sequence Models: RNN, LSTM, GRU",
+  concepts: `
+    <div class="concept">
+      <h4>The RNN recurrence</h4>
+      <pre><code>h_t = tanh(W_hh · h_{t−1} + W_xh · x_t + b_h)
+y_t = W_hy · h_t + b_y</code></pre>
+      <p>The same weights are reused at every time step — this is weight sharing over time. The hidden state
+      <code>h_t</code> is the network's "memory" of everything seen so far.</p>
+    </div>
+
+    <div class="concept">
+      <h4>LSTM gates (memorize the four equations)</h4>
+      <pre><code>f_t = σ(W_f · [h_{t−1}, x_t] + b_f)     # forget gate
+i_t = σ(W_i · [h_{t−1}, x_t] + b_i)     # input gate
+g_t = tanh(W_g · [h_{t−1}, x_t] + b_g)  # candidate
+o_t = σ(W_o · [h_{t−1}, x_t] + b_o)     # output gate
+
+c_t = f_t ⊙ c_{t−1} + i_t ⊙ g_t         # cell state update
+h_t = o_t ⊙ tanh(c_t)                    # hidden state</code></pre>
+      <p>The <b>cell state</b> <code>c_t</code> is the key: it is updated <i>additively</i>, giving gradients a
+      near-constant path back through time.</p>
+    </div>
+
+    <div class="concept">
+      <h4>GRU vs LSTM</h4>
+      <table>
+        <thead><tr><th></th><th>LSTM</th><th>GRU</th></tr></thead>
+        <tbody>
+          <tr><td>Gates</td><td>3 (forget, input, output)</td><td>2 (update, reset)</td></tr>
+          <tr><td>States</td><td>Cell state + hidden state</td><td>Hidden state only</td></tr>
+          <tr><td>Parameters</td><td>~4 × (n² + nm)</td><td>~3 × (n² + nm)</td></tr>
+          <tr><td>Speed</td><td>Slower</td><td>Faster</td></tr>
+          <tr><td>Long dependencies</td><td>Slightly better</td><td>Comparable on most tasks</td></tr>
+        </tbody>
+      </table>
+    </div>
+  `,
+  qa: [
+    {
+      q: "Why do we need specialized architectures for sequences?",
+      a: `<p>Sequence data has two properties that feed-forward networks cannot handle:</p>
+      <ul>
+        <li><b>Variable length</b> — you cannot fix the input size in advance.</li>
+        <li><b>Temporal dependence</b> — the meaning of a token depends on the tokens before it.</li>
+      </ul>
+      <p>RNNs handle both by applying the same cell recurrently, sharing parameters across time steps and
+      maintaining a hidden state that summarizes the past.</p>`
+    },
+    {
+      q: "What is backpropagation through time (BPTT)?",
+      a: `<p>BPTT is simply backpropagation applied to the <b>unrolled</b> RNN: the recurrence is expanded into a
+      chain of identical cells, one per time step, and gradients flow backwards through that chain.</p>
+      <p>Because the same weight matrix is applied at every step, the gradient involves a product of many copies of
+      <code>W_hh</code> (times the activation derivative). If the largest singular value of <code>W_hh</code> is
+      less than 1 the product vanishes; if greater than 1 it explodes. This is the root cause of the RNN training
+      difficulty.</p>
+      <p><b>Truncated BPTT</b> limits backprop to the last <code>k</code> steps to bound memory and computation,
+      at the cost of not learning dependencies longer than <code>k</code>.</p>`
+    },
+    {
+      q: "Why do plain RNNs suffer from vanishing gradients?",
+      a: `<p>The gradient of the loss at time <code>t</code> with respect to an early hidden state involves:</p>
+      <p><code>∂h_t/∂h_k = Π_{i=k+1..t} diag(σ'(z_i)) · W_hh</code></p>
+      <p>This is a product of <code>(t − k)</code> matrices. If the activation is tanh, <code>σ'</code> is at most 1
+      and usually much smaller; multiplied many times, the product decays to zero exponentially. The network
+      effectively cannot learn dependencies more than ~10–20 steps back.</p>`
+    },
+    {
+      q: "How does LSTM solve the vanishing gradient problem?",
+      a: `<p>The key is the <b>cell state</b> with additive updates:</p>
+      <p><code>c_t = f_t ⊙ c_{t−1} + i_t ⊙ g_t</code></p>
+      <p>Taking the derivative: <code>∂c_t/∂c_{t−1} = f_t</code> (plus a small term). There is no repeated matrix
+      multiplication — just an elementwise multiply by the forget gate. If the forget gate is near 1, gradients flow
+      back through many time steps almost unchanged (the "constant error carousel").</p>
+      <p>The gates are <i>learned</i>: the network can decide to remember (f ≈ 1) or forget (f ≈ 0) at each step.</p>`
+    },
+    {
+      q: "What does each LSTM gate do intuitively?",
+      a: `<ul>
+        <li><b>Forget gate</b> — decides how much of the old cell state to keep. "Should I still remember the
+        subject from 20 words ago?"</li>
+        <li><b>Input gate</b> — decides how much of the new candidate information to write into the cell state.</li>
+        <li><b>Candidate</b> — the new information proposed by the current input.</li>
+        <li><b>Output gate</b> — decides how much of the cell state to expose as the hidden state at this time
+        step (for the next layer and for the prediction).</li>
+      </ul>`
+    },
+    {
+      q: "GRU vs LSTM — which should you use?",
+      a: `<p>GRUs have two gates (update and reset) and no separate cell state, so they have ~25% fewer parameters
+      and train faster. Empirically, performance is often comparable; GRUs tend to win on smaller datasets, while
+      LSTMs can capture slightly longer dependencies and are more common in long-sequence tasks.</p>
+      <p>In practice: <b>try GRU first</b> for speed, switch to LSTM if you need the extra capacity. And for most
+      modern sequence tasks, a <b>transformer</b> beats both if you have enough data.</p>`
+    },
+    {
+      q: "What is a bidirectional RNN?",
+      a: `<p>A bidirectional RNN runs two RNNs over the sequence — one forward and one backward — and concatenates
+      their hidden states. Each output therefore has context from both the past and the future.</p>
+      <p><b>Use cases:</b> tasks where the whole sequence is available, like text classification, NER, or
+      machine translation encoding.</p>
+      <p><b>Not usable</b> for autoregressive generation or online streaming, since the future is not available.</p>`
+    },
+    {
+      q: "What is a seq2seq model and how does it work?",
+      a: `<p>Seq2seq maps an input sequence to an output sequence of a different length using an
+      <b>encoder–decoder</b> architecture:</p>
+      <ol>
+        <li>The <b>encoder</b> reads the input and compresses it into a context vector / final hidden state.</li>
+        <li>The <b>decoder</b> generates the output one token at a time, conditioned on that context and on the
+        tokens it has already produced.</li>
+      </ol>
+      <p>Attention was introduced to fix the bottleneck of squeezing a long sentence into one fixed vector —
+      letting the decoder look back at all encoder states. That idea eventually became the transformer.</p>`
+    },
+    {
+      q: "What is teacher forcing?",
+      a: `<p>During seq2seq training, instead of feeding the decoder its own previous prediction (which may be
+      wrong early on), you feed the <b>ground-truth</b> previous token. This stabilizes and speeds up training.</p>
+      <p><b>Downside: exposure bias</b> — at inference time the model must consume its own outputs, which it never
+      saw during training, causing error accumulation. Mitigations include scheduled sampling (gradually mixing
+      model outputs into the input) and sequence-level training objectives.</p>`
+    },
+    {
+      q: "What are the main limitations of RNNs compared to transformers?",
+      a: `<ul>
+        <li><b>Sequential computation</b> — step <code>t</code> depends on step <code>t−1</code>, so training cannot
+        be parallelized over the sequence. This is the fatal flaw at modern scale.</li>
+        <li><b>Long-range dependencies</b> — even LSTMs struggle beyond a few hundred tokens; attention has a
+        direct path between any two positions.</li>
+        <li><b>Fixed-size hidden state</b> — a bottleneck for long inputs.</li>
+        <li><b>Memory</b> — BPTT requires storing all intermediate states.</li>
+      </ul>
+      <p>Transformers solve all of these except the O(n²) attention cost, which is why they dominate.</p>`
+    },
+    {
+      q: "What is a stacked / deep RNN?",
+      a: `<p>Multiple RNN layers stacked vertically: the output sequence of layer 1 becomes the input sequence of
+      layer 2. Lower layers learn low-level patterns (character n-grams, local prosody) and higher layers learn
+      abstract, long-range structure. Usually 2–4 layers is enough; residual connections and dropout between layers
+      help with deeper stacks.</p>`
+    }
+  ]
+},
+
+/* ------------------------------------------------------------------
+   10. ATTENTION & TRANSFORMERS
+------------------------------------------------------------------ */
+{
+  id: "transformers",
+  icon: "🤖",
+  title: "10. Attention & Transformers",
+  concepts: `
+    <div class="concept">
+      <h4>Scaled dot-product attention</h4>
+      <pre><code>Attention(Q, K, V) = softmax( Q·Kᵀ / √d_k ) · V</code></pre>
+      <ul>
+        <li><b>Q (query)</b> — "what am I looking for?"</li>
+        <li><b>K (key)</b> — "what do I contain?"</li>
+        <li><b>V (value)</b> — "what do I actually give you?"</li>
+      </ul>
+      <p>The dot product <code>Q·Kᵀ</code> measures similarity; softmax turns it into attention weights; the
+      weighted sum of values is the output.</p>
+    </div>
+
+    <div class="concept">
+      <h4>Why divide by √d_k?</h4>
+      <p>If the components of Q and K are independent with zero mean and unit variance, their dot product has
+      variance <code>d_k</code>. For large <code>d_k</code> the logits become huge, pushing softmax into a
+      saturated regime where gradients are tiny. Dividing by <code>√d_k</code> restores unit variance.</p>
+    </div>
+
+    <div class="concept">
+      <h4>Transformer block</h4>
+      <pre><code>x = x + MultiHeadAttention(LayerNorm(x))   # pre-LN ordering
+x = x + FeedForward(LayerNorm(x))          # FFN: d -> 4d -> d</code></pre>
+      <p>Each block has two sub-layers, each wrapped in a residual connection and a normalization.
+      <b>Pre-LN</b> (norm before the sub-layer) is standard in modern models because it trains more stably
+      without warmup. <b>Post-LN</b> (norm after) is what the original paper used.</p>
+    </div>
+
+    <div class="concept">
+      <h4>Model families</h4>
+      <table>
+        <thead><tr><th>Type</th><th>Examples</th><th>Best for</th></tr></thead>
+        <tbody>
+          <tr><td>Encoder-only</td><td>BERT, RoBERTa, DeBERTa</td><td>Classification, NER, retrieval, embeddings</td></tr>
+          <tr><td>Decoder-only</td><td>GPT, Llama, Mistral, Claude</td><td>Generation, chat, in-context learning</td></tr>
+          <tr><td>Encoder–decoder</td><td>T5, BART, mT5</td><td>Translation, summarization, seq2seq</td></tr>
+        </tbody>
+      </table>
+    </div>
+  `,
+  qa: [
+    {
+      q: "Explain the attention mechanism.",
+      a: `<p>Attention lets each position in a sequence gather information from other positions. Each token produces
+      three vectors: a <b>query</b> (what it is looking for), a <b>key</b> (what it offers), and a <b>value</b>
+      (the information it carries).</p>
+      <ol>
+        <li>Compute similarity between the query and every key: <code>scores = Q · Kᵀ / √d_k</code>.</li>
+        <li>Normalize with softmax to get attention weights that sum to 1.</li>
+        <li>Take the weighted sum of the values: <code>output = weights · V</code>.</li>
+      </ol>
+      <p>The result is a context-aware representation of each token that blends in information from the tokens it
+      finds relevant. Crucially, the path length between any two positions is <b>O(1)</b> — unlike an RNN where
+      information must propagate step by step.</p>`
+    },
+    {
+      q: "What is self-attention?",
+      a: `<p>Self-attention is attention where Q, K and V all come from the <b>same</b> sequence. Each token attends
+      to all tokens in the same input (including itself), so every representation becomes a context-mixed version
+      of itself. This is the core operation of a transformer encoder.</p>
+      <p>By contrast, <b>cross-attention</b> takes Q from one sequence (the decoder) and K, V from another (the
+      encoder) — used in translation and encoder–decoder models.</p>`
+    },
+    {
+      q: "What is multi-head attention and why use multiple heads?",
+      a: `<p>Instead of one attention operation over <code>d_model</code> dimensions, multi-head attention projects
+      Q, K, V into <code>h</code> lower-dimensional subspaces (each of size <code>d_model/h</code>), runs attention
+      in parallel in each, concatenates the results, and applies a final linear projection.</p>
+      <p><b>Why:</b> different heads can specialize in different relationships — one head might track syntactic
+      dependencies, another coreference, another positional adjacency. A single head would have to average all these
+      patterns into one distribution. Total compute stays roughly the same as single-head attention.</p>`
+    },
+    {
+      q: "What are positional encodings and why are they necessary?",
+      a: `<p>Self-attention is <b>permutation equivariant</b>: if you shuffle the tokens, the outputs shuffle
+      identically. It has no built-in notion of order. Since word order carries meaning, positional information must
+      be injected.</p>
+      <p><b>Common approaches:</b></p>
+      <ul>
+        <li><b>Sinusoidal</b> — fixed sine/cosine functions of position and frequency (original paper). Allows
+        extrapolation in principle.</li>
+        <li><b>Learned absolute</b> — a trainable embedding per position (BERT, GPT-2). Limited to the maximum
+        length seen in training.</li>
+        <li><b>RoPE (Rotary)</b> — rotates Q and K by a position-dependent angle; relative-position aware and
+        extrapolates much better. Standard in modern LLMs (Llama, Qwen).</li>
+        <li><b>ALiBi</b> — adds a distance-based bias directly to attention scores.</li>
+      </ul>`
+    },
+    {
+      q: "Why did transformers replace RNNs?",
+      a: `<ul>
+        <li><b>Parallelism</b> — all positions are processed simultaneously, so training scales beautifully with
+        GPUs. RNNs must process sequentially.</li>
+        <li><b>Short gradient paths</b> — any two positions are one attention hop apart, so long-range dependencies
+        are learned easily. RNNs need many steps.</li>
+        <li><b>Scalability</b> — transformers keep improving with more data and parameters in a predictable way
+        (scaling laws), whereas RNN gains saturate.</li>
+        <li><b>Flexibility</b> — the same architecture works for text, images (ViT), audio, and multimodal inputs.</li>
+      </ul>
+      <p>The price is O(n²) complexity in sequence length for attention.</p>`
+    },
+    {
+      q: "What is the computational complexity of self-attention and how do you mitigate it?",
+      a: `<p>Self-attention is <b>O(n²·d)</b> in time and <b>O(n²)</b> in memory, where <code>n</code> is the
+      sequence length — because you materialize an <code>n × n</code> attention matrix.</p>
+      <p><b>Mitigations:</b></p>
+      <ul>
+        <li><b>FlashAttention</b> — a memory-efficient, IO-aware kernel that computes attention in tiles without
+        ever materializing the full matrix. Same math, much faster and lower memory.</li>
+        <li><b>Sparse attention</b> — attend only to a subset of positions (Longformer, BigBird).</li>
+        <li><b>Sliding-window attention</b> — attend to a local window (Mistral).</li>
+        <li><b>Linear attention</b> — approximate softmax with a kernel trick to get O(n).</li>
+        <li><b>KV cache + grouped-query attention</b> — reduce inference memory.</li>
+      </ul>`
+    },
+    {
+      q: "What is masking in attention?",
+      a: `<p>Masks set certain attention scores to −∞ before the softmax, so those positions receive zero weight.</p>
+      <ul>
+        <li><b>Causal (look-ahead) mask</b> — in decoder-only models, token <code>i</code> may only attend to
+        positions ≤ <code>i</code>. This is what makes autoregressive generation possible and keeps training
+        consistent with inference.</li>
+        <li><b>Padding mask</b> — prevents attending to padding tokens in a batch of variable-length sequences.</li>
+      </ul>`
+    },
+    {
+      q: "Explain BERT and its training objectives.",
+      a: `<p>BERT is an <b>encoder-only</b> transformer pretrained with two self-supervised objectives:</p>
+      <ul>
+        <li><b>Masked Language Modelling (MLM)</b> — randomly mask 15% of tokens and predict them from bidirectional
+        context. This is what makes BERT deeply bidirectional.</li>
+        <li><b>Next Sentence Prediction (NSP)</b> — predict whether sentence B actually follows sentence A. Later
+        work (RoBERTa) showed NSP is not very useful and dropped it.</li>
+      </ul>
+      <p>After pretraining, BERT is fine-tuned with a task-specific head for classification, NER, QA, etc. It is
+      excellent for <i>understanding</i> tasks but cannot generate text autoregressively.</p>`
+    },
+    {
+      q: "Explain GPT and how it differs from BERT.",
+      a: `<p>GPT is a <b>decoder-only</b> transformer trained with a single objective: predict the next token given
+      all previous tokens (causal language modelling), using a causal mask.</p>
+      <table>
+        <thead><tr><th></th><th>BERT</th><th>GPT</th></tr></thead>
+        <tbody>
+          <tr><td>Architecture</td><td>Encoder-only</td><td>Decoder-only</td></tr>
+          <tr><td>Attention</td><td>Bidirectional</td><td>Causal (left-to-right)</td></tr>
+          <tr><td>Objective</td><td>Masked LM</td><td>Next-token prediction</td></tr>
+          <tr><td>Best at</td><td>Understanding / classification</td><td>Generation / dialogue</td></tr>
+        </tbody>
+      </table>
+      <p>GPT-style models also show <b>in-context learning</b>: they can perform new tasks from examples in the
+      prompt without any weight updates.</p>`
+    },
+    {
+      q: "Why is the feed-forward network inside a transformer block so large?",
+      a: `<p>The FFN (usually <code>d → 4d → d</code>) contains about two-thirds of all parameters in the model.
+      While attention <i>mixes information across positions</i>, the FFN <i>processes each position independently</i>
+      and acts as a key-value memory — research suggests FFN layers store factual knowledge that attention then
+      routes. The 4× expansion gives enough capacity for this without changing the model width used by attention.</p>`
+    },
+    {
+      q: "What is the difference between pre-LN and post-LN transformers?",
+      a: `<p><b>Post-LN</b> (original paper): <code>x = LayerNorm(x + SubLayer(x))</code>. It achieves slightly
+      better final performance but is unstable — gradients near the output are large and it requires careful
+      warmup.</p>
+      <p><b>Pre-LN</b> (modern default): <code>x = x + SubLayer(LayerNorm(x))</code>. The residual path is a clean
+      identity, so gradients flow unimpeded and training is far more stable — warmup becomes optional. The
+      trade-off is a marginally lower ceiling on final quality, which is why some large models add a final
+      LayerNorm and extra normalization.</p>`
+    },
+    {
+      q: "What is a KV cache and why is it needed at inference?",
+      a: `<p>During autoregressive generation, each new token attends to all previous tokens. Without caching, you
+      would recompute the keys and values for the entire prefix at every step — O(n²) work per generated token.</p>
+      <p>A <b>KV cache</b> stores the computed K and V tensors for all previous positions so each step only needs to
+      compute Q for the new token and attend to the cache — O(n) work per token. The cost is memory: the cache grows
+      linearly with sequence length and batch size, and can dominate GPU memory for long contexts. Techniques like
+      <b>Multi-Query Attention</b> and <b>Grouped-Query Attention</b> shrink it by sharing K/V heads.</p>`
+    },
+    {
+      q: "What is a tokenizer and why do we need one?",
+      a: `<p>Neural networks operate on numbers, so text must be split into discrete units (tokens) and mapped to
+      integer IDs. Common algorithms:</p>
+      <ul>
+        <li><b>Word-level</b> — simple but has a huge vocabulary and fails on unseen words.</li>
+        <li><b>Character-level</b> — tiny vocabulary but very long sequences.</li>
+        <li><b>Subword (BPE, WordPiece, SentencePiece)</b> — the standard compromise: frequent words stay whole,
+        rare words split into meaningful pieces ("unhappiness" → "un" + "happi" + "ness"). Handles any input,
+        including typos and new words.</li>
+      </ul>`
+    },
+    {
+      q: "What are scaling laws?",
+      a: `<p>Empirical power-law relationships showing that model loss decreases predictably as you increase model
+      parameters, dataset size, and compute:</p>
+      <p><code>L ∝ N^(−α)</code>, <code>L ∝ D^(−β)</code>, <code>L ∝ C^(−γ)</code></p>
+      <p>Chinchilla showed that for a fixed compute budget, models were badly <b>undertrained</b> on data — the
+      optimal recipe is roughly 20 tokens per parameter. This is why modern models use far more data than earlier
+      ones of the same size. Scaling laws let teams predict the performance of a large run from small runs.</p>`
+    },
+    {
+      q: "What is the difference between pretraining, fine-tuning, instruction tuning and RLHF?",
+      a: `<ul>
+        <li><b>Pretraining</b> — self-supervised next-token (or masked-token) prediction on a huge corpus.
+        This is where most of the knowledge and capability comes from.</li>
+        <li><b>Supervised fine-tuning (SFT)</b> — train on curated (instruction, response) pairs so the model
+        follows instructions.</li>
+        <li><b>Instruction tuning</b> — SFT on a diverse mixture of tasks, improving zero-shot generalization to
+        unseen instructions.</li>
+        <li><b>RLHF / DPO</b> — align the model with human preferences using a reward model trained on human
+        comparisons, then optimize the policy against it (with a KL penalty to stay close to the SFT model).</li>
+      </ul>`
+    },
+    {
+      q: "Why do transformers need residual connections and layer norm?",
+      a: `<p>Transformers stack dozens to hundreds of blocks. Without residual connections, gradients would vanish
+      long before reaching the early layers. Without normalization, the scale of activations drifts across layers,
+      making training unstable and sensitive to initialization and learning rate. Together they make very deep,
+      very wide models trainable — the same insight as ResNet, applied to attention blocks.</p>`
+    }
+  ]
+},
+
+/* ------------------------------------------------------------------
+   11. GENERATIVE MODELS
+------------------------------------------------------------------ */
+{
+  id: "generative",
+  icon: "🎨",
+  title: "11. Generative Models",
+  concepts: `
+    <div class="concept">
+      <h4>The generative model family</h4>
+      <table>
+        <thead><tr><th>Model</th><th>Idea</th><th>Strength</th><th>Weakness</th></tr></thead>
+        <tbody>
+          <tr><td>Autoencoder</td><td>Compress → reconstruct</td><td>Simple, fast, useful embeddings</td><td>Not a true generative model; blurry</td></tr>
+          <tr><td>VAE</td><td>Probabilistic latent space + ELBO</td><td>Principled, smooth latent space</td><td>Blurry samples, posterior collapse</td></tr>
+          <tr><td>GAN</td><td>Generator vs discriminator game</td><td>Sharp, realistic samples; fast inference</td><td>Unstable, mode collapse</td></tr>
+          <tr><td>Diffusion</td><td>Learn to denoise step by step</td><td>State-of-the-art quality and diversity</td><td>Slow sampling (many steps)</td></tr>
+          <tr><td>Autoregressive</td><td>Predict next token/pixel</td><td>Exact likelihood, flexible</td><td>Slow sequential sampling</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="concept">
+      <h4>VAE loss (negative ELBO)</h4>
+      <pre><code>Loss = Reconstruction_Loss(x, x̂)  +  KL( q(z|x) ‖ p(z) )</code></pre>
+      <p>The first term pushes good reconstructions; the second keeps the latent distribution close to the prior
+      (usually a standard Gaussian) so you can sample from it. The two terms fight each other — that tension is
+      the VAE's defining characteristic.</p>
+    </div>
+
+    <div class="concept">
+      <h4>Diffusion in two sentences</h4>
+      <p><b>Forward process:</b> gradually add Gaussian noise to an image over T steps until it is pure noise
+      (fixed, no learning).</p>
+      <p><b>Reverse process:</b> train a network to predict the noise added at each step, then run it backwards from
+      pure noise to generate a sample.</p>
+    </div>
+  `,
+  qa: [
+    {
+      q: "What is an autoencoder?",
+      a: `<p>An autoencoder is trained to reconstruct its own input through a <b>bottleneck</b>:</p>
+      <div class="flow">x → encoder → z (low-dim) → decoder → x̂</div>
+      <p>The loss is reconstruction error (MSE or BCE). Because the bottleneck is smaller than the input, the
+      network must learn a compressed representation that captures the most important structure.</p>
+      <p><b>Uses:</b> dimensionality reduction (a non-linear PCA), denoising, anomaly detection (high reconstruction
+      error = anomaly), and pretraining. <b>Limitation:</b> a plain autoencoder is not a proper generative model —
+      the latent space is not regularized, so sampling from random <code>z</code> produces garbage.</p>`
+    },
+    {
+      q: "What is a VAE and how does it differ from a plain autoencoder?",
+      a: `<p>A Variational Autoencoder encodes the input into a <b>distribution</b> over the latent space
+      (mean <code>μ</code> and log-variance <code>log σ²</code>) rather than a single point, and is trained by
+      maximizing the <b>Evidence Lower Bound (ELBO)</b>:</p>
+      <pre><code>ELBO = E[log p(x|z)] − KL( q(z|x) ‖ p(z) )</code></pre>
+      <p>The KL term forces the encoded distributions to stay close to a standard Gaussian prior, which makes the
+      latent space <b>smooth and continuous</b> — nearby points decode to similar outputs, so you can sample
+      <code>z ~ N(0, I)</code> and generate new data.</p>
+      <p><b>Trade-off:</b> VAEs produce somewhat blurry samples because the reconstruction loss is averaged over
+      the latent uncertainty, but they have a principled probabilistic foundation and a well-behaved latent space.</p>`
+    },
+    {
+      q: "What is the reparameterization trick and why is it needed?",
+      a: `<p>To train a VAE you need to backpropagate through the sampling operation
+      <code>z ~ N(μ, σ²)</code>. But sampling is a stochastic operation — you cannot take its derivative.</p>
+      <p>The reparameterization trick rewrites the sample as:</p>
+      <p><code>z = μ + σ ⊙ ε</code>, where <code>ε ~ N(0, I)</code></p>
+      <p>Now the randomness is in <code>ε</code>, which does not depend on the parameters, and gradients can flow
+      through <code>μ</code> and <code>σ</code> normally. This simple change makes VAEs trainable with standard
+      backprop.</p>`
+    },
+    {
+      q: "What is posterior collapse in a VAE?",
+      a: `<p>Posterior collapse happens when the decoder becomes powerful enough to reconstruct the input
+      <i>without</i> using the latent code. The KL term then drives <code>q(z|x)</code> to exactly match the prior,
+      so the latent variable carries no information and the model degenerates into a plain autoencoder.</p>
+      <p><b>Mitigations:</b> KL annealing (gradually increase the KL weight), free-bits (allow a minimum KL per
+      dimension), a weaker decoder, or architectural changes like skip connections from encoder to decoder.</p>`
+    },
+    {
+      q: "How does a GAN work?",
+      a: `<p>A GAN pits two networks against each other:</p>
+      <ul>
+        <li><b>Generator G</b> — takes random noise <code>z</code> and produces fake samples.</li>
+        <li><b>Discriminator D</b> — tries to distinguish real from fake.</li>
+      </ul>
+      <p>The minimax objective is:</p>
+      <pre><code>min_G max_D  E[log D(x)] + E[log(1 − D(G(z)))]</code></pre>
+      <p>At the optimum, G produces samples indistinguishable from real data and D outputs 0.5 everywhere. The
+      generator never sees the real data directly — it learns only through D's gradients, which is why training is
+      delicate.</p>`
+    },
+    {
+      q: "What is mode collapse in GANs and how do you fix it?",
+      a: `<p>Mode collapse occurs when the generator learns to produce only a few types of output that reliably
+      fool the discriminator, ignoring the rest of the data distribution. The generator has found a "safe" region
+      and stops exploring.</p>
+      <p><b>Fixes:</b></p>
+      <ul>
+        <li><b>Wasserstein loss (WGAN)</b> — replaces the JS divergence with the Earth-Mover distance, which gives
+        smooth, meaningful gradients even when distributions do not overlap.</li>
+        <li><b>Minibatch discrimination</b> — let D look at a batch to detect lack of diversity.</li>
+        <li><b>Unrolled GANs</b>, <b>spectral normalization</b>, <b>experience replay</b>.</li>
+        <li>Careful architecture and hyperparameters (TTUR, EMA of generator weights).</li>
+      </ul>`
+    },
+    {
+      q: "Why is GAN training unstable?",
+      a: `<p>Because it is a two-player game, not a single optimization problem. Issues include:</p>
+      <ul>
+        <li><b>Non-stationary objective</b> — each network's loss landscape shifts as the other improves.</li>
+        <li><b>Vanishing gradients</b> — if D becomes too good, <code>D(G(z)) ≈ 0</code> and the gradient to G
+        vanishes (which is why the non-saturating loss <code>−log D(G(z))</code> is used instead).</li>
+        <li><b>Oscillation / no convergence guarantee</b> — the game may cycle rather than converge.</li>
+        <li><b>Mode collapse</b>.</li>
+      </ul>
+      <p>WGAN, spectral normalization, and gradient penalties (WGAN-GP) are the standard stabilizers.</p>`
+    },
+    {
+      q: "How do diffusion models work?",
+      a: `<p>Diffusion models have two processes:</p>
+      <ol>
+        <li><b>Forward (fixed)</b> — add small amounts of Gaussian noise over T steps until the data becomes
+        pure noise. This is a Markov chain with no learnable parameters.</li>
+        <li><b>Reverse (learned)</b> — train a network (usually a U-Net or transformer) to predict the noise that
+        was added at each step, given the noisy image and the timestep. At sampling time, start from pure noise and
+        iteratively denoise.</li>
+      </ol>
+      <p><b>Why they work so well:</b> the training objective reduces to a simple denoising regression, which is
+      extremely stable — no adversarial game, no mode collapse. They currently produce state-of-the-art image,
+      audio and video quality.</p>
+      <p><b>Downside:</b> sampling requires many forward passes (tens to hundreds of steps). Distillation methods
+      (DDIM, progressive distillation, consistency models) cut this to a few steps.</p>`
+    },
+    {
+      q: "What is latent diffusion?",
+      a: `<p>Instead of running the diffusion process in pixel space (expensive, high-dimensional), latent diffusion
+      first compresses the image into a much smaller latent representation using a pretrained autoencoder, runs the
+      entire diffusion process in that latent space, and then decodes back to pixels.</p>
+      <p>This is the architecture behind Stable Diffusion: it makes high-resolution generation feasible on consumer
+      GPUs while maintaining quality.</p>`
+    },
+    {
+      q: "What is classifier-free guidance?",
+      a: `<p>At sampling time, the model is run twice: once conditioned on the prompt and once unconditioned. The
+      final prediction is an extrapolation:</p>
+      <p><code>ε = ε_uncond + s · (ε_cond − ε_uncond)</code></p>
+      <p>Higher guidance scale <code>s</code> makes the output follow the prompt more strongly, at the cost of
+      diversity and sometimes image quality (over-saturation). It is the "CFG scale" slider in most image
+      generation UIs.</p>`
+    },
+    {
+      q: "Compare VAEs, GANs and diffusion models.",
+      a: `<table>
+        <thead><tr><th></th><th>VAE</th><th>GAN</th><th>Diffusion</th></tr></thead>
+        <tbody>
+          <tr><td>Sample quality</td><td>Blurry</td><td>Sharp</td><td>Best</td></tr>
+          <tr><td>Diversity</td><td>Good</td><td>Prone to mode collapse</td><td>Excellent</td></tr>
+          <tr><td>Training stability</td><td>Stable</td><td>Unstable</td><td>Stable</td></tr>
+          <tr><td>Sampling speed</td><td>One pass (fast)</td><td>One pass (fast)</td><td>Many steps (slow)</td></tr>
+          <tr><td>Likelihood</td><td>Lower bound (ELBO)</td><td>Implicit / none</td><td>Variational bound</td></tr>
+          <tr><td>Latent space</td><td>Smooth, meaningful</td><td>Entangled</td><td>Via autoencoder (LDM)</td></tr>
+        </tbody>
+      </table>`
+    }
+  ]
+},
+
+/* ------------------------------------------------------------------
+   12. TRANSFER LEARNING
+------------------------------------------------------------------ */
+{
+  id: "transfer",
+  icon: "🔀",
+  title: "12. Transfer Learning & Fine-Tuning",
+  concepts: `
+    <div class="concept">
+      <h4>The spectrum</h4>
+      <div class="flow">Train from scratch  →  Feature extraction (frozen)  →  Partial fine-tuning  →  Full fine-tuning  →  PEFT / LoRA</div>
+      <p>The less data you have and the more similar your domain is to the pretraining domain, the more you should
+      freeze and the less you should fine-tune.</p>
+    </div>
+
+    <div class="concept">
+      <h4>Decision guide</h4>
+      <table>
+        <thead><tr><th>Data size</th><th>Domain similarity</th><th>Strategy</th></tr></thead>
+        <tbody>
+          <tr><td>Small</td><td>Similar</td><td>Freeze backbone, train a new head</td></tr>
+          <tr><td>Small</td><td>Different</td><td>Freeze early layers, fine-tune later layers</td></tr>
+          <tr><td>Large</td><td>Similar</td><td>Fine-tune the whole network with a small LR</td></tr>
+          <tr><td>Large</td><td>Different</td><td>Full fine-tune, or train from scratch if data is huge</td></tr>
+        </tbody>
+      </table>
+    </div>
+  `,
+  qa: [
+    {
+      q: "What is transfer learning?",
+      a: `<p>Transfer learning reuses knowledge learned on a large source task (e.g. ImageNet classification or
+      large-scale language modelling) and applies it to a different target task with less data.</p>
+      <p><b>Why it works:</b> early layers learn generic, transferable features (edges, textures, basic syntax).
+      Only the later layers become task-specific. So a pretrained backbone is a much better starting point than
+      random weights — it converges faster and generalizes better with far less labelled data.</p>`
+    },
+    {
+      q: "When should you freeze layers and when should you fine-tune?",
+      a: `<ul>
+        <li><b>Freeze</b> (feature extraction) when your dataset is small, your task is similar to the pretraining
+        task, or you want to train quickly. It also prevents catastrophic forgetting.</li>
+        <li><b>Fine-tune</b> when you have enough data, when your domain differs substantially from the pretraining
+        domain, or when you need maximum accuracy.</li>
+        <li><b>Gradual unfreezing</b> is a good middle ground — start with a frozen backbone, then progressively
+        unfreeze layers from the top down.</li>
+      </ul>`
+    },
+    {
+      q: "What are discriminative (layer-wise) learning rates?",
+      a: `<p>A technique popularized by ULMFiT: give <b>earlier layers a much smaller learning rate</b> than later
+      layers, since early layers contain generic features that should be preserved, while later layers need larger
+      updates to adapt to the new task. Typically the LR decays by a factor (e.g. 2.6×) per layer going down.</p>`
+    },
+    {
+      q: "What is catastrophic forgetting?",
+      a: `<p>When a neural network is trained on a new task, it tends to overwrite the weights that encoded the
+      previous task, abruptly losing previously learned performance. It is a major issue in continual / lifelong
+      learning.</p>
+      <p><b>Mitigations:</b> low learning rates, freezing early layers, rehearsal (replay old data), elastic weight
+      consolidation (penalize changes to important weights), and parameter-efficient fine-tuning like LoRA which
+      leaves the original weights untouched.</p>`
+    },
+    {
+      q: "What is domain adaptation?",
+      a: `<p>The setting where the source and target tasks are the same but the <b>data distributions differ</b>
+      (e.g. training on synthetic images, deploying on real photos; or training on clean text and deploying on
+      noisy social-media text). Techniques include fine-tuning on a small amount of target data, feature alignment
+      losses (MMD, adversarial domain confusion), and domain randomization during training.</p>`
+    },
+    {
+      q: "What is LoRA and why is it useful?",
+      a: `<p>LoRA (Low-Rank Adaptation) freezes the pretrained weight matrix <code>W</code> and learns a low-rank
+      update instead:</p>
+      <p><code>W' = W + B·A</code>, where <code>A</code> is <code>(r × d)</code> and <code>B</code> is
+      <code>(d × r)</code>, with rank <code>r</code> typically 4–64.</p>
+      <p><b>Benefits:</b> you train ~0.1–1% of the parameters, the base model stays untouched (easy to swap adapters
+      for different tasks), memory requirements collapse, and quality is close to full fine-tuning. It is the
+      dominant PEFT method for LLM fine-tuning.</p>`
+    },
+    {
+      q: "What is linear probing?",
+      a: `<p>Linear probing freezes the entire pretrained encoder and trains only a single linear classifier on top
+      of the frozen features. It is the standard way to <b>evaluate the quality of a representation</b> — if a
+      simple linear layer on top of the features achieves high accuracy, the representation itself is good. It is
+      used extensively to benchmark self-supervised learning methods.</p>`
+    }
+  ]
+},
+
+/* ------------------------------------------------------------------
+   13. METRICS & EVALUATION
+------------------------------------------------------------------ */
+{
+  id: "metrics",
+  icon: "📊",
+  title: "13. Metrics & Model Evaluation",
+  concepts: `
+    <div class="concept">
+      <h4>Confusion matrix</h4>
+      <table>
+        <thead><tr><th></th><th>Predicted Positive</th><th>Predicted Negative</th></tr></thead>
+        <tbody>
+          <tr><td><b>Actual Positive</b></td><td>True Positive (TP)</td><td>False Negative (FN)</td></tr>
+          <tr><td><b>Actual Negative</b></td><td>False Positive (FP)</td><td>True Negative (TN)</td></tr>
+        </tbody>
+      </table>
+      <p><b>Precision</b> = TP / (TP + FP) — of the ones I flagged, how many were right?</p>
+      <p><b>Recall</b> = TP / (TP + FN) — of the ones that were truly positive, how many did I catch?</p>
+      <p><b>F1</b> = 2 · (Precision · Recall) / (Precision + Recall) — harmonic mean.</p>
+    </div>
+
+    <div class="concept">
+      <h4>Precision vs recall trade-off</h4>
+      <p>You can always increase recall by predicting positive more often, and increase precision by predicting
+      positive more conservatively. Which one matters depends on the cost of errors:</p>
+      <ul>
+        <li><b>High recall</b> — medical screening, fraud detection (missing a case is costly).</li>
+        <li><b>High precision</b> — spam filtering, content moderation (false alarms are costly).</li>
+      </ul>
+    </div>
+  `,
+  qa: [
+    {
+      q: "Why is accuracy a bad metric for imbalanced datasets?",
+      a: `<p>If 99% of samples are negative, a model that always predicts "negative" achieves 99% accuracy while
+      being completely useless — it never detects a single positive case.</p>
+      <p><b>Better metrics:</b> precision, recall, F1, balanced accuracy, PR-AUC, Cohen's kappa, or a per-class
+      breakdown. Always look at the confusion matrix, not just one number.</p>`
+    },
+    {
+      q: "Explain precision, recall and F1.",
+      a: `<ul>
+        <li><b>Precision</b> = TP / (TP + FP). "When I say positive, how often am I right?"</li>
+        <li><b>Recall</b> = TP / (TP + FN). "Of all actual positives, how many did I find?"</li>
+        <li><b>F1</b> = 2PR / (P + R). The harmonic mean, which punishes extreme imbalances between the two.</li>
+      </ul>
+      <p>Example: 100 real positives, the model flags 80, of which 60 are correct.
+      Precision = 60/80 = 0.75; Recall = 60/100 = 0.60; F1 = 2(0.75·0.60)/(1.35) ≈ 0.67.</p>`
+    },
+    {
+      q: "ROC-AUC vs PR-AUC — when do you use which?",
+      a: `<p><b>ROC-AUC</b> plots true positive rate against false positive rate across all thresholds. It measures
+      ranking quality and is threshold-independent.</p>
+      <p><b>PR-AUC</b> plots precision against recall.</p>
+      <p><b>Key difference:</b> with extreme class imbalance, the false positive rate is divided by a huge number of
+      negatives, so ROC-AUC can look very optimistic even when the model is poor. PR-AUC focuses entirely on the
+      positive class, making it far more informative for rare-event problems (fraud, disease detection, retrieval).
+      <b>Rule: use PR-AUC for imbalanced data, ROC-AUC for balanced data.</b></p>`
+    },
+    {
+      q: "What do micro, macro and weighted averaging mean for multi-class metrics?",
+      a: `<ul>
+        <li><b>Micro</b> — aggregate TP, FP, FN across all classes first, then compute the metric. Dominated by
+        frequent classes.</li>
+        <li><b>Macro</b> — compute the metric per class, then take the unweighted mean. Treats every class equally,
+        so rare classes matter a lot.</li>
+        <li><b>Weighted</b> — average per-class metrics weighted by class support. A middle ground.</li>
+      </ul>
+      <p>For balanced classes all three are nearly identical; for imbalanced data they can differ dramatically.
+      Always state which one you are reporting.</p>`
+    },
+    {
+      q: "What is the difference between top-1 and top-k accuracy?",
+      a: `<p>Top-1 accuracy counts the prediction correct only if the highest-scoring class is right. Top-k counts
+      it correct if the true class is among the k highest-scoring classes. Top-5 is standard on ImageNet because
+      several classes are genuinely ambiguous (different dog breeds) and top-5 better reflects practical usefulness.</p>`
+    },
+    {
+      q: "What is IoU and mAP?",
+      a: `<p><b>IoU (Intersection over Union)</b> = area of overlap / area of union between a predicted box and a
+      ground-truth box. A detection is counted as a true positive if IoU exceeds a threshold (typically 0.5).</p>
+      <p><b>mAP (mean Average Precision)</b> — for each class, compute the precision-recall curve over all
+      detections ranked by confidence, take the area under it (AP), then average over classes. COCO uses mAP
+      averaged over IoU thresholds 0.5:0.05:0.95, which rewards precise localization.</p>`
+    },
+    {
+      q: "What is perplexity?",
+      a: `<p>Perplexity is the exponentiated average negative log-likelihood per token:</p>
+      <p><code>PPL = exp( −(1/N) Σ log p(token_i) )</code></p>
+      <p>It can be interpreted as the effective number of equally likely choices the model is choosing among at each
+      step — lower is better. A perplexity of 20 means the model is about as uncertain as if it were choosing
+      uniformly among 20 options. It is the standard intrinsic metric for language models, though it correlates only
+      loosely with downstream task quality.</p>`
+    },
+    {
+      q: "What are BLEU, ROUGE and BERTScore?",
+      a: `<ul>
+        <li><b>BLEU</b> — n-gram precision between generated and reference text, with a brevity penalty. Standard
+        for machine translation, but it ignores meaning and penalizes valid paraphrases.</li>
+        <li><b>ROUGE</b> — n-gram <i>recall</i> oriented; standard for summarization (ROUGE-1, ROUGE-2,
+        ROUGE-L).</li>
+        <li><b>BERTScore</b> — cosine similarity between contextual embeddings of generated and reference tokens;
+        captures semantic similarity far better than n-gram overlap.</li>
+      </ul>`
+    },
+    {
+      q: "How do you split data into train/validation/test, and what is data leakage?",
+      a: `<p><b>Split:</b> train (fit parameters), validation (tune hyperparameters and early stopping), test
+      (final unbiased estimate, touched exactly once). Typical splits are 60/20/20 or 80/10/10; with little data,
+      use k-fold cross-validation on the training portion.</p>
+      <p><b>Data leakage</b> is when information from outside the training set leaks in, producing optimistic
+      results that collapse in production. Examples: scaling/normalizing using statistics computed on the full
+      dataset, using future data in a time series, near-duplicate images split across train and test, or target
+      encoding computed before the split. <b>Fix: fit every preprocessing step only on the training fold.</b></p>`
+    },
+    {
+      q: "What is model calibration?",
+      a: `<p>A model is calibrated if its predicted probabilities match observed frequencies — among all samples
+      predicted with 0.8 confidence, roughly 80% should be correct.</p>
+      <p>Deep networks are often <b>over-confident</b> (especially with cross-entropy training and no regularization).
+      <b>Fixes:</b> temperature scaling (divide logits by a learned T), label smoothing, ensembling, or isotonic
+      regression. Calibration matters whenever probabilities are used for decisions, not just ranking.</p>`
+    },
+    {
+      q: "How do you evaluate a model when you have no labelled test set?",
+      a: `<p>Options: hold out a small human-labelled sample; use proxy metrics (perplexity, reconstruction loss);
+      do human evaluation (A/B tests, pairwise preference, Likert scales); use LLM-as-judge with careful validation
+      against human labels; or evaluate on a downstream task where labels do exist. For generative models, a
+      combination of automated metrics and human evaluation is standard practice.</p>`
+    }
+  ]
+},
+
+/* ------------------------------------------------------------------
+   14. TRAINING IN PRACTICE
+------------------------------------------------------------------ */
+{
+  id: "practical",
+  icon: "🛠️",
+  title: "14. Training in Practice & Debugging",
+  concepts: `
+    <div class="concept">
+      <h4>The debugging checklist (memorize this order)</h4>
+      <ol>
+        <li><b>Overfit a single batch</b> — take 8 samples and train. If the loss doesn't go to ~0, your code has
+        a bug, not a data problem.</li>
+        <li><b>Check the loss at initialization</b> — for C classes, cross-entropy should start at
+        <code>ln(C)</code> (e.g. 2.30 for 10 classes). Much higher means bad init or wrong labels.</li>
+        <li><b>Check data and labels</b> — visualize samples, verify label alignment, check for NaNs and
+        normalization.</li>
+        <li><b>Check gradient norms</b> — near zero → vanishing; huge → exploding.</li>
+        <li><b>Try a tiny model first</b> — get the pipeline working end-to-end, then scale up.</li>
+        <li><b>Sanity-check shapes</b> — the most common source of silent bugs.</li>
+      </ol>
+    </div>
+
+    <div class="concept">
+      <h4>Hyperparameter tuning methods</h4>
+      <ul>
+        <li><b>Grid search</b> — exhaustive; exponential in the number of hyperparameters.</li>
+        <li><b>Random search</b> — usually better than grid search because most hyperparameters barely matter and
+        random sampling explores the important ones more finely.</li>
+        <li><b>Bayesian optimization</b> (Optuna, Ax) — models the objective and picks the next point
+        intelligently.</li>
+        <li><b>Hyperband / ASHA</b> — early-stops bad trials and allocates more resources to promising ones.</li>
+      </ul>
+    </div>
+  `,
+  qa: [
+    {
+      q: "Your model's loss isn't decreasing. What do you check?",
+      a: `<ol>
+        <li><b>Learning rate</b> — the most common cause. Try 1e-1 down to 1e-5 on a log scale.</li>
+        <li><b>Data pipeline</b> — are inputs normalized? Are labels shuffled and aligned with inputs? Is the
+        dataset actually diverse?</li>
+        <li><b>Loss function</b> — is it appropriate for the task? Is it being averaged or summed correctly?</li>
+        <li><b>Gradients</b> — print gradient norms per layer. Zero → vanishing; huge → exploding.</li>
+        <li><b>Architecture</b> — missing activation function, wrong output size, a linear stack with no
+        non-linearity.</li>
+        <li><b>Optimizer state</b> — are you calling <code>zero_grad()</code>? Are the parameters actually
+        registered with the optimizer?</li>
+        <li><b>Bugs</b> — can you overfit a batch of 8 samples to near-zero loss? If not, it's a code bug.</li>
+      </ol>`
+    },
+    {
+      q: "How do you tune hyperparameters efficiently?",
+      a: `<p>Prioritize in this order:</p>
+      <ol>
+        <li><b>Learning rate</b> — by far the highest impact. Do a logarithmic sweep.</li>
+        <li><b>Architecture scale</b> — depth, width, resolution.</li>
+        <li><b>Regularization</b> — weight decay, dropout rate, augmentation strength.</li>
+        <li><b>Batch size</b> — constrained by memory; remember to scale the LR.</li>
+        <li><b>Optimizer betas / schedule shape</b> — smallest impact, tune last.</li>
+      </ol>
+      <p>Use <b>random search</b> or <b>Bayesian optimization</b> (Optuna) with early stopping / Hyperband pruning
+      rather than exhaustive grid search. Never tune on the test set.</p>`
+    },
+    {
+      q: "How do you handle class imbalance?",
+      a: `<ul>
+        <li><b>Loss re-weighting</b> — weight the rare class higher in cross-entropy.</li>
+        <li><b>Focal loss</b> — down-weights easy examples.</li>
+        <li><b>Resampling</b> — oversample the minority class (with augmentation) or undersample the majority.</li>
+        <li><b>Threshold tuning</b> — the default 0.5 is rarely optimal; pick the threshold that maximizes your
+        metric on validation data.</li>
+        <li><b>Stratified splits</b> — keep class proportions consistent across train/val/test.</li>
+        <li><b>Two-stage approaches</b> — a cheap detector to filter candidates, then a stronger classifier on the
+        balanced subset.</li>
+      </ul>`
+    },
+    {
+      q: "What is mixed-precision training?",
+      a: `<p>Using <b>float16</b> or <b>bfloat16</b> for most forward/backward computations while keeping a
+      <b>float32 master copy</b> of the weights. It roughly halves memory usage and speeds up training on
+      tensor-core GPUs.</p>
+      <p><b>Loss scaling</b> is needed with fp16: gradients can underflow to zero because fp16 has a small
+      exponent range, so the loss is multiplied by a large constant before the backward pass and the gradients are
+      divided by it afterwards. <b>bfloat16</b> has the same exponent range as fp32 and generally does not need
+      loss scaling.</p>`
+    },
+    {
+      q: "What is the difference between data parallelism and model parallelism?",
+      a: `<ul>
+        <li><b>Data parallelism</b> — replicate the model on each GPU, give each a different mini-batch, and
+        all-reduce the gradients before stepping. The standard approach when the model fits on one device.
+        (DDP in PyTorch.)</li>
+        <li><b>Model parallelism</b> — split the model's layers or tensors across GPUs because it does not fit on
+        one. Pipeline parallelism splits by layer; tensor parallelism splits individual matrix operations. This is
+        how LLMs are trained.</li>
+        <li><b>ZeRO / FSDP</b> — shard optimizer states, gradients, and parameters across devices, combining the
+        benefits of both.</li>
+      </ul>`
+    },
+    {
+      q: "How do you make training reproducible?",
+      a: `<p>Set all random seeds (Python, NumPy, framework, CUDA), enable deterministic algorithms in the framework
+      (at some speed cost), keep fixed data ordering, log the full config with every run, and pin library versions
+      and container images. Note that perfect bitwise reproducibility across different hardware or GPU counts is
+      usually not achievable — non-deterministic reduction orders in CUDA change floating-point results.</p>`
+    },
+    {
+      q: "What should you log during training?",
+      a: `<ul>
+        <li>Train and validation loss per epoch/step.</li>
+        <li>Task metrics (accuracy, F1, mAP) on validation.</li>
+        <li>Learning rate.</li>
+        <li>Gradient norms (per layer if debugging).</li>
+        <li>Weight norms and activation statistics.</li>
+        <li>Throughput (samples/sec) and memory usage.</li>
+        <li>Hardware utilization.</li>
+      </ul>
+      <p>Tools: TensorBoard, Weights &amp; Biases, MLflow, Comet. Always log the full hyperparameter config
+      alongside the metrics — you will not remember it later.</p>`
+    },
+    {
+      q: "What is the difference between a bug and a hyperparameter problem?",
+      a: `<p>A <b>bug</b> is something that is objectively wrong — shapes that silently broadcast, labels misaligned
+      with inputs, a forgotten <code>zero_grad()</code>, normalization applied to the wrong axis, missing
+      <code>model.eval()</code> at inference. These produce a model that cannot learn even in principle.</p>
+      <p>A <b>hyperparameter problem</b> is a model that learns but suboptimally — it's in the right regime, just
+      not tuned. The single-batch overfit test is the fastest way to distinguish them: if you can't overfit 8
+      samples, it's a bug.</p>`
+    },
+    {
+      q: "Why is validation loss sometimes lower than training loss?",
+      a: `<p>Because training loss is measured <i>during</i> the epoch while the model is still improving, often
+      averaged over an early phase when it was worse, while validation is measured at the end of the epoch.
+      Additionally, regularization like dropout is active during training (making it harder) but disabled at
+      validation, and data augmentation makes training data harder than the clean validation set.</p>
+      <p>If the gap persists and grows, it's genuine overfitting.</p>`
+    }
+  ]
+},
+
+/* ------------------------------------------------------------------
+   15. COMPRESSION & DEPLOYMENT
+------------------------------------------------------------------ */
+{
+  id: "deployment",
+  icon: "🚀",
+  title: "15. Model Compression & Deployment",
+  concepts: `
+    <div class="concept">
+      <h4>The four compression levers</h4>
+      <table>
+        <thead><tr><th>Technique</th><th>Idea</th><th>Typical gain</th></tr></thead>
+        <tbody>
+          <tr><td>Quantization</td><td>Reduce numeric precision (fp32 → int8)</td><td>4× smaller, 2–4× faster</td></tr>
+          <tr><td>Pruning</td><td>Remove unimportant weights/filters</td><td>2–10× sparsity, sometimes faster</td></tr>
+          <tr><td>Knowledge distillation</td><td>Small student mimics large teacher</td><td>10× smaller, minimal accuracy loss</td></tr>
+          <tr><td>Efficient architectures</td><td>Depthwise separable convs, attention variants</td><td>5–10× fewer FLOPs</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="concept">
+      <h4>Latency vs throughput</h4>
+      <p><b>Latency</b> = time for one request. <b>Throughput</b> = requests per second. Batching increases
+      throughput but increases per-request latency. Real-time systems optimize latency; batch/offline systems
+      optimize throughput. They require different deployment choices.</p>
+    </div>
+  `,
+  qa: [
+    {
+      q: "What is quantization and what are the main approaches?",
+      a: `<p>Quantization reduces the numerical precision of weights (and sometimes activations) to shrink the model
+      and speed up inference: fp32 → fp16 (2×) or int8 (4×).</p>
+      <ul>
+        <li><b>Post-training quantization (PTQ)</b> — quantize a trained model using a calibration dataset to
+        determine the ranges. Simple and fast, but can lose accuracy, especially for small models.</li>
+        <li><b>Quantization-aware training (QAT)</b> — simulate quantization during training so the model adapts
+        to it. Better accuracy, requires retraining.</li>
+        <li><b>Dynamic quantization</b> — quantize weights ahead of time and activations on the fly. Good for
+        transformers and RNNs.</li>
+        <li><b>4-bit / GPTQ / AWQ</b> — modern LLM quantization methods that keep quality high at very low
+        precision.</li>
+      </ul>`
+    },
+    {
+      q: "What is pruning?",
+      a: `<p>Pruning removes weights or entire structures that contribute little to the output.</p>
+      <ul>
+        <li><b>Unstructured pruning</b> — zero out individual weights (often 90%+). Compresses well but requires
+        sparse hardware/kernels to actually get speedups.</li>
+        <li><b>Structured pruning</b> — remove entire filters, channels or heads. Directly reduces compute and
+        works on any hardware.</li>
+      </ul>
+      <p>Best practice is <b>iterative pruning with fine-tuning</b>: prune a small fraction, fine-tune to recover
+      accuracy, repeat. Pruning at initialization ("lottery ticket hypothesis") shows some sparse subnetworks can
+      train to full accuracy from scratch.</p>`
+    },
+    {
+      q: "What is knowledge distillation?",
+      a: `<p>A large, accurate <b>teacher</b> model transfers its knowledge to a small <b>student</b> model. The
+      student is trained on both the true labels and the teacher's soft outputs (logits / probability
+      distribution):</p>
+      <pre><code>Loss = α · CE(student, labels) + (1−α) · KL(student_soft ‖ teacher_soft)</code></pre>
+      <p><b>Why soft targets help:</b> the teacher's distribution over classes encodes similarity structure
+      ("this looks 70% like a cat, 25% like a dog") — the "dark knowledge" that hard labels don't provide. This is
+      how DistilBERT, TinyBERT and most small production models are built.</p>`
+    },
+    {
+      q: "How would you deploy a model to production?",
+      a: `<ol>
+        <li><b>Export</b> to a portable format (ONNX, TorchScript, SavedModel) or a compiled runtime (TensorRT,
+        TFLite, OpenVINO).</li>
+        <li><b>Optimize</b> — quantization, pruning, distillation, kernel fusion, operator-level optimization.</li>
+        <li><b>Serve</b> — a REST/gRPC API (FastAPI, TorchServe, Triton, vLLM), with batching, caching and
+        autoscaling.</li>
+        <li><b>Monitor</b> — latency, throughput, error rate, and <b>data drift</b> (input distribution shifts) and
+        <b>concept drift</b> (input→output relationship changes).</li>
+        <li><b>Version</b> — model registry, A/B testing, shadow deployment, and a rollback plan.</li>
+        <li><b>Retrain</b> — on a schedule or when drift detection fires.</li>
+      </ol>`
+    },
+    {
+      q: "What is the difference between online and batch inference?",
+      a: `<p><b>Online inference</b> serves predictions in real time per request — low latency, often no batching
+      or micro-batching, higher cost per prediction. <b>Batch inference</b> processes large volumes of data offline
+      in bulk — high throughput, low cost per prediction, but results are not immediate. Recommendation systems
+      often use both: batch-computed candidate generation plus online re-ranking.</p>`
+    },
+    {
+      q: "What is ONNX?",
+      a: `<p>ONNX (Open Neural Network Exchange) is an open standard for representing trained models as a graph of
+      operators. It allows you to train in PyTorch and deploy with ONNX Runtime, TensorRT, OpenVINO or a mobile
+      runtime — decoupling the training framework from the deployment environment. The ONNX Runtime also applies
+      graph optimizations (operator fusion, constant folding, quantization) automatically.</p>`
+    },
+    {
+      q: "What are the main sources of latency in an ML service?",
+      a: `<ul>
+        <li><b>Preprocessing</b> — often underestimated; image decode/resize, tokenization.</li>
+        <li><b>Model compute</b> — FLOPs × memory bandwidth.</li>
+        <li><b>Memory transfer</b> — moving data CPU ↔ GPU.</li>
+        <li><b>Framework overhead</b> — Python interpreter, per-op dispatch (this is why tracing/compiling
+        helps).</li>
+        <li><b>Network / queueing</b> — load balancer, batching queue.</li>
+      </ul>
+      <p>Profile before optimizing — the bottleneck is often preprocessing, not the model.</p>`
+    }
+  ]
+},
+
+/* ------------------------------------------------------------------
+   16. MATH FOUNDATIONS
+------------------------------------------------------------------ */
+{
+  id: "math",
+  icon: "∑",
+  title: "16. Math Foundations",
+  concepts: `
+    <div class="concept">
+      <h4>What you actually need</h4>
+      <ul>
+        <li><b>Linear algebra</b> — matrix multiplication, shapes, transpose, eigenvalues/SVD.</li>
+        <li><b>Calculus</b> — partial derivatives, the chain rule, gradients, Jacobians, Hessians.</li>
+        <li><b>Probability</b> — distributions, expectation, variance, Bayes' rule, MLE vs MAP, KL divergence.</li>
+        <li><b>Optimization</b> — convexity, gradient descent, Lagrange multipliers (for constrained problems).</li>
+      </ul>
+    </div>
+
+    <div class="concept">
+      <h4>MLE vs MAP</h4>
+      <p><b>MLE</b> maximizes the likelihood <code>p(D|θ)</code>. <b>MAP</b> maximizes the posterior
+      <code>p(θ|D) ∝ p(D|θ)p(θ)</code> — i.e. MLE plus a prior.</p>
+      <p>A <b>Gaussian prior</b> corresponds to <b>L2 regularization</b>; a <b>Laplace prior</b> corresponds to
+      <b>L1 regularization</b>. So regularization is Bayesian inference in disguise.</p>
+    </div>
+  `,
+  qa: [
+    {
+      q: "State the chain rule and explain why it is central to deep learning.",
+      a: `<p>For composite functions: <code>d/dx f(g(x)) = f'(g(x)) · g'(x)</code>.</p>
+      <p>A neural network is a deeply nested composite function
+      <code>L = loss(f_n(f_{n−1}(… f_1(x))))</code>, so the gradient with respect to any parameter is a product
+      of local derivatives along the path from that parameter to the loss. Backpropagation is just the chain rule
+      applied efficiently across the computational graph, reusing intermediate results.</p>`
+    },
+    {
+      q: "What is a gradient, a Jacobian and a Hessian?",
+      a: `<ul>
+        <li><b>Gradient</b> — the vector of first partial derivatives of a scalar function:
+        <code>∇f = [∂f/∂x₁, …, ∂f/∂xₙ]</code>. Points in the direction of steepest ascent.</li>
+        <li><b>Jacobian</b> — the matrix of first partial derivatives of a vector-valued function:
+        <code>J[i][j] = ∂fᵢ/∂xⱼ</code>. Shape m×n.</li>
+        <li><b>Hessian</b> — the matrix of second partial derivatives of a scalar function. Shape n×n. It describes
+        curvature: positive definite → local minimum, indefinite → saddle point.</li>
+      </ul>
+      <p>For a model with n parameters, the Hessian has n² entries — impossible to store for large networks, which
+      is why second-order methods are impractical.</p>`
+    },
+    {
+      q: "What is maximum likelihood estimation and how does it lead to cross-entropy?",
+      a: `<p>MLE picks the parameters that maximize the probability of the observed data:</p>
+      <p><code>θ* = argmax_θ Π p(yᵢ | xᵢ; θ)</code></p>
+      <p>Taking the log (monotonic, so the argmax is unchanged) turns the product into a sum:</p>
+      <p><code>θ* = argmax_θ Σ log p(yᵢ | xᵢ; θ) = argmin_θ −Σ log p(yᵢ | xᵢ; θ)</code></p>
+      <p>The last expression is exactly <b>cross-entropy loss</b>. So training a classifier with cross-entropy is
+      maximum likelihood estimation under a categorical distribution.</p>`
+    },
+    {
+      q: "What is the difference between MLE and MAP?",
+      a: `<p><b>MLE</b> maximizes <code>p(D|θ)</code> — it only looks at the data. <b>MAP</b> maximizes
+      <code>p(θ|D) ∝ p(D|θ)·p(θ)</code> — it also incorporates a prior belief about θ.</p>
+      <p>With a Gaussian prior on the weights, MAP estimation is equivalent to L2-regularized MLE. With a Laplace
+      prior it is equivalent to L1. So regularization and priors are two views of the same thing.</p>`
+    },
+    {
+      q: "What are L1 and L2 norms?",
+      a: `<p><b>L1 norm:</b> <code>‖x‖₁ = Σ|xᵢ|</code> — the "taxicab" or Manhattan distance. Promotes sparsity.</p>
+      <p><b>L2 norm:</b> <code>‖x‖₂ = √(Σxᵢ²)</code> — the Euclidean distance. Promotes small, distributed values.</p>
+      <p>Both are used in regularization and in gradient clipping (clipping by global L2 norm preserves the gradient
+      direction).</p>`
+    },
+    {
+      q: "What is a convex function and why does convexity matter?",
+      a: `<p>A function is convex if the line segment between any two points on its graph lies above the graph:
+      <code>f(λx + (1−λ)y) ≤ λf(x) + (1−λ)f(y)</code>. Equivalently, its Hessian is positive semi-definite
+      everywhere.</p>
+      <p><b>Why it matters:</b> every local minimum is a global minimum, so gradient descent converges to the optimum
+      regardless of initialization. Deep network losses are non-convex, so no such guarantee exists — but in
+      practice SGD finds good solutions anyway.</p>`
+    },
+    {
+      q: "Explain Bayes' theorem in the context of machine learning.",
+      a: `<p><code>P(θ|D) = P(D|θ)·P(θ) / P(D)</code></p>
+      <ul>
+        <li><code>P(θ|D)</code> — posterior: belief about parameters after seeing data.</li>
+        <li><code>P(D|θ)</code> — likelihood: how probable the data is under these parameters.</li>
+        <li><code>P(θ)</code> — prior: belief before seeing data.</li>
+        <li><code>P(D)</code> — evidence: normalizing constant (usually intractable for neural networks).</li>
+      </ul>
+      <p>Bayesian neural networks try to model the full posterior over weights instead of a point estimate, giving
+      uncertainty estimates — but the integral is intractable, so they rely on variational inference (as in VAEs) or
+      Monte Carlo sampling (MC Dropout).</p>`
+    },
+    {
+      q: "What is the eigenvalue decomposition used for in deep learning?",
+      a: `<p>For a symmetric matrix (like a Hessian), eigenvalues describe the curvature along each eigenvector
+      direction — large positive eigenvalues mean steep directions, near-zero eigenvalues mean flat directions, and
+      negative eigenvalues indicate a saddle point.</p>
+      <p>In practice, the <b>top eigenvalue of the Hessian</b> relates to the maximum stable learning rate, and the
+      <b>condition number</b> (ratio of largest to smallest eigenvalue) explains why plain gradient descent
+      struggles in ill-conditioned loss landscapes.</p>`
+    },
+    {
+      q: "What is the expectation and variance of a random variable?",
+      a: `<p><b>Expectation</b> <code>E[X] = Σ x·p(x)</code> is the probability-weighted average value.</p>
+      <p><b>Variance</b> <code>Var(X) = E[(X − E[X])²] = E[X²] − E[X]²</code> measures the spread around the mean.</p>
+      <p>These matter constantly in deep learning: weight initialization is designed to preserve activation variance,
+      batch norm normalizes to zero mean and unit variance, and the reparameterization trick exploits
+      <code>Var(aX + b) = a²Var(X)</code>.</p>`
+    }
+  ]
+},
+
+/* ------------------------------------------------------------------
+   17. RAPID FIRE
+------------------------------------------------------------------ */
+{
+  id: "rapid",
+  icon: "⚡",
+  title: "17. Rapid-Fire Interview Questions",
+  concepts: `
+    <div class="concept">
+      <h4>How to use this section</h4>
+      <p>These are short-answer questions asked in screening rounds. Cover the answer, say it out loud in one or
+      two sentences, then check. Speed and precision matter more than depth here.</p>
+    </div>
+  `,
+  qa: [
+    {
+      q: "What is the difference between a parameter and a hyperparameter? (30 seconds)",
+      a: `<p>Parameters are learned from data by the optimizer (weights, biases). Hyperparameters are set by you
+      before training (learning rate, batch size, architecture choices) and are tuned on the validation set.</p>`
+    },
+    {
+      q: "What is the difference between an epoch and an iteration?",
+      a: `<p>An iteration is one weight update (one mini-batch). An epoch is one full pass over the entire
+      training dataset. One epoch = (dataset size / batch size) iterations.</p>`
+    },
+    {
+      q: "What does <code>model.eval()</code> do in PyTorch?",
+      a: `<p>It switches the model to inference mode: dropout is disabled and batch norm uses its stored running
+      statistics instead of batch statistics. Forgetting it is a classic bug that makes inference
+      non-deterministic and inconsistent.</p>`
+    },
+    {
+      q: "What is the output size of a 3×3 convolution with stride 2 and padding 1 on a 64×64 input?",
+      a: `<p><code>⌊(64 − 3 + 2)/2⌋ + 1 = ⌊63/2⌋ + 1 = 31 + 1 = 32</code>. The spatial size is halved.</p>`
+    },
+    {
+      q: "How many parameters in a 3×3 conv with 32 in-channels and 64 out-channels?",
+      a: `<p><code>(3·3·32 + 1) × 64 = 577 × 64 = 36,928</code> parameters.</p>`
+    },
+    {
+      q: "What is the initial cross-entropy loss for a 10-class classifier with random weights?",
+      a: `<p><code>ln(10) ≈ 2.303</code>. If your first loss is far from this, something is wrong — bad
+      initialization, unnormalized inputs, or a label mapping bug.</p>`
+    },
+    {
+      q: "What is the difference between <code>softmax</code> and <code>sigmoid</code>?",
+      a: `<p>Sigmoid is for binary/multi-label outputs — each unit independently squashes to (0,1). Softmax is for
+      mutually exclusive multi-class outputs — it normalizes across classes so the outputs sum to 1.</p>`
+    },
+    {
+      q: "Why do we normalize input features?",
+      a: `<p>Normalization makes the loss landscape better conditioned, allows larger learning rates, speeds up
+      convergence, and prevents one feature with a large scale from dominating the gradient. It also keeps
+      activations in a sensible range for the first layer.</p>`
+    },
+    {
+      q: "What is the difference between a hyperparameter and a parameter in 10 seconds?",
+      a: `<p>Parameter = learned. Hyperparameter = chosen.</p>`
+    },
+    {
+      q: "Can a neural network with zero hidden layers solve a non-linear problem?",
+      a: `<p>No. Without a hidden layer and non-linearity it is a linear model and can only draw linear decision
+      boundaries. It cannot solve XOR.</p>`
+    },
+    {
+      q: "What is a tensor?",
+      a: `<p>A multi-dimensional array — the fundamental data structure of deep learning. A scalar is 0-D, a vector
+      1-D, a matrix 2-D, and a batch of images is 4-D <code>(batch, channels, height, width)</code>.</p>`
+    },
+    {
+      q: "What is broadcasting?",
+      a: `<p>Broadcasting lets operations work on tensors of different shapes by implicitly expanding the smaller
+      one. A bias of shape <code>(C,)</code> is broadcast across a batch of shape <code>(N, C)</code>. It is
+      convenient but a common source of silent shape bugs.</p>`
+    },
+    {
+      q: "What is the difference between <code>view()</code> and <code>reshape()</code> in PyTorch?",
+      a: `<p><code>view()</code> requires the tensor to be contiguous in memory and returns a view (shares storage).
+      <code>reshape()</code> works on non-contiguous tensors too and returns a view if possible, otherwise a copy.
+      Use <code>reshape()</code> when unsure.</p>`
+    },
+    {
+      q: "What is a vanishing gradient in one sentence?",
+      a: `<p>Gradients shrink exponentially as they propagate backwards through many layers, so early layers stop
+      learning — fixed by ReLU, good initialization, normalization, and residual connections.</p>`
+    },
+    {
+      q: "What is the difference between L1 and L2 loss?",
+      a: `<p>L1 (MAE) is robust to outliers and its gradient is constant in magnitude. L2 (MSE) penalizes large
+      errors quadratically, is smooth everywhere, and is sensitive to outliers.</p>`
+    },
+    {
+      q: "Why is ReLU preferred over sigmoid in hidden layers?",
+      a: `<p>ReLU has a gradient of exactly 1 for positive inputs, so it does not saturate; it is cheap to compute;
+      and it produces sparse activations. Sigmoid saturates on both ends, causing vanishing gradients.</p>`
+    },
+    {
+      q: "What is the purpose of <code>torch.no_grad()</code>?",
+      a: `<p>It disables gradient tracking during inference, reducing memory usage and speeding up computation.
+      Gradients are not needed when you are only doing a forward pass.</p>`
+    },
+    {
+      q: "What is an ablation study?",
+      a: `<p>Systematically removing or changing one component at a time to measure its contribution. It is how you
+      justify design choices in a paper or a production system.</p>`
+    },
+    {
+      q: "What does 'over-parameterized' mean?",
+      a: `<p>The model has more parameters than training samples. Classical theory says this should overfit badly,
+      but modern deep networks do it routinely and still generalize — see double descent and implicit
+      regularization of SGD.</p>`
+    },
+    {
+      q: "What is the difference between bagging and boosting?",
+      a: `<p><b>Bagging</b> trains models in parallel on bootstrap samples and averages them — reduces variance
+      (Random Forest). <b>Boosting</b> trains models sequentially, each correcting the previous one's errors —
+      reduces bias (XGBoost, AdaBoost).</p>`
+    },
+    {
+      q: "What is an inductive bias? Give an example.",
+      a: `<p>An assumption built into a model's architecture that helps it generalize. CNNs assume locality and
+      translation equivariance; RNNs assume sequential structure; transformers assume permutation equivariance plus
+      positional encoding. Choosing an architecture = choosing a bias that matches your data.</p>`
+    },
+    {
+      q: "What is the difference between generative and discriminative models?",
+      a: `<p>Generative models learn <code>p(x, y)</code> (or <code>p(x)</code>) and can create new data.
+      Discriminative models learn <code>p(y|x)</code> and only classify/regress. Generative models need more data
+      and compute but can do more things.</p>`
+    },
+    {
+      q: "If your model has 99% accuracy but is useless, what's going on?",
+      a: `<p>Extreme class imbalance — the model predicts the majority class always. Check the confusion matrix and
+      use precision/recall, F1 or PR-AUC instead.</p>`
+    },
+    {
+      q: "What is the quickest way to check if your training code has a bug?",
+      a: `<p>Try to overfit a tiny batch (8–16 samples). A correct implementation should drive the loss to near zero
+      within a few hundred steps. If it cannot, the bug is in the code, not the data.</p>`
+    },
+    {
+      q: "What is the difference between <code>batch_size</code> and <code>steps_per_epoch</code>?",
+      a: `<p><code>batch_size</code> is the number of samples per forward/backward pass.
+      <code>steps_per_epoch</code> is the number of batches per epoch, normally
+      <code>ceil(N / batch_size)</code>.</p>`
+    },
+    {
+      q: "What does a high training loss and high validation loss mean?",
+      a: `<p>Underfitting. The model is too simple, undertrained, or the learning rate is wrong. Increase capacity,
+      train longer, or reduce regularization.</p>`
+    },
+    {
+      q: "What does a low training loss and high validation loss mean?",
+      a: `<p>Overfitting. The model memorized the training data. Add regularization, more data, augmentation, or
+      early stopping.</p>`
+    },
+    {
+      q: "Why do we use a separate validation set instead of tuning on the test set?",
+      a: `<p>Because tuning on the test set leaks information — the reported test performance becomes optimistically
+      biased and will not reflect real-world performance. The test set must be touched exactly once, at the end.</p>`
+    }
+  ]
+}
+
+];
+
+/* ============================================================
+   RENDER THE NOTEBOOK
+   ============================================================ */
+const contentEl  = document.getElementById('content');
+const tocEl      = document.getElementById('toc');
+const noResults  = document.getElementById('noResults');
+
+let totalQuestions = 0;
+
+DATA.forEach((sec) => {
+  totalQuestions += sec.qa.length;
+
+  /* ---- build section ---- */
+  const section = document.createElement('section');
+  section.className = 'section';
+  section.id = sec.id;
+
+  const qaHTML = sec.qa.map((item, j) => `
+    <div class="qa" data-idx="${sec.id}-${j}">
+      <button class="q" type="button" aria-expanded="false">
+        <span class="q-text">${item.q}</span>
+        <span class="chev" aria-hidden="true">▾</span>
+      </button>
+      <div class="a">
+        <div class="a-inner">${item.a}</div>
+      </div>
+    </div>
+  `).join('');
+
+  section.innerHTML = `
+    <div class="section-head">
+      <h2><span class="sec-icon">${sec.icon}</span> ${sec.title}</h2>
+      <label class="done-toggle" data-done="${sec.id}">
+        <input type="checkbox" data-sec="${sec.id}">
+        <span>Done</span>
+      </label>
+    </div>
+    ${sec.concepts || ''}
+    <div class="qa-list">${qaHTML}</div>
+  `;
+
+  contentEl.appendChild(section);
+
+  /* ---- build TOC entry ---- */
+  const link = document.createElement('a');
+  link.href = '#' + sec.id;
+  link.dataset.target = sec.id;
+  link.innerHTML = `<span class="ico">${sec.icon}</span><span class="lbl">${sec.title}</span>`;
+  tocEl.appendChild(link);
+});
+
+/* Stats in hero */
+document.getElementById('statSections').textContent = DATA.length;
+document.getElementById('statQuestions').textContent = totalQuestions;
+
+/* ============================================================
+   ACCORDION BEHAVIOUR (event delegation)
+   ============================================================ */
+contentEl.addEventListener('click', (e) => {
+  const btn = e.target.closest('.q');
+  if (!btn) return;
+
+  const qa = btn.parentElement;
+  const isOpen = qa.classList.toggle('open');
+  btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+});
+
+/* ============================================================
+   EXPAND / COLLAPSE ALL
+   ============================================================ */
+document.getElementById('expandAll').addEventListener('click', () => {
+  document.querySelectorAll('.qa').forEach(qa => {
+    qa.classList.add('open');
+    qa.querySelector('.q').setAttribute('aria-expanded', 'true');
+  });
+});
+
+document.getElementById('collapseAll').addEventListener('click', () => {
+  document.querySelectorAll('.qa').forEach(qa => {
+    qa.classList.remove('open');
+    qa.querySelector('.q').setAttribute('aria-expanded', 'false');
+  });
+});
+
+/* ============================================================
+   THEME SWITCHING
+   ============================================================ */
+const themeButtons = document.querySelectorAll('#themeSwitch button');
+
+function setTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  try { localStorage.setItem('dlnb-theme', theme); } catch (e) {}
+  themeButtons.forEach(b => {
+    b.classList.toggle('active', b.dataset.theme === theme);
+  });
+}
+
+themeButtons.forEach(btn => {
+  btn.addEventListener('click', () => setTheme(btn.dataset.theme));
+});
+
+/* initialise active state */
+setTheme(document.documentElement.getAttribute('data-theme') || 'light');
+
+/* ============================================================
+   PROGRESS TRACKING (localStorage)
+   ============================================================ */
+const STORAGE_KEY = 'dlnb-progress';
+let doneSet = new Set();
+
+try {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (raw) doneSet = new Set(JSON.parse(raw));
+} catch (e) { doneSet = new Set(); }
+
+function saveProgress() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify([...doneSet])); } catch (e) {}
+}
+
+function updateProgressUI() {
+  const total = DATA.length;
+  const done = doneSet.size;
+  const pct = total ? (done / total) * 100 : 0;
+
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = done + ' / ' + total;
+
+  document.querySelectorAll('[data-sec]').forEach(cb => {
+    const id = cb.dataset.sec;
+    const isDone = doneSet.has(id);
+    cb.checked = isDone;
+    cb.closest('.done-toggle').classList.toggle('checked', isDone);
+  });
+}
+
+contentEl.addEventListener('change', (e) => {
+  const cb = e.target.closest('input[data-sec]');
+  if (!cb) return;
+
+  if (cb.checked) doneSet.add(cb.dataset.sec);
+  else doneSet.delete(cb.dataset.sec);
+
+  saveProgress();
+  updateProgressUI();
+});
+
+updateProgressUI();
+
+/* ============================================================
+   SEARCH
+   ============================================================ */
+const searchInput  = document.getElementById('search');
+const searchClear  = document.getElementById('searchClear');
+
+function runSearch(rawTerm) {
+  const term = (rawTerm || '').trim().toLowerCase();
+
+  searchClear.classList.toggle('visible', term.length > 0);
+
+  let anyVisible = false;
+
+  document.querySelectorAll('.section').forEach(section => {
+    const qas = section.querySelectorAll('.qa');
+    const concepts = section.querySelectorAll('.concept');
+    const heading = section.querySelector('.section-head h2');
+    let sectionHasMatch = false;
+
+    if (!term) {
+      qas.forEach(qa => {
+        qa.style.display = '';
+      });
+      concepts.forEach(c => { c.style.display = ''; });
+      section.style.display = '';
+      return;
+    }
+
+    const headingMatch = heading && heading.textContent.toLowerCase().includes(term);
+
+    qas.forEach(qa => {
+      const hit = headingMatch || qa.textContent.toLowerCase().includes(term);
+      qa.style.display = hit ? '' : 'none';
+      if (hit) {
+        qa.classList.add('open');
+        qa.querySelector('.q').setAttribute('aria-expanded', 'true');
+        sectionHasMatch = true;
+      }
+    });
+
+    concepts.forEach(c => {
+      const hit = headingMatch || c.textContent.toLowerCase().includes(term);
+      c.style.display = hit ? '' : 'none';
+      if (hit) sectionHasMatch = true;
+    });
+
+    section.style.display = sectionHasMatch ? '' : 'none';
+    if (sectionHasMatch) anyVisible = true;
+  });
+
+  /* hide TOC entries with no matching section */
+  document.querySelectorAll('#toc a').forEach(a => {
+    const target = document.getElementById(a.dataset.target);
+    a.style.display = (!term || (target && target.style.display !== 'none')) ? '' : 'none';
+  });
+
+  noResults.classList.toggle('show', !anyVisible && term.length > 0);
+}
+
+let searchTimer = null;
+searchInput.addEventListener('input', (e) => {
+  clearTimeout(searchTimer);
+  const val = e.target.value;
+  searchTimer = setTimeout(() => runSearch(val), 140);
+});
+
+searchClear.addEventListener('click', () => {
+  searchInput.value = '';
+  runSearch('');
+  searchInput.focus();
+});
+
+/* Keyboard: "/" focuses search, Escape clears it */
+document.addEventListener('keydown', (e) => {
+  if (e.key === '/' && document.activeElement !== searchInput) {
+    e.preventDefault();
+    searchInput.focus();
+    searchInput.select();
+  }
+  if (e.key === 'Escape' && document.activeElement === searchInput) {
+    searchInput.value = '';
+    runSearch('');
+    searchInput.blur();
+  }
+});
+
+/* ============================================================
+   SCROLL SPY
+   ============================================================ */
+const tocLinks = Array.from(document.querySelectorAll('#toc a'));
+
+const spyObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const id = entry.target.id;
+    tocLinks.forEach(a => a.classList.toggle('active', a.dataset.target === id));
+  });
+}, {
+  rootMargin: '-15% 0px -70% 0px',
+  threshold: 0
+});
+
+document.querySelectorAll('.section').forEach(s => spyObserver.observe(s));
+
+/* ============================================================
+   MOBILE SIDEBAR
+   ============================================================ */
+const sidebar  = document.getElementById('sidebar');
+const backdrop = document.getElementById('backdrop');
+const menuBtn  = document.getElementById('menuBtn');
+
+function openSidebar() {
+  sidebar.classList.add('open');
+  backdrop.classList.add('show');
+}
+
+function closeSidebar() {
+  sidebar.classList.remove('open');
+  backdrop.classList.remove('show');
+}
+
+menuBtn.addEventListener('click', () => {
+  sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+});
+
+backdrop.addEventListener('click', closeSidebar);
+
+tocEl.addEventListener('click', (e) => {
+  if (e.target.closest('a') && window.innerWidth <= 1000) closeSidebar();
+});
+
+/* ============================================================
+   BACK TO TOP
+   ============================================================ */
+const toTop = document.getElementById('toTop');
+
+window.addEventListener('scroll', () => {
+  toTop.classList.toggle('show', window.scrollY > 500);
+}, { passive: true });
+
+toTop.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+</script>
+
+</body>
+</html>
