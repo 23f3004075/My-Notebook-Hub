@@ -1,7 +1,7 @@
 # My Notebook Hub
 
 It is collection of several notebooks regarding concepts like DSA, Python Functions, System Engineering etc. 
-
+You can add your personal Sheets to track your progress.
 
 ## Listed Notebooks
 
@@ -9,7 +9,8 @@ It is collection of several notebooks regarding concepts like DSA, Python Functi
 * System Commands
 * DSA for AIML
 * System Engineering 
-* DBMS and SQl
+* DBMS and SQL
+* Deep Learning
 
 ### Tech Stack
 * HTML + CSS
@@ -19,3 +20,6 @@ It is collection of several notebooks regarding concepts like DSA, Python Functi
 
 
 [Check the Notebook here:](https://23f3004075.github.io/My-Notebook-Hub/)
+
+
+> Contact: sourasishghosh02@gmail.com
